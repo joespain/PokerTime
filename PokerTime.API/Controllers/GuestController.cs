@@ -5,21 +5,18 @@ using Microsoft.AspNetCore.Routing;
 using PokerTime.API.Data;
 using PokerTime.API.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PokerTime.API.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
-    public class TournamentController : ControllerBase
+    public class GuestController : ControllerBase
     {
         private readonly IPTRepository _repository;
         private readonly IMapper _mapper;
         private readonly LinkGenerator _linkGenerator;
-        public TournamentController(IPTRepository repository, IMapper mapper, LinkGenerator linkGenerator)
+        public GuestController(IPTRepository repository, IMapper mapper, LinkGenerator linkGenerator)
         {
             _repository = repository;
             _mapper = mapper;
@@ -27,26 +24,18 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpGet("{id:Guid}")]
-        public async Task<ActionResult<TournamentModel[]>> Get(Guid id)
+        public async Task<ActionResult<GuestModel[]>> Get(Guid id)
         {
             try
             {
-                var results = await _repository.GetAllTournamentsByIdAsync(id);
-                return _mapper.Map<TournamentModel[]>(results);
+                var result = await _repository.GetAllGuestsByIdAsync(id);
+
+                return _mapper.Map<GuestModel[]>(result);
             }
             catch
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
-
-
-
-
-
-
-
-
-
     }
 }

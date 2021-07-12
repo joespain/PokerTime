@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using PokerTime.API.Data.Entities;
+using PokerTime.API.Models;
 
 namespace PokerTime.API.Data
 {
@@ -10,7 +8,10 @@ namespace PokerTime.API.Data
     {
         public PTProfile()
         {
-
+            this.CreateMap<Tournament, TournamentModel>()
+                .ReverseMap();
+            this.CreateMap<Guest, GuestModel>()
+                .ReverseMap();
         }
     }
 }
