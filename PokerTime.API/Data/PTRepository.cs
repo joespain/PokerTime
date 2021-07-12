@@ -43,7 +43,7 @@ namespace PokerTime.API.Data
         {
             _logger.LogInformation($"Getting all Tournaments");
 
-            IQueryable<Tournament> query = _context.Tournaments.Where(c => c.UserId == id);
+            IQueryable<Tournament> query = _context.Tournaments.Where(c => c.HostId == id);
 
 
             // Order It
@@ -56,7 +56,7 @@ namespace PokerTime.API.Data
         {
             _logger.LogInformation($"Getting all guests");
 
-            IQueryable<Guest> query = _context.Guests.Where(g => g.UserId == id);
+            IQueryable<Guest> query = _context.Guests.Where(g => g.HostId == id);
 
             query = query.OrderBy(g => g.Name);
 
