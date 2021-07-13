@@ -8,9 +8,13 @@ namespace PokerTime.API.Data
     {
         public PTProfile()
         {
-            this.CreateMap<Tournament, TournamentModel>()
+            this.CreateMap<TournamentStructure, TournamentStructureModel>()
                 .ReverseMap();
-            this.CreateMap<Guest, GuestModel>()
+            this.CreateMap<User, UserModel>()
+                .ReverseMap();
+            this.CreateMap<BlindLevel, BlindLevelModel>()
+                .ReverseMap();
+            this.CreateMap<Event, EventModel>()
                 .ReverseMap();
         }
     }

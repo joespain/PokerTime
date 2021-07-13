@@ -1,10 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PokerTime.API.Data.Entities;
 using Microsoft.Extensions.Configuration;
+using PokerTime.API.Data.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PokerTime.API.Data
 {
@@ -16,55 +13,97 @@ namespace PokerTime.API.Data
             _config = config;
         }
 
-        public DbSet<Tournament> Tournaments { get; set; }
-        public DbSet<Guest> Guests { get; set; }
+        public DbSet<TournamentStructure> TournamentStructures { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Event> Events { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(_config.GetConnectionString("PokerTime"));
+            optionsBuilder.EnableSensitiveDataLogging();
         }
 
         protected override void OnModelCreating(ModelBuilder bldr)
         {
-            bldr.Entity<Tournament>()
-                .HasData(new 
+            //bldr.Entity<User>(entity =>
+            //{
+            //    entity.HasMany(e => e.Friends)
+            //    .WithMany(e=> e.)
+            //});
+
+            var Mike = new User
+            {
+                Id = Guid.NewGuid(),
+                Name = "Mike Spain",
+                Email = "MJSpain@gmail.com",
+                Phone = "12354567890",
+                IsPaidUser = true
+            };
+
+            var Jim = new User
+            {
+                Id = Guid.NewGuid(),
+                Name = "Jim Spain",
+                Email = "JimboSpain@gmail.com",
+                Phone = "0987654321",
+                IsPaidUser = false
+            };
+
+            var Joe = new User
+            {
+                Id = Guid.NewGuid(),
+                Name = "Joe Spain",
+                Email = "Joe.Spain22@gmail.com",
+                Phone = "7274094210",
+                IsPaidUser = false
+            };
+
+            //Mike.Friends.Add(Joe);
+            //Mike.Friends.Add(Jim);
+
+            bldr.Entity<User>()
+                .HasData(Mike);
+            bldr.Entity<User>()
+                .HasData(Jim);
+            bldr.Entity<User>()
+                .HasData(Joe);
+
+            bldr.Entity<TournamentStructure>()
+                .HasData(new
                 {
                     Id = 1,
-                    Name = "Joe's Tournament of Champions",
-                    HostId = new Guid { }
+                    Name = "Joe's Structure of Champions!",
+                    UserId = Mike.Id,
+                    User = Mike,
+                    DateCreated = DateTime.Today,
+                    NumberOfEvents = 0
                 });
 
-            bldr.Entity<Round>()
-                .HasData(new 
+            bldr.Entity<BlindLevel>()
+                .HasData(new BlindLevel
                 {
                     Id = 1,
-                    TournamentId = 1,
-                    RoundNumber = 1,
+                    TournamentStructureId = 1,
+                    LevelNumber = 1,
                     Ante = 20,
                     BigBlind = 100,
                     SmallBlind = 200,
                     Minutes = 30
                 });
 
-            bldr.Entity<Round>()
-                .HasData(new
+            bldr.Entity<BlindLevel>()
+                .HasData(new BlindLevel
                 {
                     Id = 2,
-                    TournamentId = 1,
-                    RoundNumber = 2,
+                    TournamentStructureId = 1,
+                    LevelNumber = 2,
                     Ante = 25,
                     BigBlind = 150,
                     SmallBlind = 250,
                     Minutes = 30
                 });
 
-            //bldr.Entity<Guest>()
-            //    .HasData(new
-            //    {
-            //        Id = 1,
-            //        Name = "Billy Bob",
-            //        Email = "Jimbo@gmail.com"
-            //    });
+
         }
 
     }

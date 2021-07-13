@@ -26,7 +26,7 @@ namespace PokerTime.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<PTContext>();
-            //services.AddScoped<ICampRepository, CampRepository>();
+            services.AddScoped<IPTRepository, PTRepository>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             services.AddControllers();

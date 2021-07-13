@@ -39,28 +39,71 @@ namespace PokerTime.API.Data
             return (await _context.SaveChangesAsync()) > 0;
         }
 
-        public async Task<Tournament[]> GetAllTournamentsByIdAsync(Guid id)
+        public async Task<IEnumerable<TournamentStructure>> GetTournamentStructuresByUserIdAsync(Guid id)
         {
             _logger.LogInformation($"Getting all Tournaments");
 
-            IQueryable<Tournament> query = _context.Tournaments.Where(c => c.HostId == id);
+            IQueryable<TournamentStructure> query = _context.TournamentStructures.Where(c => c.Host.Id == id);
 
+            query = query.OrderBy(c => c.Name);
 
-            // Order It
-            query = query.OrderBy(c => c.Id);
-
-            return await query.ToArrayAsync();
+            return await query.ToListAsync();
         }
 
-        public async Task<Guest[]> GetAllGuestsByIdAsync(Guid id)
+        public async Task<TournamentStructure> GetTournamentStructureAsync(int id)
         {
-            _logger.LogInformation($"Getting all guests");
+            _logger.LogInformation($"Getting Tournament");
 
-            IQueryable<Guest> query = _context.Guests.Where(g => g.HostId == id);
+            IQueryable<TournamentStructure> query = _context.TournamentStructures.Where(c => c.Id == id);
+
+            return await query.FirstOrDefaultAsync();
+        }
+
+
+        public async Task<IEnumerable<User>> GetAllUsers()
+        {
+            _logger.LogInformation($"Getting all users");
+
+            IQueryable<User> query = _context.Users;
+
+            query = query.OrderBy(u => u.Name);
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<bool> AddFriendByUserIdAsync(Guid UserId, Guid FriendId)
+        {
+            _logger.LogInformation($"Adding Friend");
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == UserId);
+            var friend = await _context.Users.FirstOrDefaultAsync(f => f.Id == FriendId);
+
+            user.Friends.Add(friend);
+
+            return await SaveChangesAsync();
+
+
+        }
+
+        public async Task<IEnumerable<User>> GetAllFriendsByIdAsync(Guid id)
+        {
+            _logger.LogInformation($"Getting all Friends");
+
+            IQueryable<User> query = _context.Users.Where(u => u.Id == id);
 
             query = query.OrderBy(g => g.Name);
 
             return await query.ToArrayAsync();
+        }
+
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            _logger.LogInformation($"Getting user with email {email}");
+
+            IQueryable<User> query = _context.Users.Where(u => u.Email == email);
+
+            return await query.FirstOrDefaultAsync();
+
         }
 
 
