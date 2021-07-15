@@ -28,11 +28,11 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TournamentStructureModel>>> Get(int UserId)
+        public async Task<ActionResult<IEnumerable<TournamentStructureModel>>> GetTournamentStructures(int userId)
         {
             try
             {
-                var results = await _repository.GetTournamentStructuresByUserIdAsync(UserId);
+                var results = await _repository.GetTournamentStructuresByUserIdAsync(userId);
 
                 return _mapper.Map<IEnumerable<TournamentStructureModel>>(results).ToList();
             }
@@ -43,47 +43,95 @@ namespace PokerTime.API.Controllers
             }
         }
 
-        //[HttpGet("{StructureId:int}")]
-        //public async Task<ActionResult<TournamentStructureModel>> Get(int StructureId)
-        //{
-        //    try
-        //    {
-        //        var Results = await _repository.GetTournamentStructureAsync(StructureId);
-
-        //        return _mapper.Map<TournamentStructureModel>(Results);
-        //    }
-        //    catch
-        //    {
-        //        //Update with real status code errors
-        //        return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
-        //    }
-        //}
-
-        [HttpPost]
-        public async Task<ActionResult<TournamentStructureModel>> Post(int Id, TournamentStructureModel Model)
+        [HttpGet("{StructureId:int}")]
+        public async Task<ActionResult<TournamentStructureModel>> GetTournamentStructure(int userId, int structureId)
         {
             try
-            {   
-                Model.HostId = Id;
-                Model.Host = _mapper.Map<UserModel>(_repository.GetUserByIdAsync(Id));
+            {
+                var results = await _repository.GetTournamentStructureAsync(structureId);
 
-                var location = _linkGenerator.GetPathByAction("Get",
-                    "TournamentStructures", Model.Id);
-
-
-                var newTournamentStructure = _mapper.Map<TournamentStructure>(Model);
-                _repository.Add(newTournamentStructure);
-                if (await _repository.SaveChangesAsync())
-                {
-                    return Created(location, _mapper.Map<TournamentStructureModel>(newTournamentStructure));
-                }
+                return _mapper.Map<TournamentStructureModel>(results);
             }
             catch
             {
                 //Update with real status code errors
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
-            return BadRequest();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<TournamentStructureModel>> AddTournamentStructure(int userId, TournamentStructureModel model)
+        {
+            try
+            {   
+                //Get the user to attach to the Tournament Structure
+                var user = await _repository.GetUserByIdAsync(userId);
+
+                if(user == null) return BadRequest("User does not exist.");
+
+                var newTournamentStructure = _mapper.Map<TournamentStructure>(model);
+
+                newTournamentStructure.DateCreated = DateTime.Today;
+                newTournamentStructure.Host = user;
+                newTournamentStructure.HostId = userId;
+                
+                _repository.Add(newTournamentStructure);
+                if (await _repository.SaveChangesAsync())
+                {
+                    var location = _linkGenerator.GetPathByAction(HttpContext, 
+                        "Get", "Users",
+                    values: new { userId, newTournamentStructure.Id });
+                    return Created(location, _mapper.Map<TournamentStructureModel>(newTournamentStructure));
+                }
+                else
+                {
+                    return BadRequest("Failed to add new Tournament Structure.");
+                }
+            }
+            catch(Exception e)
+            {
+                //Update with real status code errors
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
+            }
+        }
+
+        [HttpPut("{structureId:int}")]
+        public async Task<ActionResult<TournamentStructureModel>> UpdateTournamentStructure(TournamentStructureModel structure)
+        {
+            try
+            {
+                var existingStructure = await _repository.GetTournamentStructureAsync(structure.Id);
+                if (existingStructure == null) return BadRequest("Tournament Structure does not exist. Create a new structure.");
+
+                _mapper.Map(structure, existingStructure);
+                if (await _repository.SaveChangesAsync())
+                {
+                    return _mapper.Map<TournamentStructureModel>(structure);
+                }
+                else return BadRequest("There was an error updating the Tournament Structure.");
+            }
+            catch(Exception e)
+            {
+                //Update with real status code errors
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
+            }
+        }
+
+
+        [HttpDelete("{structureId:int}")]
+        public async Task<ActionResult> DeleteTournamentStructure(int structureId)
+        {
+            try
+            {
+                if (structureId == 0) return BadRequest("No tournament structure to delete.");
+                await _repository.DeleteTournamentStructure(structureId);
+                return NoContent();  //Success
+            }
+            catch(Exception e)
+            {
+                //Update with real status code errors
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
+            }
         }
 
 

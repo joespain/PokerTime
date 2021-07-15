@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using PokerTime.API.Data.Entities;
-using System;
-using System.Collections.Generic;
 
 namespace PokerTime.API.Data
 {
@@ -61,68 +59,6 @@ namespace PokerTime.API.Data
                 .HasData(Jim);
             bldr.Entity<User>()
                 .HasData(Joe);
-
-            //var bill = new Invitee
-            //{
-            //    Id = 1,
-            //    Name = "Billy Bob",
-            //    Email = "BillyB@gmail.com",
-            //    Phone = "7274094211",
-            //    UserId = 3
-            //};
-            //var troy = new Invitee
-            //{
-            //    Id = 2,
-            //    Name = "Troy Trofelkers",
-            //    Email = "Troy@gmail.com",
-            //    Phone = "8184094211",
-            //    UserId = 3
-            //};
-
-            //var ts1 = new TournamentStructure
-            //{
-            //    Id = 1,
-            //    Name = "Joe's Structure of Champions!",
-            //    HostId = 3,
-            //    DateCreated = DateTime.Today,
-            //    NumberOfEvents = 0
-            //};
-
-
-
-            //bldr.Entity<Invitee>()
-            //    .HasData(bill);
-            //bldr.Entity<Invitee>()
-            //    .HasData(troy);
-
-            //bldr.Entity<TournamentStructure>()
-            //    .HasData(ts1);
-
-            //bldr.Entity<BlindLevel>()
-            //    .HasData(new BlindLevel
-            //    {
-            //        Id = 1,
-            //        TournamentStructureId = 1,
-            //        LevelNumber = 1,
-            //        Ante = 20,
-            //        BigBlind = 100,
-            //        SmallBlind = 200,
-            //        Minutes = 30
-            //    });
-
-            //bldr.Entity<BlindLevel>()
-            //    .HasData(new BlindLevel
-            //    {
-            //        Id = 2,
-            //        TournamentStructureId = 1,
-            //        LevelNumber = 2,
-            //        Ante = 25,
-            //        BigBlind = 150,
-            //        SmallBlind = 250,
-            //        Minutes = 30
-            //    });
-
-
         }
 
     }

@@ -40,15 +40,15 @@ namespace PokerTime.API.Controllers
                 //replace with real error code
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
-            
+
         }
 
-        [HttpGet("{UserId:int}")]
-        public async Task<ActionResult<UserModel>> Get(int UserId)
+        [HttpGet("{userId:int}")]
+        public async Task<ActionResult<UserModel>> Get(int userId)
         {
             try
             {
-                var result = await _repository.GetUserByIdAsync(UserId);
+                var result = await _repository.GetUserByIdAsync(userId);
 
                 return _mapper.Map<UserModel>(result);
             }
@@ -59,31 +59,11 @@ namespace PokerTime.API.Controllers
             }
         }
 
-
-        //[HttpGet("{UserId:int}")]
-        //public async Task<ActionResult<IEnumerable<TournamentStructureModel>>> Get(int id)
-        //{
-        //    try
-        //    {
-        //        var result = await _repository.GetTournamentStructuresByUserIdAsync(id);
-
-        //        return _mapper.Map<IEnumerable<TournamentStructureModel>>(result).ToList();
-        //    }
-        //    catch
-        //    {
-        //        //replace with real error code
-        //        return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
-        //    }
-        //}
-
         [HttpPost]
         public async Task<ActionResult<UserModel>> Post(UserModel model)
         {
             try
             {
-                var location = _linkGenerator.GetPathByAction("Get",
-                    "Users", model.Id);
-
                 //What if user with same name/email/phone exists?
                 //var user = _repository.GetUserByEmailAsync(model.Email);
                 //if (user != null)
@@ -91,19 +71,72 @@ namespace PokerTime.API.Controllers
                 //    return BadRequest("User already exists");
                 //}
 
+                var location = _linkGenerator.GetPathByAction(HttpContext, "Get",
+                    "Users", model.Id);
+
                 var newUser = _mapper.Map<User>(model);
                 _repository.Add(newUser);
-                if(await _repository.SaveChangesAsync())
+                if (await _repository.SaveChangesAsync())
                 {
                     return Created(location, _mapper.Map<UserModel>(newUser));
                 }
             }
-            catch
+            catch (Exception e)
             {
                 //replace with real error code
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
             }
             return BadRequest();
+        }
+
+        [HttpPut("{userId:int}")]
+        public async Task<ActionResult<UserModel>> UpdateUser([FromBody] UserModel user)
+        {
+            try
+            {
+                var existingUser = await _repository.GetUserByIdAsync(user.Id);
+                if (existingUser == null)
+                {
+                    return BadRequest("User to update was not found.");
+                }
+
+                //var location = _linkGenerator.GetPathByAction("Get",
+                //    "Users",
+                //    new { Id = user.Id });
+
+                //if(string.IsNullOrEmpty(location))
+                //{
+                //    return BadRequest("Error updating user.");
+                //}
+
+                _mapper.Map(user, existingUser);
+
+                if(await _repository.SaveChangesAsync())
+                {
+                    return _mapper.Map<UserModel>(user);
+                }
+                return BadRequest("There was an error updating the user.");
+            }
+            catch(Exception e)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
+            }
+        }
+
+        [HttpDelete("{userId}")]
+        public async Task<ActionResult> DeleteUser(int userId)
+        {
+            try
+            {
+                if (userId == 0) return BadRequest("No user to delete.");
+
+                await _repository.DeleteUser(userId);
+                return NoContent();  //Success
+            }
+            catch(Exception e)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
+            }
         }
 
     }

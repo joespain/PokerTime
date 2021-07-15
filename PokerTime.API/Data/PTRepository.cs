@@ -67,24 +67,51 @@ namespace PokerTime.API.Data
             return await query.FirstOrDefaultAsync();
         }
 
+        public async Task DeleteTournamentStructure(int structureId)
+        {
+            _logger.LogInformation($"Deleting TournamentStructure with Id {structureId}");
+
+
+            var foundTournamentStructure = await _context.TournamentStructures.FirstOrDefaultAsync(s => s.Id == structureId);
+            if (foundTournamentStructure == null) return;
+
+            _context.TournamentStructures.Remove(foundTournamentStructure);
+            await _context.SaveChangesAsync();
+
+            return;
+        }
+
         //Users-------------------------------------------------
 
         public async Task<IEnumerable<User>> GetAllUsers()
         {
             _logger.LogInformation($"Getting all users");
 
-            IQueryable<User> query = _context.Users;
-
-            query = query.OrderBy(u => u.Name);
+            IQueryable<User> query = _context.Users
+                            .OrderBy(u => u.Name);
 
             return await query.ToListAsync();
         }
 
-        public async Task<User> GetUserByIdAsync(int UserId)
+        public async Task<User> GetUserByIdAsync(int userId)
         {
-            _logger.LogInformation($"Getting User");
+            _logger.LogInformation($"Getting User with Id {userId}");
 
-            return await _context.Users.FirstOrDefaultAsync(u => u.Id == UserId);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        }
+
+        public async Task DeleteUser(int userId)
+        {
+            _logger.LogInformation($"Deleting User with Id {userId}");
+
+
+            var foundUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (foundUser == null) return;
+
+            _context.Users.Remove(foundUser);
+            await _context.SaveChangesAsync();
+
+            return;
         }
 
 
@@ -92,7 +119,7 @@ namespace PokerTime.API.Data
 
         public async Task<IEnumerable<Invitee>> GetAllInviteesByUserIdAsync(int id)
         {
-            _logger.LogInformation($"Getting all Invitees for user");
+            _logger.LogInformation($"Getting all Invitees for user with Id: {id}");
 
             IQueryable<Invitee> query = _context.Invitees
                 .Where(u => u.UserId == id)

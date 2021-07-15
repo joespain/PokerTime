@@ -15,10 +15,12 @@ namespace PokerTime.API.Data
         //Get Tournament Structures
         Task<IEnumerable<TournamentStructure>> GetTournamentStructuresByUserIdAsync(int id);
         Task<TournamentStructure> GetTournamentStructureAsync(int id);
+        Task DeleteTournamentStructure(int id);
 
         //Get Users
         Task<IEnumerable<User>> GetAllUsers();
         Task<User> GetUserByIdAsync(int id);
+        Task DeleteUser(int userId);
 
         //Get Invitees
         Task<IEnumerable<Invitee>> GetAllInviteesByUserIdAsync(int id);

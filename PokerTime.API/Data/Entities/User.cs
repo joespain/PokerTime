@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace PokerTime.API.Data.Entities
@@ -9,12 +8,9 @@ namespace PokerTime.API.Data.Entities
 
         //Eventually I want to be able to connect users together so each user has a list of Friends(people they've invited before)
         //but I can't figure out how to do a self-referencing relationship with EF Core.
-        //public User()
-        //{
-        //    this.Invitees = new List<Invitee>();
-        //    this.TournamentStructures = new List<TournamentStructure>();
-        //    this.Events = new List<Event>();
-        //}
+
+        //public int ParentUserId {get;set;}
+        //public ICollection<User> Friends {get;set;}
 
         public int Id { get; set; }
         [Required]
