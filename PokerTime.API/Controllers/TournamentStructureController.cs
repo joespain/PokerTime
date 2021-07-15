@@ -27,12 +27,12 @@ namespace PokerTime.API.Controllers
             _linkGenerator = linkGenerator;
         }
 
-        [HttpGet("{Id:Guid}")]
-        public async Task<ActionResult<IEnumerable<TournamentStructureModel>>> Get(Guid Id)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<TournamentStructureModel>>> Get(int UserId)
         {
             try
             {
-                var results = await _repository.GetTournamentStructuresByUserIdAsync(Id);
+                var results = await _repository.GetTournamentStructuresByUserIdAsync(UserId);
 
                 return _mapper.Map<IEnumerable<TournamentStructureModel>>(results).ToList();
             }
@@ -43,27 +43,30 @@ namespace PokerTime.API.Controllers
             }
         }
 
-        [HttpGet("{StructureId:int}")]
-        public async Task<ActionResult<TournamentStructureModel>> Get(int StructureId)
-        {
-            try
-            {
-                var Results = await _repository.GetTournamentStructureAsync(StructureId);
+        //[HttpGet("{StructureId:int}")]
+        //public async Task<ActionResult<TournamentStructureModel>> Get(int StructureId)
+        //{
+        //    try
+        //    {
+        //        var Results = await _repository.GetTournamentStructureAsync(StructureId);
 
-                return _mapper.Map<TournamentStructureModel>(Results);
-            }
-            catch
-            {
-                //Update with real status code errors
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
-            }
-        }
+        //        return _mapper.Map<TournamentStructureModel>(Results);
+        //    }
+        //    catch
+        //    {
+        //        //Update with real status code errors
+        //        return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+        //    }
+        //}
 
         [HttpPost]
-        public async Task<ActionResult<TournamentStructureModel>> Post(Guid Id, TournamentStructureModel Model)
+        public async Task<ActionResult<TournamentStructureModel>> Post(int Id, TournamentStructureModel Model)
         {
             try
-            {
+            {   
+                Model.HostId = Id;
+                Model.Host = _mapper.Map<UserModel>(_repository.GetUserByIdAsync(Id));
+
                 var location = _linkGenerator.GetPathByAction("Get",
                     "TournamentStructures", Model.Id);
 

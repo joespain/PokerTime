@@ -43,15 +43,14 @@ namespace PokerTime.API.Controllers
             
         }
 
-
-        [HttpGet("{id:Guid}")]
-        public async Task<ActionResult<IEnumerable<TournamentStructureModel>>> Get(Guid id)
+        [HttpGet("{UserId:int}")]
+        public async Task<ActionResult<UserModel>> Get(int UserId)
         {
             try
             {
-                var result = await _repository.GetTournamentStructuresByUserIdAsync(id);
+                var result = await _repository.GetUserByIdAsync(UserId);
 
-                return _mapper.Map<IEnumerable<TournamentStructureModel>>(result).ToList();
+                return _mapper.Map<UserModel>(result);
             }
             catch
             {
@@ -59,6 +58,23 @@ namespace PokerTime.API.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
+
+
+        //[HttpGet("{UserId:int}")]
+        //public async Task<ActionResult<IEnumerable<TournamentStructureModel>>> Get(int id)
+        //{
+        //    try
+        //    {
+        //        var result = await _repository.GetTournamentStructuresByUserIdAsync(id);
+
+        //        return _mapper.Map<IEnumerable<TournamentStructureModel>>(result).ToList();
+        //    }
+        //    catch
+        //    {
+        //        //replace with real error code
+        //        return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+        //    }
+        //}
 
         [HttpPost]
         public async Task<ActionResult<UserModel>> Post(UserModel model)
@@ -69,11 +85,11 @@ namespace PokerTime.API.Controllers
                     "Users", model.Id);
 
                 //What if user with same name/email/phone exists?
-                var user = _repository.GetUserByEmailAsync(model.Email);
-                if (user != null)
-                {
-                    return BadRequest("User already exists");
-                }
+                //var user = _repository.GetUserByEmailAsync(model.Email);
+                //if (user != null)
+                //{
+                //    return BadRequest("User already exists");
+                //}
 
                 var newUser = _mapper.Map<User>(model);
                 _repository.Add(newUser);

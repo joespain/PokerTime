@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using PokerTime.API.Data.Entities;
 using System;
+using System.Collections.Generic;
 
 namespace PokerTime.API.Data
 {
@@ -16,6 +17,7 @@ namespace PokerTime.API.Data
         public DbSet<TournamentStructure> TournamentStructures { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<Invitee> Invitees { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -25,24 +27,9 @@ namespace PokerTime.API.Data
 
         protected override void OnModelCreating(ModelBuilder bldr)
         {
-            //bldr.Entity<User>(entity =>
-            //{
-            //    entity.HasMany(e => e.Friends)
-            //    .WithMany(e=> e.)
-            //});
-
-            var Mike = new User
-            {
-                Id = Guid.NewGuid(),
-                Name = "Mike Spain",
-                Email = "MJSpain@gmail.com",
-                Phone = "12354567890",
-                IsPaidUser = true
-            };
-
             var Jim = new User
             {
-                Id = Guid.NewGuid(),
+                Id = 1,
                 Name = "Jim Spain",
                 Email = "JimboSpain@gmail.com",
                 Phone = "0987654321",
@@ -51,57 +38,89 @@ namespace PokerTime.API.Data
 
             var Joe = new User
             {
-                Id = Guid.NewGuid(),
+                Id = 2,
                 Name = "Joe Spain",
                 Email = "Joe.Spain22@gmail.com",
                 Phone = "7274094210",
-                IsPaidUser = false
+                IsPaidUser = false,
             };
 
-            //Mike.Friends.Add(Joe);
-            //Mike.Friends.Add(Jim);
+            bldr.Entity<User>(u =>
+            {
+                u.HasData(new
+                {
+                    Id = 3,
+                    Name = "Mike Spain",
+                    Email = "MJSpain@gmail.com",
+                    Phone = "12354567890",
+                    IsPaidUser = true,
+                });
+            });
 
-            bldr.Entity<User>()
-                .HasData(Mike);
             bldr.Entity<User>()
                 .HasData(Jim);
             bldr.Entity<User>()
                 .HasData(Joe);
 
-            bldr.Entity<TournamentStructure>()
-                .HasData(new
-                {
-                    Id = 1,
-                    Name = "Joe's Structure of Champions!",
-                    UserId = Mike.Id,
-                    User = Mike,
-                    DateCreated = DateTime.Today,
-                    NumberOfEvents = 0
-                });
+            //var bill = new Invitee
+            //{
+            //    Id = 1,
+            //    Name = "Billy Bob",
+            //    Email = "BillyB@gmail.com",
+            //    Phone = "7274094211",
+            //    UserId = 3
+            //};
+            //var troy = new Invitee
+            //{
+            //    Id = 2,
+            //    Name = "Troy Trofelkers",
+            //    Email = "Troy@gmail.com",
+            //    Phone = "8184094211",
+            //    UserId = 3
+            //};
 
-            bldr.Entity<BlindLevel>()
-                .HasData(new BlindLevel
-                {
-                    Id = 1,
-                    TournamentStructureId = 1,
-                    LevelNumber = 1,
-                    Ante = 20,
-                    BigBlind = 100,
-                    SmallBlind = 200,
-                    Minutes = 30
-                });
+            //var ts1 = new TournamentStructure
+            //{
+            //    Id = 1,
+            //    Name = "Joe's Structure of Champions!",
+            //    HostId = 3,
+            //    DateCreated = DateTime.Today,
+            //    NumberOfEvents = 0
+            //};
 
-            bldr.Entity<BlindLevel>()
-                .HasData(new BlindLevel
-                {
-                    Id = 2,
-                    TournamentStructureId = 1,
-                    LevelNumber = 2,
-                    Ante = 25,
-                    BigBlind = 150,
-                    SmallBlind = 250,
-                    Minutes = 30
-                });
+
+
+            //bldr.Entity<Invitee>()
+            //    .HasData(bill);
+            //bldr.Entity<Invitee>()
+            //    .HasData(troy);
+
+            //bldr.Entity<TournamentStructure>()
+            //    .HasData(ts1);
+
+            //bldr.Entity<BlindLevel>()
+            //    .HasData(new BlindLevel
+            //    {
+            //        Id = 1,
+            //        TournamentStructureId = 1,
+            //        LevelNumber = 1,
+            //        Ante = 20,
+            //        BigBlind = 100,
+            //        SmallBlind = 200,
+            //        Minutes = 30
+            //    });
+
+            //bldr.Entity<BlindLevel>()
+            //    .HasData(new BlindLevel
+            //    {
+            //        Id = 2,
+            //        TournamentStructureId = 1,
+            //        LevelNumber = 2,
+            //        Ante = 25,
+            //        BigBlind = 150,
+            //        SmallBlind = 250,
+            //        Minutes = 30
+            //    });
 
 
         }

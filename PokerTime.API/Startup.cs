@@ -28,6 +28,9 @@ namespace PokerTime.API
             services.AddDbContext<PTContext>();
             services.AddScoped<IPTRepository, PTRepository>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddControllersWithViews()
+                    .AddNewtonsoftJson(options =>
+                            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddControllers();
         }
