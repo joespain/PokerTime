@@ -44,11 +44,11 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpGet("{StructureId:int}")]
-        public async Task<ActionResult<TournamentStructureModel>> GetTournamentStructure(int userId, int structureId)
+        public async Task<ActionResult<TournamentStructureModel>> GetTournamentStructure(int structureId)
         {
             try
             {
-                var results = await _repository.GetTournamentStructureAsync(structureId);
+                var results = await _repository.GetTournamentStructureByIdAsync(structureId);
 
                 return _mapper.Map<TournamentStructureModel>(results);
             }
@@ -100,7 +100,7 @@ namespace PokerTime.API.Controllers
         {
             try
             {
-                var existingStructure = await _repository.GetTournamentStructureAsync(structure.Id);
+                var existingStructure = await _repository.GetTournamentStructureByIdAsync(structure.Id);
                 if (existingStructure == null) return BadRequest("Tournament Structure does not exist. Create a new structure.");
 
                 _mapper.Map(structure, existingStructure);
@@ -119,13 +119,19 @@ namespace PokerTime.API.Controllers
 
 
         [HttpDelete("{structureId:int}")]
-        public async Task<ActionResult> DeleteTournamentStructure(int structureId)
+        public async Task<ActionResult> DeleteTournamentStructure(int id)
         {
             try
             {
-                if (structureId == 0) return BadRequest("No tournament structure to delete.");
-                await _repository.DeleteTournamentStructure(structureId);
-                return NoContent();  //Success
+                if (id == 0) return BadRequest("No tournament structure to delete.");
+                if(await _repository.DeleteTournamentStructure(id))
+                {
+                    return NoContent();  //Success
+                }
+                else
+                {
+                    return BadRequest("Error deleting TournamentStructure.");
+                }
             }
             catch(Exception e)
             {

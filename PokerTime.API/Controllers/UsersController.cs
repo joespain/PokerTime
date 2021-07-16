@@ -60,16 +60,16 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserModel>> Post(UserModel model)
+        public async Task<ActionResult<UserModel>> AddUser(UserModel model)
         {
             try
             {
                 //What if user with same name/email/phone exists?
-                //var user = _repository.GetUserByEmailAsync(model.Email);
-                //if (user != null)
-                //{
-                //    return BadRequest("User already exists");
-                //}
+                var user = _repository.GetUserByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    return BadRequest("User already exists");
+                }
 
                 var location = _linkGenerator.GetPathByAction(HttpContext, "Get",
                     "Users", model.Id);
@@ -124,14 +124,21 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpDelete("{userId}")]
-        public async Task<ActionResult> DeleteUser(int userId)
+        public async Task<ActionResult> DeleteUser(int id)
         {
             try
             {
-                if (userId == 0) return BadRequest("No user to delete.");
+                if (id == 0) return BadRequest("No user to delete.");
 
-                await _repository.DeleteUser(userId);
-                return NoContent();  //Success
+                if(await _repository.DeleteUser(id))
+                {
+                    return NoContent();  //Success
+                }
+                else
+                {
+                    return BadRequest("Error deleting User.");
+                }
+                
             }
             catch(Exception e)
             {

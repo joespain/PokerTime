@@ -14,7 +14,7 @@ namespace PokerTime.API.Data
                 .ReverseMap();
             this.CreateMap<BlindLevel, BlindLevelModel>()
                 .ReverseMap();
-            this.CreateMap<Event, EventModel>()
+            this.CreateMap<Invitee, EventModel>()
                 .ReverseMap();
             this.CreateMap<Invitee, InviteeModel>()
                 .ReverseMap();

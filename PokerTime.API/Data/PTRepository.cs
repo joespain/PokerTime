@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PokerTime.API.Data.Shared;
 
 namespace PokerTime.API.Data
 {
@@ -33,7 +34,7 @@ namespace PokerTime.API.Data
 
         public async Task<bool> SaveChangesAsync()
         {
-            _logger.LogInformation($"Attempting to save the changes in the context");
+            _logger.LogInformation($"Attempting to save the changes in the context.");
 
             // Only return success if at least one row was changed
             return (await _context.SaveChangesAsync()) > 0;
@@ -43,21 +44,22 @@ namespace PokerTime.API.Data
 
         public async Task<IEnumerable<TournamentStructure>> GetTournamentStructuresByUserIdAsync(int id)
         {
-            _logger.LogInformation($"Getting all Tournaments");
+
+            _logger.LogInformation(GetLogString("Deleting", "TournamentStructure", $"{id}", "", $"User"));
 
             IQueryable<TournamentStructure> query = _context.TournamentStructures
                 .Include(c => c.Host)
                 .Include(c => c.BlindLevels)
                 .Where(c => c.HostId == id);
-
+            
             query = query.OrderBy(c => c.Name);
 
             return await query.ToListAsync();
         }
 
-        public async Task<TournamentStructure> GetTournamentStructureAsync(int id)
+        public async Task<TournamentStructure> GetTournamentStructureByIdAsync(int id)
         {
-            _logger.LogInformation($"Getting Tournament");
+            _logger.LogInformation(GetLogString("Getting", "TournamentStructures", $"{id}", "", $"User"));
 
             IQueryable<TournamentStructure> query = _context.TournamentStructures
                 .Include(c => c.BlindLevels)
@@ -67,67 +69,151 @@ namespace PokerTime.API.Data
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task DeleteTournamentStructure(int structureId)
+        public async Task<bool> DeleteTournamentStructure(int id)
         {
-            _logger.LogInformation($"Deleting TournamentStructure with Id {structureId}");
+            var foundTournamentStructure = await _context.TournamentStructures.FirstOrDefaultAsync(s => s.Id == id);
+            if (foundTournamentStructure == null) return false;
 
+            _logger.LogInformation(GetLogString("Deleting", "User", $"{id}", $"{foundTournamentStructure.Name}"));
 
-            var foundTournamentStructure = await _context.TournamentStructures.FirstOrDefaultAsync(s => s.Id == structureId);
-            if (foundTournamentStructure == null) return;
+            Delete(foundTournamentStructure);
 
-            _context.TournamentStructures.Remove(foundTournamentStructure);
-            await _context.SaveChangesAsync();
-
-            return;
+            if (await _context.SaveChangesAsync() > 0) //Success
+            {
+                return true;
+            }
+            else return false;
         }
 
         //Users-------------------------------------------------
 
         public async Task<IEnumerable<User>> GetAllUsers()
         {
-            _logger.LogInformation($"Getting all users");
+            _logger.LogInformation($"Getting all users.");
 
-            IQueryable<User> query = _context.Users
-                            .OrderBy(u => u.Name);
+            IQueryable<User> query = _context.Users.OrderBy(u => u.Name);
 
             return await query.ToListAsync();
         }
 
-        public async Task<User> GetUserByIdAsync(int userId)
+        public async Task<User> GetUserByIdAsync(int id)
         {
-            _logger.LogInformation($"Getting User with Id {userId}");
+            var foundUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
-            return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            _logger.LogInformation(GetLogString("Getting", "User", $"{id}", $"{foundUser.Name}"));
+
+            return foundUser;
         }
 
-        public async Task DeleteUser(int userId)
+        public async Task<User> GetUserByEmailAsync(string email)
         {
-            _logger.LogInformation($"Deleting User with Id {userId}");
+            var foundUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
+            _logger.LogInformation("Getting user by email.");
 
-            var foundUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (foundUser == null) return;
-
-            _context.Users.Remove(foundUser);
-            await _context.SaveChangesAsync();
-
-            return;
+            return foundUser;
         }
+
+
+        public async Task<bool> DeleteUser(int id)
+        {
+            var foundUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+            _logger.LogInformation(GetLogString("Deleting", "User", $"{id}", $"{foundUser.Name}"));
+
+            Delete(foundUser);
+            if (await _context.SaveChangesAsync() > 0) //Success
+            {
+                return true;
+            }
+            else return false;
+        }
+
 
 
         //Invitees----------------------------------------
 
         public async Task<IEnumerable<Invitee>> GetAllInviteesByUserIdAsync(int id)
         {
-            _logger.LogInformation($"Getting all Invitees for user with Id: {id}");
-
             IQueryable<Invitee> query = _context.Invitees
                 .Where(u => u.UserId == id)
                 .OrderBy(u => u.Name);
 
+            _logger.LogInformation(GetLogString("Getting","Invitees",$"{id}", "", "user"));
+
             return await query.ToListAsync();
         }
 
+        public async Task<Invitee> GetInviteeByIdAsync(int id)
+        {
+            _logger.LogInformation($"Getting invitee with Id: {id}");
+
+            return await _context.Invitees.FirstOrDefaultAsync(i => i.Id == id);
+        }
+
+        public async Task<bool> DeleteInvitee(int id)
+        {
+            var foundUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+
+            _logger.LogInformation(GetLogString("Deleting", "Invitee", $"{id}", $"{foundUser.Name}"));
+
+            Delete(foundUser);
+            if (await _context.SaveChangesAsync() > 0) //Success
+            {
+                return true;
+            }
+            else return false;
+        }
+
+        //Events---------------------------------------
+
+
+        public async Task<IEnumerable<Event>> GetAllEventsByUserIdAsync(int id)
+        {
+            IQueryable<Event> query = _context.Events
+                .Where(u => u.UserId == id)
+                .OrderBy(u => u.Name);
+
+            _logger.LogInformation(GetLogString("Getting", "Events", $"{id}", "", "user"));
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<Event> GetEventByIdAsync(int id)
+        {
+            _logger.LogInformation(GetLogString("Deleting", "Event", $"{id}", "", "User"));
+
+            return await _context.Events.FirstOrDefaultAsync(i => i.Id == id);
+        }
+
+        public async Task<bool> DeleteEvent(int id)
+        {
+            var foundEvent = await _context.Events.FirstOrDefaultAsync(u => u.Id == id);
+
+            _logger.LogInformation(GetLogString("Deleting", "Event", $"{id}", $"{foundEvent.Name}"));
+
+            Delete(foundEvent);
+            if (await _context.SaveChangesAsync() > 0) //Success
+            {
+                return true;
+            }
+            else return false;
+        }
+
+
+
+
+
+        //Log methods
+        public string GetLogString(string action, string type, string id, string name)
+        {
+            return $"{action} {type}: {id}, {name} at {DateTime.Now}";
+        }
+
+        public string GetLogString(string action, string type, string id, string name, string forObject)
+        {
+            return $"{action} {type} for {forObject}: {id}, at {DateTime.Now}";
+        }
 
 
     }

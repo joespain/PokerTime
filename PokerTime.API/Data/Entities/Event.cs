@@ -6,16 +6,12 @@ namespace PokerTime.API.Data.Entities
 {
     public class Event
     {
-        //public Event()
-        //{
-        //    Invitees = new List<Invitee>();
-        //}
         public int Id { get; set; }
         [Required]
         [StringLength(100)]
         public string Name { get; set; }
-        public int HostId { get; set; }
-        public User Host { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
         public DateTime Date { get; set; }
 
         public int TournamentStructureId { get; set; }

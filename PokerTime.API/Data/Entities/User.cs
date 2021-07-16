@@ -23,6 +23,6 @@ namespace PokerTime.API.Data.Entities
 
         public ICollection<TournamentStructure> TournamentStructures { get; set; }
         public ICollection<Invitee> Invitees { get; set; }
-        public ICollection<Event> Events { get; set; }
+        public ICollection<Invitee> Events { get; set; }
     }
 }
