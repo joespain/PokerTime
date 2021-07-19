@@ -7,26 +7,36 @@ namespace PokerTime.API.Data
 {
     public interface IPTRepository
     {
-        //Adding, Removing & Editing
+        //Adding & Deleting
         void Add<T>(T entity) where T : class;
         void Delete<T>(T entity) where T : class;
 
+        //Users 
+        Task<IEnumerable<User>> GetAllUsers(bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
+        Task<User> GetUserByEmailAsync(string email, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
+        Task<User> GetUserByIdAsync(int id, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
+        Task<bool> DeleteUserByIdAsync(int id);
 
-        //Get Tournament Structures
+        //TournamentStructures 
         Task<IEnumerable<TournamentStructure>> GetTournamentStructuresByUserIdAsync(int id);
         Task<TournamentStructure> GetTournamentStructureByIdAsync(int id);
-        Task<bool> DeleteTournamentStructure(int id);
+        Task<bool> DeleteTournamentStructureByIdAsync(int id);
 
-        //Get Users
-        Task<IEnumerable<User>> GetAllUsers();
-        Task<User> GetUserByEmailAsync(string email);
-        Task<User> GetUserByIdAsync(int id);
-        Task<bool> DeleteUser(int userId);
-
-        //Get Invitees
+        //Invitees
         Task<IEnumerable<Invitee>> GetAllInviteesByUserIdAsync(int id);
         Task<Invitee> GetInviteeByIdAsync(int id);
-        Task<bool> DeleteInvitee(int id);
+        Task<bool> DeleteInviteeByIdAsync(int id);
+
+        //Events 
+        Task<IEnumerable<Event>> GetAllEventsByUserIdAsync(int id);
+        Task<Event> GetEventByIdAsync(int id);
+        Task<bool> DeleteEventByIdAsync(int id);
+
+        //BlindLevels
+
+        Task<IEnumerable<BlindLevel>> GetBlindLevelsByStructureIdAsync(int id);
+        Task<BlindLevel> GetBlindLevelByIdAsync(int id);
+        Task<bool> DeleteBlindLevelByIdAsync(int id);
 
         //Save
         Task<bool> SaveChangesAsync();

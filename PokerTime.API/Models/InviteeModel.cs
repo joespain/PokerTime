@@ -16,6 +16,5 @@ namespace PokerTime.API.Models
 
         public ICollection<Invitee> Events { get; set; }
         public int UserId { get; set; }
-        public User User { get; set; }
     }
 }

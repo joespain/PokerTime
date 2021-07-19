@@ -12,9 +12,8 @@ namespace PokerTime.API.Data.Entities
         public string Email { get; set; }
         public string Phone { get; set; }
 
-
-        public ICollection<Invitee> Events { get;set; }
+        public ICollection<Event> Events { get;set; }
         public int UserId { get; set; }
-        public User User { get; set; }
+        //public User Host { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace PokerTime.API.Models
         [Required]
         [StringLength(100)]
         public string Name { get; set; }
-        [Required]
+        [Required][EmailAddress]
         public string Email { get; set; }
         public string Phone { get; set; }
         public bool IsPaidUser { get; set; }

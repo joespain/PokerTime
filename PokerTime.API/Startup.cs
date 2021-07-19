@@ -1,15 +1,11 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PokerTime.API.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace PokerTime.API
 {
@@ -27,6 +23,8 @@ namespace PokerTime.API
         {
             services.AddDbContext<PTContext>();
             services.AddScoped<IPTRepository, PTRepository>();
+            //services.AddScoped<LinkGenerator, >
+            //services.AddScoped<ILinkGenerator, LinkGenerator>;
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddControllersWithViews()
                     .AddNewtonsoftJson(options =>

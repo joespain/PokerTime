@@ -14,7 +14,7 @@ namespace PokerTime.API.Controllers
 {
 
     [ApiController]
-    [Route("Users/{userId}/Events")]
+    [Route("api/users/{userId}/events")]
     public class EventController : ControllerBase
     {
         private readonly IPTRepository _repository;
@@ -44,12 +44,12 @@ namespace PokerTime.API.Controllers
             }
         }
 
-        [HttpGet("{inviteeId:int}")]
+        [HttpGet("{eventId:int}")]
         public async Task<ActionResult<EventModel>> GetEvent(int eventId)
         {
             try
             {
-                if (eventId == 0) return BadRequest("Invitee not found.");
+                if (eventId == 0) return BadRequest("Event not found.");
 
                 return _mapper.Map<EventModel>(await _repository.GetEventByIdAsync(eventId));
             }
@@ -61,19 +61,20 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<EventModel>> AddEvent(int userId, EventModel model)
+        public async Task<ActionResult<EventModel>> AddEvent(int userId, [FromBody] EventModel model)
         {
             try
             {
-                var location = _linkGenerator.GetPathByAction(HttpContext, "Get",
-                    "Events",
-                    values: new { userId, model.Id });
+                //var location = _linkGenerator.GetPathByAction(HttpContext, "Get",
+                //    "Events",
+                //    values: new { userId, model.Id });
 
-                var newEvent = _mapper.Map<Invitee>(model);
+                var newEvent = _mapper.Map<Event>(model);
                 _repository.Add(newEvent);
                 if (await _repository.SaveChangesAsync())
                 {
-                    return Created(location, _mapper.Map<EventModel>(newEvent));
+                    return Created($"api/users/{userId}/events/{newEvent.Id}", 
+                        _mapper.Map<EventModel>(newEvent));
                 }
                 else
                 {
@@ -85,7 +86,42 @@ namespace PokerTime.API.Controllers
                 //replace with real error code
                 return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
             }
-            return BadRequest();
+        }
+
+        [HttpPut("{eventId:int}")]
+        public async Task<ActionResult<EventModel>> UpdateEvent(int eventId, [FromBody] EventModel newEvent)
+        {
+            try
+            {
+                //Make sure the Id URI is the same as the model.Id. If they're different, something's wrong.
+                if (eventId != newEvent.Id)
+                {
+                    return BadRequest("Error updating Event.");
+                }
+
+                //If the old event doesn't exist, it's either deleted or got wrong id.
+                var oldEvent = await _repository.GetEventByIdAsync(newEvent.Id);
+                if (oldEvent == null)
+                {
+                    return BadRequest("Event to update was not found.");
+                }
+
+                //Mapper applies the changes of the model onto the entity, updating the entity in the process.
+                _mapper.Map(newEvent, oldEvent);
+
+                if (await _repository.SaveChangesAsync())
+                {
+                    return _mapper.Map<EventModel>(newEvent);
+                }
+                else
+                {
+                    return BadRequest("Error updating the Event.");
+                }
+            }
+            catch (Exception e)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
+            }
         }
 
         [HttpDelete]
@@ -94,7 +130,7 @@ namespace PokerTime.API.Controllers
             try
             {
                 if (eventId == 0) return BadRequest("No invitee to delete.");
-                if (await _repository.DeleteInvitee(eventId))
+                if (await _repository.DeleteEventByIdAsync(eventId))
                 {
                     return NoContent();  //Success
                 }
@@ -102,7 +138,6 @@ namespace PokerTime.API.Controllers
                 {
                     return BadRequest("Error deleting invitee.");
                 }
-
             }
             catch (Exception e)
             {

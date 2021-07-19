@@ -61,19 +61,26 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<InviteeModel>> AddInvitee(int userId, InviteeModel model)
+        public async Task<ActionResult<InviteeModel>> AddInvitee(int userId, [FromBody] InviteeModel model)
         {
             try
             {
-                var location = _linkGenerator.GetPathByAction(HttpContext, "Get",
-                    "Invitees", 
-                    values: new { userId, model.Id });
+                //Make sure the host exists
+                var host = await _repository.GetUserByIdAsync(userId);
+                if (host == null) return BadRequest("Host not found.");
+
+                model.UserId = userId;
 
                 var newInvitee = _mapper.Map<Invitee>(model);
+
                 _repository.Add(newInvitee);
+
                 if (await _repository.SaveChangesAsync())
                 {
-                    return Created(location, _mapper.Map<InviteeModel>(newInvitee));
+                    //var location = _linkGenerator.GetPathByAction(HttpContext, "Get",
+                    //"Invitees",
+                    //values: new { userId, newInvitee.Id});
+                    return Created($"api/users/{userId}/invitees/{newInvitee.Id}", _mapper.Map<InviteeModel>(newInvitee));
                 }
                 else
                 {
@@ -85,7 +92,42 @@ namespace PokerTime.API.Controllers
                 //replace with real error code
                 return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
             }
-            return BadRequest();
+        }
+
+        [HttpPut("{inviteeId:int}")]
+        public async Task<ActionResult<InviteeModel>> UpdateInvitee(int inviteeId, [FromBody] InviteeModel newInvitee)
+        {
+            try
+            {
+                //Make sure the Id URI is the same as the model.Id. If they're different, something's fucked.
+                if (inviteeId != newInvitee.Id)
+                {
+                    return BadRequest("Error updating Invitee.");
+                }
+
+                //If the old invitee doesn't exist, it's either deleted or got wrong id.
+                var oldInvitee = await _repository.GetInviteeByIdAsync(newInvitee.Id);
+                if (oldInvitee == null)
+                {
+                    return BadRequest("Invitee to update was not found.");
+                }
+
+                //Mapper applies the changes of the model onto the entity, updating the entity in the process.
+                _mapper.Map(newInvitee, oldInvitee);
+
+                if (await _repository.SaveChangesAsync())
+                {
+                    return _mapper.Map<InviteeModel>(newInvitee);
+                }
+                else
+                {
+                    return BadRequest("Error updating the Invitee.");
+                }
+            }
+            catch (Exception e)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
+            }
         }
 
         [HttpDelete]
@@ -94,7 +136,7 @@ namespace PokerTime.API.Controllers
             try
             {
                 if (id == 0) return BadRequest("No invitee to delete.");
-                if(await _repository.DeleteInvitee(id))
+                if(await _repository.DeleteInviteeByIdAsync(id))
                 {
                     return NoContent();  //Success
                 }

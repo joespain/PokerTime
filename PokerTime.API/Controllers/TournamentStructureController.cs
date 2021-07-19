@@ -14,7 +14,7 @@ namespace PokerTime.API.Controllers
 {
 
     [ApiController]
-    [Route("api/Users/{UserId}/TournamentStructures")]
+    [Route("api/Users/{userId:int}/TournamentStructures")]
     public class TournamentStructureController : ControllerBase
     {
         private readonly IPTRepository _repository;
@@ -60,7 +60,7 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<TournamentStructureModel>> AddTournamentStructure(int userId, TournamentStructureModel model)
+        public async Task<ActionResult<TournamentStructureModel>> AddTournamentStructure(int userId, [FromBody] TournamentStructureModel model)
         {
             try
             {   
@@ -72,16 +72,17 @@ namespace PokerTime.API.Controllers
                 var newTournamentStructure = _mapper.Map<TournamentStructure>(model);
 
                 newTournamentStructure.DateCreated = DateTime.Today;
-                newTournamentStructure.Host = user;
-                newTournamentStructure.HostId = userId;
+                newTournamentStructure.UserId = userId;
                 
                 _repository.Add(newTournamentStructure);
                 if (await _repository.SaveChangesAsync())
                 {
-                    var location = _linkGenerator.GetPathByAction(HttpContext, 
-                        "Get", "Users",
-                    values: new { userId, newTournamentStructure.Id });
-                    return Created(location, _mapper.Map<TournamentStructureModel>(newTournamentStructure));
+                    //find out why the link generator isn't working.
+                    //var location = _linkGenerator.GetPathByAction(HttpContext, 
+                    //    "Get", "Users",
+                    //values: new { userId, newTournamentStructure.Id });
+                    return Created($"users/{userId}/tournamentstructures/{newTournamentStructure.Id}",
+                        _mapper.Map<TournamentStructureModel>(newTournamentStructure));
                 }
                 else
                 {
@@ -96,19 +97,31 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpPut("{structureId:int}")]
-        public async Task<ActionResult<TournamentStructureModel>> UpdateTournamentStructure(TournamentStructureModel structure)
+        public async Task<ActionResult<TournamentStructureModel>> UpdateTournamentStructure(int structureId, TournamentStructureModel newStructure)
         {
             try
             {
-                var existingStructure = await _repository.GetTournamentStructureByIdAsync(structure.Id);
-                if (existingStructure == null) return BadRequest("Tournament Structure does not exist. Create a new structure.");
+                //Make sure the Id URI is the same as the model.Id. If they're different, something's fucked.
+                if (structureId != newStructure.Id)
+                {
+                    return BadRequest("Error updating TournamentStructure.");
+                }
 
-                _mapper.Map(structure, existingStructure);
+                //If the old structure doesn't exist, it's either deleted or got wrong id.
+                var oldStructure = await _repository.GetTournamentStructureByIdAsync(newStructure.Id);
+                if (oldStructure == null)
+                {
+                    return BadRequest("Tournament Structure does not exist.");
+                }
+
+                //Mapper applies the changes of the model onto the entity, updating the entity in the process.
+                _mapper.Map(newStructure, oldStructure);
+
                 if (await _repository.SaveChangesAsync())
                 {
-                    return _mapper.Map<TournamentStructureModel>(structure);
+                    return _mapper.Map<TournamentStructureModel>(newStructure);
                 }
-                else return BadRequest("There was an error updating the Tournament Structure.");
+                else return BadRequest("Error updating the Tournament Structure.");
             }
             catch(Exception e)
             {
@@ -117,14 +130,13 @@ namespace PokerTime.API.Controllers
             }
         }
 
-
         [HttpDelete("{structureId:int}")]
-        public async Task<ActionResult> DeleteTournamentStructure(int id)
+        public async Task<ActionResult> DeleteTournamentStructure(int structureId)
         {
             try
             {
-                if (id == 0) return BadRequest("No tournament structure to delete.");
-                if(await _repository.DeleteTournamentStructure(id))
+                if (structureId == 0) return BadRequest("No TournamentStructure to delete.");
+                if(await _repository.DeleteTournamentStructureByIdAsync(structureId))
                 {
                     return NoContent();  //Success
                 }

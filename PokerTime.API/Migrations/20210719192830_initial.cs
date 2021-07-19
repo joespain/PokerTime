@@ -32,21 +32,97 @@ namespace PokerTime.API.Migrations
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NumberOfEvents = table.Column<int>(type: "int", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    HostId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TournamentStructures", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TournamentStructures_Users_HostId",
-                        column: x => x.HostId,
+                        name: "FK_TournamentStructures_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "BlindLevel",
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    TournamentStructureId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Events_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Events_TournamentStructures_TournamentStructureId",
+                        column: x => x.TournamentStructureId,
+                        principalTable: "TournamentStructures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Invitees",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Invitees", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Invitees_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            
+
+            migrationBuilder.CreateTable(
+                name: "EventInvitee",
+                columns: table => new
+                {
+                    EventsId = table.Column<int>(type: "int", nullable: false),
+                    InviteesId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventInvitee", x => new { x.EventsId, x.InviteesId });
+                    table.ForeignKey(
+                        name: "FK_EventInvitee_Events_EventsId",
+                        column: x => x.EventsId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_EventInvitee_Invitees_InviteesId",
+                        column: x => x.InviteesId,
+                        principalTable: "Invitees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BlindLevels",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -60,70 +136,13 @@ namespace PokerTime.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BlindLevel", x => x.Id);
+                    table.PrimaryKey("PK_BlindLevels", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BlindLevel_TournamentStructures_TournamentStructureId",
+                        name: "FK_BlindLevels_TournamentStructures_TournamentStructureId",
                         column: x => x.TournamentStructureId,
                         principalTable: "TournamentStructures",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Events",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    HostId = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TournamentStructureId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Events", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Events_TournamentStructures_TournamentStructureId",
-                        column: x => x.TournamentStructureId,
-                        principalTable: "TournamentStructures",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Events_Users_HostId",
-                        column: x => x.HostId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Invitee",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EventId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Invitee", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Invitee_Events_EventId",
-                        column: x => x.EventId,
-                        principalTable: "Events",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Invitee_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.InsertData(
@@ -142,14 +161,19 @@ namespace PokerTime.API.Migrations
                 values: new object[] { 2, "Joe.Spain22@gmail.com", false, "Joe Spain", "7274094210" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_BlindLevel_TournamentStructureId",
-                table: "BlindLevel",
+                name: "IX_BlindLevels_TournamentStructureId",
+                table: "BlindLevels",
                 column: "TournamentStructureId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Events_HostId",
+                name: "IX_EventInvitee_InviteesId",
+                table: "EventInvitee",
+                column: "InviteesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_UserId",
                 table: "Events",
-                column: "HostId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_TournamentStructureId",
@@ -157,34 +181,32 @@ namespace PokerTime.API.Migrations
                 column: "TournamentStructureId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Invitee_EventId",
-                table: "Invitee",
-                column: "EventId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Invitee_UserId",
-                table: "Invitee",
+                name: "IX_Invitees_UserId",
+                table: "Invitees",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TournamentStructures_HostId",
+                name: "IX_TournamentStructures_UserId",
                 table: "TournamentStructures",
-                column: "HostId");
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BlindLevel");
+                name: "BlindLevels");
 
             migrationBuilder.DropTable(
-                name: "Invitee");
+                name: "EventInvitee");
+
+            migrationBuilder.DropTable(
+                name: "TournamentStructures");
 
             migrationBuilder.DropTable(
                 name: "Events");
 
             migrationBuilder.DropTable(
-                name: "TournamentStructures");
+                name: "Invitees");
 
             migrationBuilder.DropTable(
                 name: "Users");

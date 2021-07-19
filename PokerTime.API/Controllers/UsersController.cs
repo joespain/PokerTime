@@ -27,7 +27,7 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserModel>>> Get()
+        public async Task<ActionResult<IEnumerable<UserModel>>> GetUsers()
         {
             try
             {
@@ -35,27 +35,31 @@ namespace PokerTime.API.Controllers
 
                 return _mapper.Map<IEnumerable<UserModel>>(users).ToList();
             }
-            catch
+            catch(Exception e)
             {
                 //replace with real error code
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
             }
-
         }
 
         [HttpGet("{userId:int}")]
-        public async Task<ActionResult<UserModel>> Get(int userId)
+        public async Task<ActionResult<UserModel>> GetUser(int userId)
         {
             try
             {
                 var result = await _repository.GetUserByIdAsync(userId);
 
+                if(result == null)
+                {
+                    return BadRequest("User does not exist.");
+                }
+
                 return _mapper.Map<UserModel>(result);
             }
-            catch
+            catch(Exception e)
             {
                 //replace with real error code
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
             }
         }
 
@@ -71,14 +75,19 @@ namespace PokerTime.API.Controllers
                     return BadRequest("User already exists");
                 }
 
-                var location = _linkGenerator.GetPathByAction(HttpContext, "Get",
-                    "Users", model.Id);
-
                 var newUser = _mapper.Map<User>(model);
+
                 _repository.Add(newUser);
+                
                 if (await _repository.SaveChangesAsync())
                 {
-                    return Created(location, _mapper.Map<UserModel>(newUser));
+
+                    //Figure out why this linkgenerator isn't working.
+                    //var location = _linkGenerator.GetPathByAction(action: "Get", controller: "Users", values: new { userId = newUser.Id });
+
+                    //if (location == null) return BadRequest("Error saving user, location");
+
+                    return Created($"/Users/{newUser.Id}", _mapper.Map<UserModel>(newUser));
                 }
             }
             catch (Exception e)
@@ -90,32 +99,27 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpPut("{userId:int}")]
-        public async Task<ActionResult<UserModel>> UpdateUser([FromBody] UserModel user)
+        public async Task<ActionResult<UserModel>> UpdateUser(int userId, [FromBody] UserModel newUser)
         {
             try
             {
-                var existingUser = await _repository.GetUserByIdAsync(user.Id);
-                if (existingUser == null)
+                var oldUser = await _repository.GetUserByIdAsync(userId);
+                if (oldUser == null)
                 {
                     return BadRequest("User to update was not found.");
                 }
 
-                //var location = _linkGenerator.GetPathByAction("Get",
-                //    "Users",
-                //    new { Id = user.Id });
-
-                //if(string.IsNullOrEmpty(location))
-                //{
-                //    return BadRequest("Error updating user.");
-                //}
-
-                _mapper.Map(user, existingUser);
+                //Mapper applies the changes of the model onto the user, updating the entity in the process.
+                _mapper.Map(newUser, oldUser);
 
                 if(await _repository.SaveChangesAsync())
                 {
-                    return _mapper.Map<UserModel>(user);
+                    return _mapper.Map<UserModel>(newUser);
                 }
-                return BadRequest("There was an error updating the user.");
+                else
+                {
+                    return BadRequest("Error updating the user.");
+                }
             }
             catch(Exception e)
             {
@@ -124,13 +128,13 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpDelete("{userId}")]
-        public async Task<ActionResult> DeleteUser(int id)
+        public async Task<ActionResult> DeleteUser(int userId)
         {
             try
             {
-                if (id == 0) return BadRequest("No user to delete.");
+                if (userId == 0) return BadRequest("No user to delete.");
 
-                if(await _repository.DeleteUser(id))
+                if(await _repository.DeleteUserByIdAsync(userId))
                 {
                     return NoContent();  //Success
                 }

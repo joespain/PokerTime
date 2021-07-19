@@ -12,11 +12,8 @@ namespace PokerTime.API.Data.Entities
         public string Name { get; set; }
         public int NumberOfEvents { get; set; }
         public DateTime DateCreated { get; set; }
+
         public ICollection<BlindLevel> BlindLevels { get; set; }
-
-
-        public int HostId { get; set; }
-        public User Host { get; set; }
-
+        public int UserId { get; set; }
     }
 }
