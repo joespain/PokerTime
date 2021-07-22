@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace PokerTime.API.Data.Entities
+namespace PokerTime.Shared.Entities
 {
     public class User
     {

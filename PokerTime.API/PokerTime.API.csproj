@@ -23,4 +23,8 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PokerTime.Shared\PokerTime.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

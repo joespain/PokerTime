@@ -1,4 +1,5 @@
-﻿using PokerTime.API.Data.Entities;
+﻿
+using PokerTime.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

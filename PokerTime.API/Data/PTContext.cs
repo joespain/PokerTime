@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using PokerTime.API.Data.Entities;
+using PokerTime.Shared.Entities;
 
 namespace PokerTime.API.Data
 {

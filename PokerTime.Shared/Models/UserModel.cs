@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace PokerTime.API.Models
+namespace PokerTime.Shared.Models
 {
     public class UserModel
     {

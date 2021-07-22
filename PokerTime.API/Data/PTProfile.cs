@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using PokerTime.API.Data.Entities;
-using PokerTime.API.Models;
+using PokerTime.Shared.Entities;
+using PokerTime.Shared.Models;
 
 namespace PokerTime.API.Data
 {

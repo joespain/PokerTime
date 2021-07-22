@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PokerTime.API.Data;
-using System.Reflection;
+using System.Linq;
 
-namespace PokerTime.API
+namespace PokerTime.App.Server
 {
     public class Startup
     {
@@ -19,29 +19,12 @@ namespace PokerTime.API
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<PTContext>();
-            services.AddScoped<IPTRepository, PTRepository>();
-            //services.AddScoped<LinkGenerator, >
-            //services.AddScoped<ILinkGenerator, LinkGenerator>;
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            services.AddControllersWithViews()
-                    .AddNewtonsoftJson(options =>
-                            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("Open",
-                    builder =>
-                    {
-                        builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader();
-                    });
-            });
-
-            services.AddControllers();
+            services.AddControllersWithViews();
+            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +33,7 @@ namespace PokerTime.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseWebAssemblyDebugging();
             }
             else
             {
@@ -58,14 +42,17 @@ namespace PokerTime.API
                 app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
+            app.UseBlazorFrameworkFiles();
+            app.UseStaticFiles();
+
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseCors("Open");
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapRazorPages();
                 endpoints.MapControllers();
+                endpoints.MapFallbackToFile("index.html");
             });
         }
     }

@@ -1,0 +1,45 @@
+﻿@page "/userprofile"
+@page "/userprofile/{UserId}"
+@using PokerTime.Shared
+
+
+<section class="user-edit">
+    @if (!Saved)
+    {
+        <h1>User Profile</h1>
+
+        <EditForm Model="@user" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group row">
+                <label for="Name" class="col-sm-3">Name: </label>
+                <InputText @bind-Value="@user.Name" placeholder="Enter Name"></InputText>
+                <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => user.Name)" />
+            </div>
+            <div class="form-group row">
+                <label for="Email" class="col-sm-3">Email: </label>
+                <InputText @bind-Value="@user.Email" placeholder="Enter Email"></InputText>
+                <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => user.Email)" />
+            </div>
+            <div class="form-group row">
+                <label for="Phone" class="col-sm-3">Phone Number: </label>
+                <InputText @bind-Value="@user.Phone" placeholder="Enter Phone"></InputText>
+                <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => user.Phone)" />
+            </div>
+
+            <button type="submit" class="btn btn-primary edit-btn">Save User</button>
+            <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToOverview">Cancel</a>
+            @if (user.Id > 0)
+            {
+                <a class="btn btn-danger" @onclick="@DeleteUser">
+                    Delete
+                </a>
+            }
+        </EditForm>
+    }
+    else
+    {
+        <div class="alert @StatusClass">@Message</div>
+        <a class="btn btn-outline-primary" @onclick="@NavigateToOverview">Back to overview</a>
+    }
+</section>

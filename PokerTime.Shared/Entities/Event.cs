@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace PokerTime.API.Data.Entities
+namespace PokerTime.Shared.Entities
 {
-    public class TournamentStructure
+    public class Event
     {
         public int Id { get; set; }
         [Required]
         [StringLength(100)]
         public string Name { get; set; }
-        public int NumberOfEvents { get; set; }
-        public DateTime DateCreated { get; set; }
+        public DateTime Date { get; set; }
 
-        public ICollection<BlindLevel> BlindLevels { get; set; }
         public int UserId { get; set; }
+        public int TournamentStructureId { get; set; }
+        public ICollection<Invitee> Invitees { get; set; }
     }
 }

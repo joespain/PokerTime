@@ -1,20 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace PokerTime.API.Models
+﻿namespace PokerTime.Shared.Entities
 {
-    public class BlindLevelModel
+    public class BlindLevel
     {
         public int Id { get; set; }
-        [Required]
         public int TournamentStructureId { get; set; }
-        [Required]
         public int LevelNumber { get; set; }
-        [Required]
         public int SmallBlind { get; set; }
-        [Required]
         public int BigBlind { get; set; }
         public int Ante { get; set; }
-        [Required]
         public int Minutes { get; set; }
     }
 }

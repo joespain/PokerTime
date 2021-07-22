@@ -1,8 +1,7 @@
-﻿using PokerTime.API.Data.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace PokerTime.API.Models
+namespace PokerTime.Shared.Models
 {
     public class InviteeModel
     {
@@ -14,7 +13,7 @@ namespace PokerTime.API.Models
         public string Email { get; set; }
         public string Phone { get; set; }
 
-        public ICollection<Invitee> Events { get; set; }
+        public ICollection<EventModel> Events { get; set; }
         public int UserId { get; set; }
     }
 }

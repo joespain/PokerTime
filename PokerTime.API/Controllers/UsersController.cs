@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using PokerTime.API.Data;
-using PokerTime.API.Data.Entities;
-using PokerTime.API.Models;
+using PokerTime.Shared.Entities;
+using PokerTime.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,11 +69,11 @@ namespace PokerTime.API.Controllers
             try
             {
                 //What if user with same name/email/phone exists?
-                var user = _repository.GetUserByEmailAsync(model.Email);
-                if (user != null)
-                {
-                    return BadRequest("User already exists");
-                }
+                //var user = _repository.GetUserByEmailAsync(model.Email);
+                //if (user != null)
+                //{
+                //    return BadRequest("User already exists");
+                //}
 
                 var newUser = _mapper.Map<User>(model);
 

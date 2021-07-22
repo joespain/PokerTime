@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace PokerTime.API.Models
+namespace PokerTime.Shared.Entities
 {
-    public class TournamentStructureModel
+    public class TournamentStructure
     {
         public int Id { get; set; }
         [Required]
@@ -13,7 +13,7 @@ namespace PokerTime.API.Models
         public int NumberOfEvents { get; set; }
         public DateTime DateCreated { get; set; }
 
-        public ICollection<BlindLevelModel> BlindLevels { get; set; }
+        public ICollection<BlindLevel> BlindLevels { get; set; }
         public int UserId { get; set; }
     }
 }

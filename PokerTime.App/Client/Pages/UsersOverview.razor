@@ -1,0 +1,36 @@
+﻿@page "/users"
+
+<h1>All Users</h1>
+
+@if(AllUsers == null)
+{
+    <p>Loading all users...</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in AllUsers)
+            {
+                <tr>
+                    <td></td>
+                    <td>@user.Id</td>
+                    <td>@user.Name</td>
+                    <td>@user.Email</td>
+                    <td>@user.Phone</td>
+                    <td></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
