@@ -14,6 +14,6 @@ namespace PokerTime.Shared.Models
         public DateTime DateCreated { get; set; }
 
         public ICollection<BlindLevelModel> BlindLevels { get; set; }
-        public int UserId { get; set; }
+        public Guid HostId { get; set; }
     }
 }

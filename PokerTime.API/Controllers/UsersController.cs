@@ -42,12 +42,12 @@ namespace PokerTime.API.Controllers
             }
         }
 
-        [HttpGet("{userId:int}")]
-        public async Task<ActionResult<UserModel>> GetUser(int userId)
+        [HttpGet("{hostId:Guid}")]
+        public async Task<ActionResult<UserModel>> GetUser(Guid hostId)
         {
             try
             {
-                var result = await _repository.GetUserByIdAsync(userId);
+                var result = await _repository.GetUserByIdAsync(hostId);
 
                 if(result == null)
                 {
@@ -68,20 +68,12 @@ namespace PokerTime.API.Controllers
         {
             try
             {
-                //What if user with same name/email/phone exists?
-                //var user = _repository.GetUserByEmailAsync(model.Email);
-                //if (user != null)
-                //{
-                //    return BadRequest("User already exists");
-                //}
-
                 var newUser = _mapper.Map<User>(model);
 
                 _repository.Add(newUser);
                 
                 if (await _repository.SaveChangesAsync())
                 {
-
                     //Figure out why this linkgenerator isn't working.
                     //var location = _linkGenerator.GetPathByAction(action: "Get", controller: "Users", values: new { userId = newUser.Id });
 
@@ -98,12 +90,12 @@ namespace PokerTime.API.Controllers
             return BadRequest();
         }
 
-        [HttpPut("{userId:int}")]
-        public async Task<ActionResult<UserModel>> UpdateUser(int userId, [FromBody] UserModel newUser)
+        [HttpPut("{hostId:Guid}")]
+        public async Task<ActionResult<UserModel>> UpdateUser(Guid hostId, [FromBody] UserModel newUser)
         {
             try
             {
-                var oldUser = await _repository.GetUserByIdAsync(userId);
+                var oldUser = await _repository.GetUserByIdAsync(hostId);
                 if (oldUser == null)
                 {
                     return BadRequest("User to update was not found.");
@@ -127,14 +119,13 @@ namespace PokerTime.API.Controllers
             }
         }
 
-        [HttpDelete("{userId}")]
-        public async Task<ActionResult> DeleteUser(int userId)
+        [HttpDelete("{hostId:Guid}")]
+        public async Task<ActionResult> DeleteUser(Guid hostId)
         {
             try
             {
-                if (userId == 0) return BadRequest("No user to delete.");
 
-                if(await _repository.DeleteUserByIdAsync(userId))
+                if(await _repository.DeleteUserByIdAsync(hostId))
                 {
                     return NoContent();  //Success
                 }

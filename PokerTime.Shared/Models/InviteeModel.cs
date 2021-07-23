@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace PokerTime.Shared.Models
@@ -14,6 +15,6 @@ namespace PokerTime.Shared.Models
         public string Phone { get; set; }
 
         public ICollection<EventModel> Events { get; set; }
-        public int UserId { get; set; }
+        public Guid HostId { get; set; }
     }
 }

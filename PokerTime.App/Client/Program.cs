@@ -16,13 +16,14 @@ namespace PokerTime.App.Client
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 
+            //HttpClient
             builder.Services.AddScoped(sp =>
                 new HttpClient { BaseAddress = new Uri("http://localhost:6600") });
 
-            //builder.Services.AddHttpClient(IUserDataService, UserDataService)(client =>
-            //    client.BaseAddress = new Uri("https://localhost:6600"));
-
+            //Data services that connect to API
             builder.Services.AddScoped<IUserDataService, UserDataService>();
+            builder.Services.AddScoped<IStructureDataService, StructureDataService>();
+            builder.Services.AddScoped<IBlindLevelDataService, BlindLevelDataService>();
 
             await builder.Build().RunAsync();
         }

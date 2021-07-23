@@ -1,18 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PokerTime.Shared.Entities
 {
     public class User
     {
-
-        //Eventually I want to be able to connect users together so each user has a list of Friends(people they've invited before)
-        //but I can't figure out how to do a self-referencing relationship with EF Core.
-
-        //public int ParentUserId {get;set;}
-        //public ICollection<User> Friends {get;set;}
-
-        public int Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
+        public Guid Id { get; set; }
         [Required]
         [StringLength(100)]
         public string Name { get; set; }

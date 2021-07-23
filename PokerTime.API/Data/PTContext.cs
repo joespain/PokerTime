@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using PokerTime.Shared.Entities;
+using System;
 
 namespace PokerTime.API.Data
 {
@@ -28,38 +29,38 @@ namespace PokerTime.API.Data
         {
             var Jim = new User
             {
-                Id = 1,
+                Id = Guid.NewGuid(),
                 Name = "Jim Spain",
                 Email = "JimboSpain@gmail.com",
                 Phone = "0987654321",
-                IsPaidUser = false
+                IsPaidUser = true
             };
 
-            var Joe = new User
-            {
-                Id = 2,
-                Name = "Joe Spain",
-                Email = "Joe.Spain22@gmail.com",
-                Phone = "7274094210",
-                IsPaidUser = false,
-            };
+            //var Joe = new User
+            //{
+            //    Id = new System.Guid(),
+            //    Name = "Joe Spain",
+            //    Email = "Joe.Spain22@gmail.com",
+            //    Phone = "7274094210",
+            //    IsPaidUser = false,
+            //};
 
-            bldr.Entity<User>(u =>
-            {
-                u.HasData(new
-                {
-                    Id = 3,
-                    Name = "Mike Spain",
-                    Email = "MJSpain@gmail.com",
-                    Phone = "12354567890",
-                    IsPaidUser = true,
-                });
-            });
+            //bldr.Entity<User>(u =>
+            //{
+            //    u.HasData(new
+            //    {
+            //        Id = new System.Guid(),
+            //        Name = "Mike Spain",
+            //        Email = "MJSpain@gmail.com",
+            //        Phone = "12354567890",
+            //        IsPaidUser = true,
+            //    });
+            //});
 
             bldr.Entity<User>()
                 .HasData(Jim);
-            bldr.Entity<User>()
-                .HasData(Joe);
+            //bldr.Entity<User>()
+            //    .HasData(Joe);
         }
 
     }

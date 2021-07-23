@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using PokerTime.App.Client.Interfaces;
 using PokerTime.Shared.Entities;
+using PokerTime.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,10 @@ namespace PokerTime.App.Client.Pages
         [Inject]
         public ILogger<UsersOverview> Logger { get; set; }
 
-        public IEnumerable<User> AllUsers { get; set; }
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
+        public List<User> AllUsers { get; set; }
 
 
         protected override async Task OnInitializedAsync()
@@ -30,6 +34,11 @@ namespace PokerTime.App.Client.Pages
             {
                 Logger.LogDebug(e, e.Message);
             }
+        }
+
+        protected void NavigateToUser(int userId)
+        {
+            NavigationManager.NavigateTo($"/userprofile/{userId}");
         }
     }
 }

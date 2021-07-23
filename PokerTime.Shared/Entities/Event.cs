@@ -12,7 +12,7 @@ namespace PokerTime.Shared.Entities
         public string Name { get; set; }
         public DateTime Date { get; set; }
 
-        public int UserId { get; set; }
+        public Guid HostId { get; set; }
         public int TournamentStructureId { get; set; }
         public ICollection<Invitee> Invitees { get; set; }
     }

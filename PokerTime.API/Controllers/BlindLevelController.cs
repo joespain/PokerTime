@@ -14,7 +14,7 @@ namespace PokerTime.API.Controllers
 {
 
         [ApiController]
-        [Route("api/Users/{userId:int}/TournamentStructures/{structureId:int}/BlindLevels")]
+        [Route("api/Users/{HostId:Guid}/TournamentStructures/{structureId:int}/BlindLevels")]
         public class BlindLevelController : ControllerBase
         {
             private readonly IPTRepository _repository;
@@ -60,7 +60,7 @@ namespace PokerTime.API.Controllers
             }
 
             [HttpPost]
-            public async Task<ActionResult<BlindLevelModel>> AddBlindLevel(int userId, int structureId, [FromBody] BlindLevelModel model)
+            public async Task<ActionResult<BlindLevelModel>> AddBlindLevel(Guid hostId, int structureId, [FromBody] BlindLevelModel model)
             {
                 try
                 {
@@ -87,7 +87,7 @@ namespace PokerTime.API.Controllers
                         //var location = _linkGenerator.GetPathByAction(HttpContext,
                         //    "Get", "BlindLevels",
                         //values: new { structureId, newBlindLevel.Id, userId });
-                        return Created($"api/users/{userId}/tournamentstructures/{structureId}/blindlevels/{newBlindLevel.Id}",
+                        return Created($"api/users/{hostId}/tournamentstructures/{structureId}/blindlevels/{newBlindLevel.Id}",
                             _mapper.Map<BlindLevelModel>(newBlindLevel));
                     }
                     else

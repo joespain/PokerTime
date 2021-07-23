@@ -1,0 +1,47 @@
+﻿@page "/structures/{StructureId:int}"
+
+
+<section class="user-edit">
+    @if (!Saved)
+    {
+        <h1>Edit Structure</h1>
+
+        <EditForm Model="@TournamentStructure" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group row">
+                <label for="Name" class="col-sm-3">Name: </label>
+                <InputText @bind-Value="@TournamentStructure.Name" placeholder="Enter Tournament Structure Name"></InputText>
+                <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => TournamentStructure.Name)" />
+            </div>
+        </EditForm>
+
+            @foreach(var blindLevel in BlindLevels)
+            {
+                <EditForm Model="@blindLevel">
+
+                    <div class="form-group row">
+                        <label for="Email" class="col-sm-3">Small Blind: </label>
+                        <InputText @bind-Value="@blindLevel.SmallBlind" placeholder="Enter Email"></InputText>
+                        <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Host.Email)" />
+                    </div>
+                    <div class="form-group row">
+                        <label for="Phone" class="col-sm-3">Phone Number: </label>
+                        <InputText @bind-Value="@Host.Phone" placeholder="Enter Phone"></InputText>
+                        <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Host.Phone)" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary edit-btn">Save</button>
+                    <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToStructures">Cancel</a>
+
+                    <a class="btn btn-danger" @onclick="@DeleteStructure">Delete</a>
+                </EditForm>
+            }
+        
+    }
+    else
+    {
+        <div class="alert @StatusClass">@Message</div>
+        <a class="btn btn-outline-primary" @onclick="@NavigateToStructures">Back to Tournament Structures</a>
+    }
+</section>

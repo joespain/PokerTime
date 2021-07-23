@@ -1,0 +1,53 @@
+﻿@page "/structures"
+
+<h3>Structures</h3>
+
+@if (TournamentStructures == null)
+{
+    <p>No tournament structures found. Do you want to add a <a href="@($"/structures/0")">
+    New Structure</a>?</p>
+}
+else
+{
+
+    <a class="btn btn-block" href="@($"/structures/0")">
+        <span class="oi oi-plus"></span>New Structure
+    </a>
+
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Date Created</th>
+                <th>No. of Events</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var structure in TournamentStructures)
+            {
+                <tr>
+                    <td></td>
+                    <td>@structure.Name</td>
+                    <td>@structure.DateCreated</td>
+                    <td>@structure.NumberOfEvents</td>
+                    <td>
+                        <a class="btn btn-primary table-btn" href="@($"/structures/{structure.Id}")">
+                            <span class="oi oi-pencil" aria-hidden="true"></span> Edit
+                        </a>
+                    </td>
+                    <td>
+                        <a class="btn btn-primary table-btn" href="@($"/events")">
+                            <span class="oi oi-pencil" aria-hidden="true"></span> New Event
+                        </a>
+                    </td>
+                    <td></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+

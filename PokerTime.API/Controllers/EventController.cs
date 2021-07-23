@@ -14,7 +14,7 @@ namespace PokerTime.API.Controllers
 {
 
     [ApiController]
-    [Route("api/users/{userId}/events")]
+    [Route("api/users/{hostId:Guid}/events")]
     public class EventController : ControllerBase
     {
         private readonly IPTRepository _repository;
@@ -27,13 +27,16 @@ namespace PokerTime.API.Controllers
             _linkGenerator = linkGenerator;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EventModel>>> GetEvents(int userId)
+        public async Task<ActionResult<IEnumerable<EventModel>>> GetEvents(Guid hostId)
         {
             try
             {
-                if (userId == 0) return BadRequest("User does not exist.");
+                var events = await _repository.GetAllEventsByUserIdAsync(hostId);
 
-                var events = await _repository.GetAllEventsByUserIdAsync(userId);
+                if (events == null)
+                {
+                    events = new List<Event>();
+                }
 
                 return _mapper.Map<IEnumerable<EventModel>>(events).ToList();
             }
@@ -61,19 +64,16 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<EventModel>> AddEvent(int userId, [FromBody] EventModel model)
+        public async Task<ActionResult<EventModel>> AddEvent(Guid hostId, [FromBody] EventModel model)
         {
             try
             {
-                //var location = _linkGenerator.GetPathByAction(HttpContext, "Get",
-                //    "Events",
-                //    values: new { userId, model.Id });
-
                 var newEvent = _mapper.Map<Event>(model);
                 _repository.Add(newEvent);
+
                 if (await _repository.SaveChangesAsync())
                 {
-                    return Created($"api/users/{userId}/events/{newEvent.Id}", 
+                    return Created($"api/users/{hostId}/events/{newEvent.Id}", 
                         _mapper.Map<EventModel>(newEvent));
                 }
                 else
@@ -145,11 +145,5 @@ namespace PokerTime.API.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
             }
         }
-
-
-
-
     }
-
-
 }

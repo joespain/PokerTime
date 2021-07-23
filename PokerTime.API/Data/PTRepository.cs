@@ -67,7 +67,7 @@ namespace PokerTime.API.Data
             return await query.ToListAsync();
         }
 
-        public async Task<User> GetUserByIdAsync(int id, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false)
+        public async Task<User> GetUserByIdAsync(Guid id, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false)
         {
             //Is there a better way of doing this? I hate this huge if/else statement
 
@@ -196,7 +196,7 @@ namespace PokerTime.API.Data
         }
 
 
-        public async Task<bool> DeleteUserByIdAsync(int id)
+        public async Task<bool> DeleteUserByIdAsync(Guid id)
         {
             var foundUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
@@ -212,14 +212,14 @@ namespace PokerTime.API.Data
 
         //TournamentStructures----------------------------------------------------
 
-        public async Task<IEnumerable<TournamentStructure>> GetTournamentStructuresByUserIdAsync(int id)
+        public async Task<IEnumerable<TournamentStructure>> GetTournamentStructuresByUserIdAsync(Guid id)
         {
 
             _logger.LogInformation(GetLogString("Getting", "TournamentStructures", $"{id}", "", $"User"));
 
             IQueryable<TournamentStructure> query = _context.TournamentStructures
                 .Include(s => s.BlindLevels)
-                .Where(s => s.UserId == id)
+                .Where(s => s.HostId == id)
                 .OrderBy(s => s.DateCreated);
 
             return await query.ToListAsync();
@@ -256,10 +256,10 @@ namespace PokerTime.API.Data
 
         //Invitees----------------------------------------
 
-        public async Task<IEnumerable<Invitee>> GetAllInviteesByUserIdAsync(int id)
+        public async Task<IEnumerable<Invitee>> GetAllInviteesByUserIdAsync(Guid id)
         {
             IQueryable<Invitee> query = _context.Invitees
-                .Where(u => u.UserId == id)
+                .Where(u => u.HostId == id)
                 .OrderBy(u => u.Name);
 
             _logger.LogInformation(GetLogString("Getting","Invitees",$"{id}", "", "user"));
@@ -276,11 +276,11 @@ namespace PokerTime.API.Data
 
         public async Task<bool> DeleteInviteeByIdAsync(int id)
         {
-            var foundUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var foundInvitee = await _context.Invitees.FirstOrDefaultAsync(u => u.Id == id);
 
-            _logger.LogInformation(GetLogString("Deleting", "Invitee", $"{id}", $"{foundUser.Name}"));
+            _logger.LogInformation(GetLogString("Deleting", "Invitee", $"{id}", $"{foundInvitee.Name}"));
 
-            Delete(foundUser);
+            Delete(foundInvitee);
             if (await _context.SaveChangesAsync() > 0) //Success
             {
                 return true;
@@ -291,10 +291,10 @@ namespace PokerTime.API.Data
         //Events---------------------------------------
 
 
-        public async Task<IEnumerable<Event>> GetAllEventsByUserIdAsync(int id)
+        public async Task<IEnumerable<Event>> GetAllEventsByUserIdAsync(Guid id)
         {
             IQueryable<Event> query = _context.Events
-                .Where(u => u.UserId == id)
+                .Where(u => u.HostId == id)
                 .OrderBy(u => u.Name);
 
             _logger.LogInformation(GetLogString("Getting", "Events", $"{id}", "", "user"));

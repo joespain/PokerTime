@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace PokerTime.API.Controllers
 {
     [ApiController]
-    [Route("api/users/{userId}/invitees")]
+    [Route("api/users/{hostId:Guid}/invitees")]
     public class InviteeController : ControllerBase
     {
         private readonly IPTRepository _repository;
@@ -27,13 +27,11 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<InviteeModel>>> GetInvitees(int userId)
+        public async Task<ActionResult<IEnumerable<InviteeModel>>> GetInvitees(Guid hostId)
         {
             try
             {
-                if (userId == 0) return BadRequest("User does not exist.");
-
-                var invitees = await _repository.GetAllInviteesByUserIdAsync(userId);
+                var invitees = await _repository.GetAllInviteesByUserIdAsync(hostId);
 
                 return _mapper.Map<IEnumerable<InviteeModel>>(invitees).ToList();
             }
@@ -61,15 +59,16 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<InviteeModel>> AddInvitee(int userId, [FromBody] InviteeModel model)
+        public async Task<ActionResult<InviteeModel>> AddInvitee(Guid hostId, [FromBody] InviteeModel model)
         {
             try
             {
                 //Make sure the host exists
-                var host = await _repository.GetUserByIdAsync(userId);
+                var host = await _repository.GetUserByIdAsync(hostId);
+
                 if (host == null) return BadRequest("Host not found.");
 
-                model.UserId = userId;
+                model.HostId = hostId;
 
                 var newInvitee = _mapper.Map<Invitee>(model);
 
@@ -80,7 +79,7 @@ namespace PokerTime.API.Controllers
                     //var location = _linkGenerator.GetPathByAction(HttpContext, "Get",
                     //"Invitees",
                     //values: new { userId, newInvitee.Id});
-                    return Created($"api/users/{userId}/invitees/{newInvitee.Id}", _mapper.Map<InviteeModel>(newInvitee));
+                    return Created($"api/users/{hostId}/invitees/{newInvitee.Id}", _mapper.Map<InviteeModel>(newInvitee));
                 }
                 else
                 {
@@ -144,7 +143,6 @@ namespace PokerTime.API.Controllers
                 {
                     return BadRequest("Error deleting Invitee.");
                 }
-                
             }
             catch (Exception e)
             {

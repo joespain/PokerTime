@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using PokerTime.App.Client.Interfaces;
+using PokerTime.App.Client.Services;
 using PokerTime.Shared.Entities;
 using System;
 using System.Collections.Generic;
@@ -9,10 +10,11 @@ using System.Threading.Tasks;
 
 namespace PokerTime.App.Client.Pages
 {
-    public partial class UserProfile
+    public partial class Structures
     {
         public Guid HostId { get; set; }
         public User Host { get; set; }
+        public List<TournamentStructure> TournamentStructures { get; set; }
 
         //used to store state of screen
         protected string Message = string.Empty;
@@ -23,7 +25,10 @@ namespace PokerTime.App.Client.Pages
         public IUserDataService UserDataService { get; set; }
 
         [Inject]
-        public ILogger<UsersOverview> Logger { get; set; }
+        public IStructureDataService StructureDataService { get; set; }
+
+        [Inject]
+        public ILogger<Structures> Logger { get; set; }
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
@@ -32,12 +37,21 @@ namespace PokerTime.App.Client.Pages
         {
             try
             {
-                //set the current host.
+
+                //Set the current host
                 Host = await UserDataService.GetUser(Guid.Parse("fe578a4f-6b3e-49d6-b8ee-53b23ae61757"));
                 HostId = Host.Id;
 
                 Saved = false;
                 
+                TournamentStructures = (await StructureDataService.GetStructures(HostId)).ToList();
+
+                if(TournamentStructures == null)
+                {
+                    TournamentStructures = new List<TournamentStructure>();
+                }
+                
+
             }
             catch (Exception e)
             {
@@ -45,31 +59,21 @@ namespace PokerTime.App.Client.Pages
             }
         }
 
-        protected async Task HandleValidSubmit()
+        protected void NewStructure()
         {
-                await UserDataService.UpdateUser(Host);
-                StatusClass = "alert-success";
-                Message = "User updated successfully.";
-                Saved = true;
+            NavigationManager.NavigateTo($"structures/");
         }
 
-        protected void HandleInvalidSubmit()
+        protected void Edit(int structureId)
         {
-            StatusClass = "alert-danger";
-            Message = "There are validation errors. Please try again.";
+
+            NavigationManager.NavigateTo($"structures/{structureId}");
         }
 
-        protected async Task DeleteUser()
+        protected void Delete(int structureId)
         {
-            await UserDataService.DeleteUser(Host.Id);
+            StructureDataService.DeleteStructure(structureId, HostId);
+        }
 
-            StatusClass = "alert-success";
-            Message = "User deleted successfully.";
-            Saved = true;
-        }
-        protected void NavigateToOverview()
-        {
-            NavigationManager.NavigateTo("/users");
-        }
     }
 }

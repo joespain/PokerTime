@@ -1,5 +1,6 @@
 ﻿using PokerTime.App.Client.Interfaces;
 using PokerTime.Shared.Entities;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
@@ -23,7 +24,7 @@ namespace PokerTime.App.Client.Services
                 await _httpClient.GetStreamAsync($"api/users"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<User> GetUser(int userId)
+        public async Task<User> GetUser(Guid userId)
         {
             return await JsonSerializer.DeserializeAsync<User>(
                 await _httpClient.GetStreamAsync($"api/users/{userId}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
@@ -50,7 +51,7 @@ namespace PokerTime.App.Client.Services
             await _httpClient.PutAsync($"api/users/{user.Id}", userJson);
         }
 
-        public async Task DeleteUser(int userId)
+        public async Task DeleteUser(Guid userId)
         {
             await _httpClient.DeleteAsync($"api/users/{userId}");
         }

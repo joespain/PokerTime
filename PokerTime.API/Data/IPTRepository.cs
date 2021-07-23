@@ -15,21 +15,21 @@ namespace PokerTime.API.Data
         //Users 
         Task<IEnumerable<User>> GetAllUsers(bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
         Task<User> GetUserByEmailAsync(string email, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
-        Task<User> GetUserByIdAsync(int id, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
-        Task<bool> DeleteUserByIdAsync(int id);
+        Task<User> GetUserByIdAsync(Guid id, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
+        Task<bool> DeleteUserByIdAsync(Guid id);
 
         //TournamentStructures 
-        Task<IEnumerable<TournamentStructure>> GetTournamentStructuresByUserIdAsync(int id);
+        Task<IEnumerable<TournamentStructure>> GetTournamentStructuresByUserIdAsync(Guid id);
         Task<TournamentStructure> GetTournamentStructureByIdAsync(int id);
         Task<bool> DeleteTournamentStructureByIdAsync(int id);
 
         //Invitees
-        Task<IEnumerable<Invitee>> GetAllInviteesByUserIdAsync(int id);
+        Task<IEnumerable<Invitee>> GetAllInviteesByUserIdAsync(Guid id);
         Task<Invitee> GetInviteeByIdAsync(int id);
         Task<bool> DeleteInviteeByIdAsync(int id);
 
         //Events 
-        Task<IEnumerable<Event>> GetAllEventsByUserIdAsync(int id);
+        Task<IEnumerable<Event>> GetAllEventsByUserIdAsync(Guid id);
         Task<Event> GetEventByIdAsync(int id);
         Task<bool> DeleteEventByIdAsync(int id);
 

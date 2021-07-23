@@ -14,7 +14,7 @@ namespace PokerTime.API.Controllers
 {
 
     [ApiController]
-    [Route("api/Users/{userId:int}/TournamentStructures")]
+    [Route("api/Users/{hostId:Guid}/TournamentStructures")]
     public class TournamentStructureController : ControllerBase
     {
         private readonly IPTRepository _repository;
@@ -28,11 +28,11 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TournamentStructureModel>>> GetTournamentStructures(int userId)
+        public async Task<ActionResult<IEnumerable<TournamentStructureModel>>> GetTournamentStructures(Guid hostId)
         {
             try
             {
-                var results = await _repository.GetTournamentStructuresByUserIdAsync(userId);
+                var results = await _repository.GetTournamentStructuresByUserIdAsync(hostId);
 
                 return _mapper.Map<IEnumerable<TournamentStructureModel>>(results).ToList();
             }
@@ -60,19 +60,19 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<TournamentStructureModel>> AddTournamentStructure(int userId, [FromBody] TournamentStructureModel model)
+        public async Task<ActionResult<TournamentStructureModel>> AddTournamentStructure(Guid hostId, [FromBody] TournamentStructureModel model)
         {
             try
             {   
                 //Get the user to attach to the Tournament Structure
-                var user = await _repository.GetUserByIdAsync(userId);
+                var user = await _repository.GetUserByIdAsync(hostId);
 
                 if(user == null) return BadRequest("User does not exist.");
 
                 var newTournamentStructure = _mapper.Map<TournamentStructure>(model);
 
                 newTournamentStructure.DateCreated = DateTime.Today;
-                newTournamentStructure.UserId = userId;
+                newTournamentStructure.HostId = hostId;
                 
                 _repository.Add(newTournamentStructure);
                 if (await _repository.SaveChangesAsync())
@@ -81,7 +81,7 @@ namespace PokerTime.API.Controllers
                     //var location = _linkGenerator.GetPathByAction(HttpContext, 
                     //    "Get", "Users",
                     //values: new { userId, newTournamentStructure.Id });
-                    return Created($"users/{userId}/tournamentstructures/{newTournamentStructure.Id}",
+                    return Created($"users/{hostId}/tournamentstructures/{newTournamentStructure.Id}",
                         _mapper.Map<TournamentStructureModel>(newTournamentStructure));
                 }
                 else
