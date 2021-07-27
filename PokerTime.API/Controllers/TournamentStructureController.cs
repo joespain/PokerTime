@@ -12,10 +12,9 @@ using System.Threading.Tasks;
 
 namespace PokerTime.API.Controllers
 {
-
+    [Route("api/users/{hostId:Guid}/tournamentstructures")]
     [ApiController]
-    [Route("api/Users/{hostId:Guid}/TournamentStructures")]
-    public class TournamentStructureController : ControllerBase
+    public class TournamentStructureController : Controller
     {
         private readonly IPTRepository _repository;
         private readonly IMapper _mapper;
@@ -32,7 +31,7 @@ namespace PokerTime.API.Controllers
         {
             try
             {
-                var results = await _repository.GetTournamentStructuresByUserIdAsync(hostId);
+                var results = await _repository.GetTournamentStructuresByHostIdAsync(hostId);
 
                 return _mapper.Map<IEnumerable<TournamentStructureModel>>(results).ToList();
             }
@@ -63,11 +62,11 @@ namespace PokerTime.API.Controllers
         public async Task<ActionResult<TournamentStructureModel>> AddTournamentStructure(Guid hostId, [FromBody] TournamentStructureModel model)
         {
             try
-            {   
-                //Get the user to attach to the Tournament Structure
-                var user = await _repository.GetUserByIdAsync(hostId);
+            {
+                //Get the host to attach to the Tournament Structure
+                var host = await _repository.GetHostByIdAsync(hostId);
 
-                if(user == null) return BadRequest("User does not exist.");
+                if (host == null) return BadRequest("Host does not exist.");
 
                 var newTournamentStructure = _mapper.Map<TournamentStructure>(model);
 

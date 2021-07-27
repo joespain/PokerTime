@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace PokerTime.App.Client.Pages
 {
-    public partial class UserProfile
+    public partial class HostProfile 
     {
         public Guid HostId { get; set; }
-        public User Host { get; set; }
+        public Host Host { get; set; }
 
         //used to store state of screen
         protected string Message = string.Empty;
@@ -20,7 +20,7 @@ namespace PokerTime.App.Client.Pages
         protected bool Saved;
 
         [Inject]
-        public IUserDataService UserDataService { get; set; }
+        public IHostDataService HostDataService { get; set; }
 
         [Inject]
         public ILogger<UsersOverview> Logger { get; set; }
@@ -33,7 +33,7 @@ namespace PokerTime.App.Client.Pages
             try
             {
                 //set the current host.
-                Host = await UserDataService.GetUser(Guid.Parse("fe578a4f-6b3e-49d6-b8ee-53b23ae61757"));
+                Host = await HostDataService.GetHost(Guid.Parse("8c13e4c0-43d8-4e44-855b-0d6683cac1aa"));
                 HostId = Host.Id;
 
                 Saved = false;
@@ -47,7 +47,7 @@ namespace PokerTime.App.Client.Pages
 
         protected async Task HandleValidSubmit()
         {
-                await UserDataService.UpdateUser(Host);
+                await HostDataService.UpdateHost(Host);
                 StatusClass = "alert-success";
                 Message = "User updated successfully.";
                 Saved = true;
@@ -59,9 +59,9 @@ namespace PokerTime.App.Client.Pages
             Message = "There are validation errors. Please try again.";
         }
 
-        protected async Task DeleteUser()
+        protected async Task DeleteHost()
         {
-            await UserDataService.DeleteUser(Host.Id);
+            await HostDataService.DeleteHost(Host.Id);
 
             StatusClass = "alert-success";
             Message = "User deleted successfully.";

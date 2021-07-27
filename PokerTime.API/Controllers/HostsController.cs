@@ -13,13 +13,13 @@ using System.Threading.Tasks;
 namespace PokerTime.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    [Route("api/users")]
+    public class HostsController : ControllerBase
     {
         private readonly IPTRepository _repository;
         private readonly IMapper _mapper;
         private readonly LinkGenerator _linkGenerator;
-        public UsersController(IPTRepository repository, IMapper mapper, LinkGenerator linkGenerator)
+        public HostsController(IPTRepository repository, IMapper mapper, LinkGenerator linkGenerator)
         {
             _repository = repository;
             _mapper = mapper;
@@ -27,13 +27,13 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserModel>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<HostModel>>> GetHosts()
         {
             try
             {
-                var users = await _repository.GetAllUsers();
+                var users = await _repository.GetAllHosts();
 
-                return _mapper.Map<IEnumerable<UserModel>>(users).ToList();
+                return _mapper.Map<IEnumerable<HostModel>>(users).ToList();
             }
             catch(Exception e)
             {
@@ -43,18 +43,18 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpGet("{hostId:Guid}")]
-        public async Task<ActionResult<UserModel>> GetUser(Guid hostId)
+        public async Task<ActionResult<HostModel>> GetHost(Guid hostId)
         {
             try
             {
-                var result = await _repository.GetUserByIdAsync(hostId);
+                var result = await _repository.GetHostByIdAsync(hostId,true,true,true);
 
                 if(result == null)
                 {
                     return BadRequest("User does not exist.");
                 }
 
-                return _mapper.Map<UserModel>(result);
+                return _mapper.Map<HostModel>(result);
             }
             catch(Exception e)
             {
@@ -64,13 +64,13 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<UserModel>> AddUser(UserModel model)
+        public async Task<ActionResult<HostModel>> AddHost(HostModel model)
         {
             try
             {
-                var newUser = _mapper.Map<User>(model);
+                var newHost = _mapper.Map<Host>(model);
 
-                _repository.Add(newUser);
+                _repository.Add(newHost);
                 
                 if (await _repository.SaveChangesAsync())
                 {
@@ -79,7 +79,7 @@ namespace PokerTime.API.Controllers
 
                     //if (location == null) return BadRequest("Error saving user, location");
 
-                    return Created($"/Users/{newUser.Id}", _mapper.Map<UserModel>(newUser));
+                    return Created($"/users/{newHost.Id}", _mapper.Map<HostModel>(newHost));
                 }
             }
             catch (Exception e)
@@ -91,26 +91,26 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpPut("{hostId:Guid}")]
-        public async Task<ActionResult<UserModel>> UpdateUser(Guid hostId, [FromBody] UserModel newUser)
+        public async Task<ActionResult<HostModel>> UpdateHost(Guid hostId, [FromBody] HostModel newHost)
         {
             try
             {
-                var oldUser = await _repository.GetUserByIdAsync(hostId);
-                if (oldUser == null)
+                var oldHost = await _repository.GetHostByIdAsync(hostId);
+                if (oldHost == null)
                 {
-                    return BadRequest("User to update was not found.");
+                    return BadRequest("Host to update was not found.");
                 }
 
                 //Mapper applies the changes of the model onto the user, updating the entity in the process.
-                _mapper.Map(newUser, oldUser);
+                _mapper.Map(newHost, oldHost);
 
                 if(await _repository.SaveChangesAsync())
                 {
-                    return _mapper.Map<UserModel>(newUser);
+                    return _mapper.Map<HostModel>(newHost);
                 }
                 else
                 {
-                    return BadRequest("Error updating the user.");
+                    return BadRequest("Error updating the host.");
                 }
             }
             catch(Exception e)
@@ -120,12 +120,12 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpDelete("{hostId:Guid}")]
-        public async Task<ActionResult> DeleteUser(Guid hostId)
+        public async Task<ActionResult> DeleteHost(Guid hostId)
         {
             try
             {
 
-                if(await _repository.DeleteUserByIdAsync(hostId))
+                if(await _repository.DeleteHostByIdAsync(hostId))
                 {
                     return NoContent();  //Success
                 }

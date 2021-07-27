@@ -1,5 +1,6 @@
 ﻿using PokerTime.App.Client.Interfaces;
 using PokerTime.Shared.Entities;
+using PokerTime.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,11 +35,11 @@ namespace PokerTime.App.Client.Services
                 new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<TournamentStructure> AddStructure(TournamentStructure structure)
+        public async Task<TournamentStructure> AddStructure(TournamentStructure structure, Guid hostId)
         {
             var structureJson = new StringContent(JsonSerializer.Serialize(structure), Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync($"api/users/{structure.HostId}/structures", structureJson);
+            var response = await _httpClient.PostAsync($"api/users/{hostId}/tournamentstructures/", structureJson);
 
             if (response.IsSuccessStatusCode)
             {
@@ -51,12 +52,12 @@ namespace PokerTime.App.Client.Services
         {
             var structureJson = new StringContent(JsonSerializer.Serialize(structure), Encoding.UTF8, "application/json");
 
-            await _httpClient.PutAsync($"api/users/{structure.HostId}/structures/{structure.Id}", structureJson);
+            await _httpClient.PutAsync($"api/users/{structure.HostId}/tournamentstructures/{structure.Id}", structureJson);
         }
 
         public async Task DeleteStructure(int structureId, Guid hostId)
         {
-            await _httpClient.DeleteAsync($"api/Users/{hostId}/TournamentStructures/{structureId}");
+            await _httpClient.DeleteAsync($"api/users/{hostId}/tournamentstructures/{structureId}");
         }
     }
 }

@@ -39,14 +39,14 @@ namespace PokerTime.API.Data
             return (await _context.SaveChangesAsync()) > 0;
         }
 
-        //Users-------------------------------------------------
+        //Hosts-------------------------------------------------
 
-        public async Task<IEnumerable<User>> GetAllUsers(bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents= false)
+        public async Task<IEnumerable<Host>> GetAllHosts(bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents= false)
         {
-            _logger.LogInformation("Getting all users.");
+            _logger.LogInformation("Getting all hosts.");
 
-            IQueryable<User> query =
-                _context.Users.OrderBy(u => u.Name);
+            IQueryable<Host> query =
+                _context.Hosts.OrderBy(u => u.Name);
 
             //Add additional connected entities to the query if requested
             if(includeTournamentStructures)
@@ -67,82 +67,31 @@ namespace PokerTime.API.Data
             return await query.ToListAsync();
         }
 
-        public async Task<User> GetUserByIdAsync(Guid id, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false)
+        public async Task<Host> GetHostByIdAsync(Guid id, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false)
         {
             //Is there a better way of doing this? I hate this huge if/else statement
 
-            User foundUser = null;
+            Host foundHost = null;
 
-            if (includeTournamentStructures && includeInvitees && includeEvents)
-            {
-                foundUser = await _context.Users
-                    .Include(u => u.Invitees)
-                    .Include(u => u.Events)
-                    .Include(u => u.TournamentStructures)
-                    .FirstOrDefaultAsync(u => u.Id == id);
-            }
-            else if (includeTournamentStructures && includeInvitees)
-            {
-                foundUser = await _context.Users
-                    .Include(u => u.Invitees)
-                    .Include(u => u.TournamentStructures)
-                    .FirstOrDefaultAsync(u => u.Id == id);
-            }
-            else if (includeTournamentStructures && includeEvents)
-            {
-                foundUser = await _context.Users
-                    .Include(u => u.Events)
-                    .Include(u => u.TournamentStructures)
-                    .FirstOrDefaultAsync(u => u.Id == id);
-            }
-            else if(includeEvents && includeInvitees)
-            {
-                foundUser = await _context.Users
-                    .Include(u => u.Invitees)
-                    .Include(u => u.Events)
-                    .FirstOrDefaultAsync(u => u.Id == id);
-            }
-            else if (includeTournamentStructures)
-            {
-                foundUser = await _context.Users
-                    .Include(u => u.TournamentStructures)
-                    .FirstOrDefaultAsync(u => u.Id == id);
-            }
-            else if (includeEvents)
-            {
-                foundUser = await _context.Users
-                    .Include(u => u.Events)
-                    .FirstOrDefaultAsync(u => u.Id == id);
-            }
-            else if (includeInvitees)
-            {
-                foundUser = await _context.Users
-                    .Include(u => u.Invitees)
-                    .FirstOrDefaultAsync(u => u.Id == id);
-            }
-            else
-            {
-                foundUser = await _context.Users
-                    .FirstOrDefaultAsync(u => u.Id == id);
-            }
+            foundHost = await _context.Hosts.FirstOrDefaultAsync(u => u.Id == id);
 
-            if (foundUser == null)
+            if (foundHost == null)
                 return null;
 
-            _logger.LogInformation(GetLogString("Getting", "User", $"{id}", $"{foundUser.Name}"));
+            _logger.LogInformation(GetLogString("Getting", "Host", $"{id}", $"{foundHost.Name}"));
 
-            return foundUser;
+            return foundHost;
         }
 
-        public async Task<User> GetUserByEmailAsync(string email, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false)
+        public async Task<Host> GetHostByEmailAsync(string email, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false)
         {
-            _logger.LogInformation("Getting user by email.");
+            _logger.LogInformation("Getting host by email.");
 
-            User foundUser = null;
+            Host foundHost = null;
 
             if (includeTournamentStructures && includeInvitees && includeEvents)
             {
-                foundUser = await _context.Users
+                foundHost = await _context.Hosts
                     .Include(u => u.Invitees)
                     .Include(u => u.Events)
                     .Include(u => u.TournamentStructures)
@@ -150,59 +99,59 @@ namespace PokerTime.API.Data
             }
             else if (includeTournamentStructures && includeInvitees)
             {
-                foundUser = await _context.Users
+                foundHost = await _context.Hosts
                     .Include(u => u.Invitees)
                     .Include(u => u.TournamentStructures)
                     .FirstOrDefaultAsync(u => u.Email == email);
             }
             else if (includeTournamentStructures && includeEvents)
             {
-                foundUser = await _context.Users
+                foundHost = await _context.Hosts
                     .Include(u => u.Events)
                     .Include(u => u.TournamentStructures)
                     .FirstOrDefaultAsync(u => u.Email == email);
             }
             else if (includeEvents && includeInvitees)
             {
-                foundUser = await _context.Users
+                foundHost = await _context.Hosts
                     .Include(u => u.Invitees)
                     .Include(u => u.Events)
                     .FirstOrDefaultAsync(u => u.Email == email);
             }
             else if (includeTournamentStructures)
             {
-                foundUser = await _context.Users
+                foundHost = await _context.Hosts
                     .Include(u => u.TournamentStructures)
                     .FirstOrDefaultAsync(u => u.Email == email);
             }
             else if (includeEvents)
             {
-                foundUser = await _context.Users
+                foundHost = await _context.Hosts
                     .Include(u => u.Events)
                     .FirstOrDefaultAsync(u => u.Email == email);
             }
             else if (includeInvitees)
             {
-                foundUser = await _context.Users
+                foundHost = await _context.Hosts
                     .Include(u => u.Invitees)
                     .FirstOrDefaultAsync(u => u.Email == email);
             }
             else
             {
-                foundUser = await _context.Users
+                foundHost = await _context.Hosts
                     .FirstOrDefaultAsync(u => u.Email == email);
             }
-            return foundUser;
+            return foundHost;
         }
 
 
-        public async Task<bool> DeleteUserByIdAsync(Guid id)
+        public async Task<bool> DeleteHostByIdAsync(Guid id)
         {
-            var foundUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var foundHost = await _context.Hosts.FirstOrDefaultAsync(u => u.Id == id);
 
-            _logger.LogInformation(GetLogString("Deleting", "User", $"{id}", $"{foundUser.Name}"));
+            _logger.LogInformation(GetLogString("Deleting", "Host", $"{id}", $"{foundHost.Name}"));
 
-            Delete(foundUser);
+            Delete(foundHost);
             if (await _context.SaveChangesAsync() > 0) //Success
             {
                 return true;
@@ -212,10 +161,10 @@ namespace PokerTime.API.Data
 
         //TournamentStructures----------------------------------------------------
 
-        public async Task<IEnumerable<TournamentStructure>> GetTournamentStructuresByUserIdAsync(Guid id)
+        public async Task<IEnumerable<TournamentStructure>> GetTournamentStructuresByHostIdAsync(Guid id)
         {
 
-            _logger.LogInformation(GetLogString("Getting", "TournamentStructures", $"{id}", "", $"User"));
+            _logger.LogInformation(GetLogString("Getting", "TournamentStructures", $"{id}", "", $"Host"));
 
             IQueryable<TournamentStructure> query = _context.TournamentStructures
                 .Include(s => s.BlindLevels)
@@ -227,7 +176,7 @@ namespace PokerTime.API.Data
 
         public async Task<TournamentStructure> GetTournamentStructureByIdAsync(int id)
         {
-            _logger.LogInformation(GetLogString("Getting", "TournamentStructure", $"{id}", "", $"User"));
+            _logger.LogInformation(GetLogString("Getting", "TournamentStructure", $"{id}", "", $"Host"));
 
             IQueryable<TournamentStructure> query = _context.TournamentStructures
                 .Include(s => s.BlindLevels)
@@ -256,13 +205,13 @@ namespace PokerTime.API.Data
 
         //Invitees----------------------------------------
 
-        public async Task<IEnumerable<Invitee>> GetAllInviteesByUserIdAsync(Guid id)
+        public async Task<IEnumerable<Invitee>> GetAllInviteesByHostIdAsync(Guid id)
         {
             IQueryable<Invitee> query = _context.Invitees
                 .Where(u => u.HostId == id)
                 .OrderBy(u => u.Name);
 
-            _logger.LogInformation(GetLogString("Getting","Invitees",$"{id}", "", "user"));
+            _logger.LogInformation(GetLogString("Getting","Invitees",$"{id}", "", "host"));
 
             return await query.ToListAsync();
         }
@@ -291,13 +240,13 @@ namespace PokerTime.API.Data
         //Events---------------------------------------
 
 
-        public async Task<IEnumerable<Event>> GetAllEventsByUserIdAsync(Guid id)
+        public async Task<IEnumerable<Event>> GetAllEventsByHostIdAsync(Guid id)
         {
             IQueryable<Event> query = _context.Events
                 .Where(u => u.HostId == id)
                 .OrderBy(u => u.Name);
 
-            _logger.LogInformation(GetLogString("Getting", "Events", $"{id}", "", "user"));
+            _logger.LogInformation(GetLogString("Getting", "Events", $"{id}", "", "host"));
 
             return await query.ToListAsync();
         }
@@ -332,7 +281,7 @@ namespace PokerTime.API.Data
         {
             IQueryable<BlindLevel> query = _context.BlindLevels
                 .Where(b => b.TournamentStructureId == id)
-                .OrderBy(b => b.LevelNumber);
+                .OrderBy(b => b.Id);
 
             _logger.LogInformation(GetLogString("Getting", "BlindLevels", $"{id}", "", "TournamentStructure"));
 

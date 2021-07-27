@@ -14,25 +14,25 @@ namespace PokerTime.App.Client.Pages
     {
         //Host (User)
         public Guid HostId { get; set; }
-        public User Host { get; set; }
+        public Host Host { get; set; }
 
         //TournamentStructure
         [Parameter]
         public int TournamentStructureId { get; set; }
-        public TournamentStructure TournamentStructure { get; set; }
+        public TournamentStructure TournamentStructure { get; set; } = new TournamentStructure();
 
         //Blind Levels
-        public List<BlindLevel> BlindLevels { get; set; }
+        public LinkedList<BlindLevel> BlindLevels { get; set; } = new LinkedList<BlindLevel>();
 
         //Services
         [Inject]
-        public IUserDataService UserDataService { get; set; }
+        public IHostDataService UserDataService { get; set; }
         [Inject]
         public IStructureDataService StructureDataService { get; set; }
         [Inject]
         public IBlindLevelDataService BlindLevelDataService { get; set; }
         [Inject]
-        public ILogger<UsersOverview> Logger { get; set; }
+        public ILogger<EditStructure> Logger { get; set; }
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
@@ -48,21 +48,34 @@ namespace PokerTime.App.Client.Pages
             {
                 Saved = false;
 
-                Host = await UserDataService.GetUser(Guid.Parse("fe578a4f-6b3e-49d6-b8ee-53b23ae61757"));
+                Host = await UserDataService.GetHost(Guid.Parse("8c13e4c0-43d8-4e44-855b-0d6683cac1aa"));
                 HostId = Host.Id;
                 if(TournamentStructureId == 0)
                 {
                     //Create new Structure & Blind Levels
                     await AddNewTournamentStructure();
-                    await AddBlindLevel(TournamentStructureId, 25, 50, 0, 30);
-                    await AddBlindLevel(TournamentStructureId, 50, 100, 0, 30);
-                    await AddBlindLevel(TournamentStructureId, 100, 200, 0, 30);
+
+                    TournamentStructure.HostId = HostId;
+                    TournamentStructure.DateCreated = DateTime.Today;
+
+                    //TournamentStructureId = TournamentStructure.Id;
+
+                    BlindLevels.AddFirst(new BlindLevel());
                 }
                 else
                 {
-                    //Get existing Structure
+                    //Get existing Structure & Blind Levels
                     TournamentStructure = await StructureDataService.GetStructure(TournamentStructureId, HostId);
-                    BlindLevels = (await BlindLevelDataService.GetBlindLevels(TournamentStructureId, HostId)).ToList();
+
+                    if(TournamentStructure.BlindLevels == null)
+                    {
+                        BlindLevels.AddFirst(new BlindLevel() { TournamentStructureId = TournamentStructureId});
+                    }
+                    else
+                    {
+                        BlindLevels = (LinkedList<BlindLevel>)TournamentStructure.BlindLevels;
+                    }
+
                 }
                 
             }
@@ -75,27 +88,47 @@ namespace PokerTime.App.Client.Pages
         public async Task AddNewTournamentStructure()
         {
             //Adds a blank tournament structure
-            TournamentStructure = await StructureDataService.AddStructure(new TournamentStructure
-            {
-                Name = "",
-                DateCreated = DateTime.Today,
-                NumberOfEvents = 0,
-                HostId = HostId,
-            });
+            TournamentStructure = await StructureDataService.AddStructure(new TournamentStructure(), HostId);
+
             TournamentStructureId = TournamentStructure.Id;
         }
 
-        public async Task AddBlindLevel(int structureId, int smallBlind = 0, int bigBlind = 0, int ante = 0, int minutes = 0)
+        public void AddBlindLevel(int smallBlind = 0, int bigBlind = 0, int ante = 0, int minutes = 0)
         {
-            var newBlindLevel = new BlindLevel
+            var newBlindLevel = new BlindLevel()
             {
-                TournamentStructureId = structureId,
+                TournamentStructureId = TournamentStructureId,
                 SmallBlind = smallBlind == 0 ? 0 : smallBlind,
                 BigBlind = bigBlind == 0 ? 0 : bigBlind,
                 Ante = ante == 0 ? 0 : ante,
                 Minutes = minutes == 0 ? 0 : minutes
             };
-            BlindLevels.Add(await BlindLevelDataService.AddBlindLevel(newBlindLevel, HostId));
+            BlindLevels.AddLast(newBlindLevel);
+        }
+
+        public async Task DeleteStructure()
+        {
+            if (TournamentStructureId == 0)
+            {
+
+            }
+        }
+
+        public async Task HandleValidSubmit()
+        {
+            TournamentStructure.BlindLevels = BlindLevels;
+            await StructureDataService.UpdateStructure(TournamentStructure);
+            
+        }
+
+        public async Task HandleInvalidSubmit()
+        {
+
+        }
+
+        public void NavigateToStructures()
+        {
+            NavigationManager.NavigateTo("/structures");
         }
 
     }

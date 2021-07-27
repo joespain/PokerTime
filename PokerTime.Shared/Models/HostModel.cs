@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PokerTime.Shared.Models
 {
-    public class UserModel
+    public class HostModel
     {
         public Guid Id { get; set; }
         [Required]

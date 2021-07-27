@@ -11,14 +11,14 @@ namespace PokerTime.App.Client.Pages
     public partial class Index
     {
         [Inject]
-        public IUserDataService UserDataService { get; set; }
+        public IHostDataService HostDataService { get; set; }
 
-        public List<User> Users { get; set; }
+        //public List<Host> Users { get; set; }
 
 
         protected override async Task OnInitializedAsync()
         {
-            Users = (await UserDataService.GetAllUsers()).ToList();
+            //Users = (await UserDataService.GetAllUsers()).ToList();
         }
 
     }

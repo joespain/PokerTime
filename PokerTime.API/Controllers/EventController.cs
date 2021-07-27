@@ -31,7 +31,7 @@ namespace PokerTime.API.Controllers
         {
             try
             {
-                var events = await _repository.GetAllEventsByUserIdAsync(hostId);
+                var events = await _repository.GetAllEventsByHostIdAsync(hostId);
 
                 if (events == null)
                 {

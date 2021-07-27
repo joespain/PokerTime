@@ -13,7 +13,7 @@ namespace PokerTime.App.Client.Pages
     public partial class UsersOverview 
     {
         [Inject]
-        public IUserDataService UserDataService { get; set; }
+        public IHostDataService UserDataService { get; set; }
 
         [Inject]
         public ILogger<UsersOverview> Logger { get; set; }
@@ -21,14 +21,14 @@ namespace PokerTime.App.Client.Pages
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
-        public List<User> AllUsers { get; set; }
+        public List<Host> AllUsers { get; set; }
 
 
         protected override async Task OnInitializedAsync()
         {
             try
             {
-                AllUsers = (await UserDataService.GetAllUsers()).ToList();
+                AllUsers = (await UserDataService.GetAllHosts()).ToList();
             }
             catch (Exception e)
             {

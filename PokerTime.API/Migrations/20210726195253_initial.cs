@@ -8,10 +8,10 @@ namespace PokerTime.API.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "Hosts",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: Guid.NewGuid()),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -19,7 +19,7 @@ namespace PokerTime.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_Hosts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -37,11 +37,11 @@ namespace PokerTime.API.Migrations
                 {
                     table.PrimaryKey("PK_Events", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Events_Users_HostId",
+                        name: "FK_Events_Hosts_HostId",
                         column: x => x.HostId,
-                        principalTable: "Users",
+                        principalTable: "Hosts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -59,11 +59,11 @@ namespace PokerTime.API.Migrations
                 {
                     table.PrimaryKey("PK_Invitees", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Invitees_Users_HostId",
+                        name: "FK_Invitees_Hosts_HostId",
                         column: x => x.HostId,
-                        principalTable: "Users",
+                        principalTable: "Hosts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -81,11 +81,11 @@ namespace PokerTime.API.Migrations
                 {
                     table.PrimaryKey("PK_TournamentStructures", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TournamentStructures_Users_HostId",
+                        name: "FK_TournamentStructures_Hosts_HostId",
                         column: x => x.HostId,
-                        principalTable: "Users",
+                        principalTable: "Hosts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -103,13 +103,13 @@ namespace PokerTime.API.Migrations
                         column: x => x.EventsId,
                         principalTable: "Events",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_EventInvitee_Invitees_InviteesId",
                         column: x => x.InviteesId,
                         principalTable: "Invitees",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -137,9 +137,9 @@ namespace PokerTime.API.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Users",
+                table: "Hosts",
                 columns: new[] { "Id", "Email", "IsPaidUser", "Name", "Phone" },
-                values: new object[] { new Guid("fe578a4f-6b3e-49d6-b8ee-53b23ae61757"), "JimboSpain@gmail.com", true, "Jim Spain", "0987654321" });
+                values: new object[] { new Guid("8c13e4c0-43d8-4e44-855b-0d6683cac1aa"), "JimboSpain@gmail.com", true, "Jim Spain", "0987654321" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_BlindLevels_TournamentStructureId",
@@ -185,7 +185,7 @@ namespace PokerTime.API.Migrations
                 name: "Invitees");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Hosts");
         }
     }
 }

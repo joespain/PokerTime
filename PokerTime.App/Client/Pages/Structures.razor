@@ -4,13 +4,12 @@
 
 @if (TournamentStructures == null)
 {
-    <p>No tournament structures found. Do you want to add a <a href="@($"/structures/0")">
-    New Structure</a>?</p>
+    <p>Loading...</p>
 }
 else
 {
 
-    <a class="btn btn-block" href="@($"/structures/0")">
+    <a class="btn btn-block" @onclick="@NewStructure">
         <span class="oi oi-plus"></span>New Structure
     </a>
 
@@ -31,7 +30,7 @@ else
                 <tr>
                     <td></td>
                     <td>@structure.Name</td>
-                    <td>@structure.DateCreated</td>
+                    <td>@structure.DateCreated.ToShortDateString()</td>
                     <td>@structure.NumberOfEvents</td>
                     <td>
                         <a class="btn btn-primary table-btn" href="@($"/structures/{structure.Id}")">

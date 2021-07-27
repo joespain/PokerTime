@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PokerTime.Shared.Entities
 {
-    public class User
+    public class Host
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]

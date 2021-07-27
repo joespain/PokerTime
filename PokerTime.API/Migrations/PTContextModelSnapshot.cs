@@ -16,7 +16,7 @@ namespace PokerTime.API.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.7")
+                .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("EventInvitee", b =>
@@ -87,14 +87,47 @@ namespace PokerTime.API.Migrations
                     b.Property<int>("TournamentStructureId")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("UserId")
+                    b.HasKey("Id");
+
+                    b.HasIndex("HostId");
+
+                    b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("PokerTime.Shared.Entities.Host", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsPaidUser")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.ToTable("Hosts");
 
-                    b.ToTable("Events");
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8c13e4c0-43d8-4e44-855b-0d6683cac1aa"),
+                            Email = "JimboSpain@gmail.com",
+                            IsPaidUser = true,
+                            Name = "Jim Spain",
+                            Phone = "0987654321"
+                        });
                 });
 
             modelBuilder.Entity("PokerTime.Shared.Entities.Invitee", b =>
@@ -118,12 +151,9 @@ namespace PokerTime.API.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("HostId");
 
                     b.ToTable("Invitees");
                 });
@@ -149,50 +179,11 @@ namespace PokerTime.API.Migrations
                     b.Property<int>("NumberOfEvents")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("HostId");
 
                     b.ToTable("TournamentStructures");
-                });
-
-            modelBuilder.Entity("PokerTime.Shared.Entities.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsPaidUser")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("fe578a4f-6b3e-49d6-b8ee-53b23ae61757"),
-                            Email = "JimboSpain@gmail.com",
-                            IsPaidUser = true,
-                            Name = "Jim Spain",
-                            Phone = "0987654321"
-                        });
                 });
 
             modelBuilder.Entity("EventInvitee", b =>
@@ -221,37 +212,43 @@ namespace PokerTime.API.Migrations
 
             modelBuilder.Entity("PokerTime.Shared.Entities.Event", b =>
                 {
-                    b.HasOne("PokerTime.Shared.Entities.User", null)
+                    b.HasOne("PokerTime.Shared.Entities.Host", null)
                         .WithMany("Events")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("HostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PokerTime.Shared.Entities.Invitee", b =>
                 {
-                    b.HasOne("PokerTime.Shared.Entities.User", null)
+                    b.HasOne("PokerTime.Shared.Entities.Host", null)
                         .WithMany("Invitees")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("HostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PokerTime.Shared.Entities.TournamentStructure", b =>
                 {
-                    b.HasOne("PokerTime.Shared.Entities.User", null)
+                    b.HasOne("PokerTime.Shared.Entities.Host", null)
                         .WithMany("TournamentStructures")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("HostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("PokerTime.Shared.Entities.TournamentStructure", b =>
-                {
-                    b.Navigation("BlindLevels");
-                });
-
-            modelBuilder.Entity("PokerTime.Shared.Entities.User", b =>
+            modelBuilder.Entity("PokerTime.Shared.Entities.Host", b =>
                 {
                     b.Navigation("Events");
 
                     b.Navigation("Invitees");
 
                     b.Navigation("TournamentStructures");
+                });
+
+            modelBuilder.Entity("PokerTime.Shared.Entities.TournamentStructure", b =>
+                {
+                    b.Navigation("BlindLevels");
                 });
 #pragma warning restore 612, 618
         }

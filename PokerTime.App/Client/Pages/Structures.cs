@@ -13,7 +13,7 @@ namespace PokerTime.App.Client.Pages
     public partial class Structures
     {
         public Guid HostId { get; set; }
-        public User Host { get; set; }
+        public Host Host { get; set; }
         public List<TournamentStructure> TournamentStructures { get; set; }
 
         //used to store state of screen
@@ -22,7 +22,7 @@ namespace PokerTime.App.Client.Pages
         protected bool Saved;
 
         [Inject]
-        public IUserDataService UserDataService { get; set; }
+        public IHostDataService UserDataService { get; set; }
 
         [Inject]
         public IStructureDataService StructureDataService { get; set; }
@@ -37,9 +37,8 @@ namespace PokerTime.App.Client.Pages
         {
             try
             {
-
                 //Set the current host
-                Host = await UserDataService.GetUser(Guid.Parse("fe578a4f-6b3e-49d6-b8ee-53b23ae61757"));
+                Host = await UserDataService.GetHost(Guid.Parse("8c13e4c0-43d8-4e44-855b-0d6683cac1aa"));
                 HostId = Host.Id;
 
                 Saved = false;
@@ -50,8 +49,6 @@ namespace PokerTime.App.Client.Pages
                 {
                     TournamentStructures = new List<TournamentStructure>();
                 }
-                
-
             }
             catch (Exception e)
             {
@@ -59,9 +56,11 @@ namespace PokerTime.App.Client.Pages
             }
         }
 
-        protected void NewStructure()
+        protected async Task NewStructure()
         {
-            NavigationManager.NavigateTo($"structures/");
+            var newStructure = await StructureDataService.AddStructure(new TournamentStructure() { Name = "New Tournament Structure"}, HostId);
+
+            NavigationManager.NavigateTo($"structures/{newStructure.Id}");
         }
 
         protected void Edit(int structureId)

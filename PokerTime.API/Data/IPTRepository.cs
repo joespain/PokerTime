@@ -13,23 +13,23 @@ namespace PokerTime.API.Data
         void Delete<T>(T entity) where T : class;
 
         //Users 
-        Task<IEnumerable<User>> GetAllUsers(bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
-        Task<User> GetUserByEmailAsync(string email, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
-        Task<User> GetUserByIdAsync(Guid id, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
-        Task<bool> DeleteUserByIdAsync(Guid id);
+        Task<IEnumerable<Host>> GetAllHosts(bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
+        Task<Host> GetHostByEmailAsync(string email, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
+        Task<Host> GetHostByIdAsync(Guid id, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
+        Task<bool> DeleteHostByIdAsync(Guid id);
 
         //TournamentStructures 
-        Task<IEnumerable<TournamentStructure>> GetTournamentStructuresByUserIdAsync(Guid id);
+        Task<IEnumerable<TournamentStructure>> GetTournamentStructuresByHostIdAsync(Guid id);
         Task<TournamentStructure> GetTournamentStructureByIdAsync(int id);
         Task<bool> DeleteTournamentStructureByIdAsync(int id);
 
         //Invitees
-        Task<IEnumerable<Invitee>> GetAllInviteesByUserIdAsync(Guid id);
+        Task<IEnumerable<Invitee>> GetAllInviteesByHostIdAsync(Guid id);
         Task<Invitee> GetInviteeByIdAsync(int id);
         Task<bool> DeleteInviteeByIdAsync(int id);
 
         //Events 
-        Task<IEnumerable<Event>> GetAllEventsByUserIdAsync(Guid id);
+        Task<IEnumerable<Event>> GetAllEventsByHostIdAsync(Guid id);
         Task<Event> GetEventByIdAsync(int id);
         Task<bool> DeleteEventByIdAsync(int id);
 

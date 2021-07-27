@@ -37,7 +37,7 @@ namespace PokerTime.App.Client.Services
         {
             var blindLevelJson = new StringContent(JsonSerializer.Serialize(blindLevel), Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync($"api/users/{hostId}/structures.{blindLevel.TournamentStructureId}/blindlevels", blindLevelJson);
+            var response = await _httpClient.PostAsync($"api/users/{hostId}/tournamentstructures/{blindLevel.TournamentStructureId}/blindlevels", blindLevelJson);
 
             if (response.IsSuccessStatusCode)
             {
@@ -50,7 +50,7 @@ namespace PokerTime.App.Client.Services
         {
             var structureJson = new StringContent(JsonSerializer.Serialize(blindLevel), Encoding.UTF8, "application/json");
 
-            await _httpClient.PutAsync($"api/users/{hostId}/structures/{blindLevel.TournamentStructureId}/blindlevels/{blindLevel.Id}", structureJson);
+            await _httpClient.PutAsync($"api/users/{hostId}/tournamentstructures/{blindLevel.TournamentStructureId}/blindlevels/{blindLevel.Id}", structureJson);
         }
 
         public async Task DeleteStructure(BlindLevel blindLevel, Guid hostId)

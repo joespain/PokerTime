@@ -14,7 +14,7 @@ namespace PokerTime.API.Data
         }
 
         public DbSet<TournamentStructure> TournamentStructures { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<Host> Hosts { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Invitee> Invitees { get; set; }
         public DbSet<BlindLevel> BlindLevels { get; set; }
@@ -27,7 +27,7 @@ namespace PokerTime.API.Data
 
         protected override void OnModelCreating(ModelBuilder bldr)
         {
-            var Jim = new User
+            var Jim = new Host
             {
                 Id = Guid.NewGuid(),
                 Name = "Jim Spain",
@@ -57,7 +57,7 @@ namespace PokerTime.API.Data
             //    });
             //});
 
-            bldr.Entity<User>()
+            bldr.Entity<Host>()
                 .HasData(Jim);
             //bldr.Entity<User>()
             //    .HasData(Joe);

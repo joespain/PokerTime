@@ -21,9 +21,12 @@ namespace PokerTime.App.Client
                 new HttpClient { BaseAddress = new Uri("http://localhost:6600") });
 
             //Data services that connect to API
-            builder.Services.AddScoped<IUserDataService, UserDataService>();
+            builder.Services.AddScoped<IHostDataService, HostDataService>();
             builder.Services.AddScoped<IStructureDataService, StructureDataService>();
             builder.Services.AddScoped<IBlindLevelDataService, BlindLevelDataService>();
+            builder.Services.AddScoped<IInviteeDataService, InviteeDataService>();
+            builder.Services.AddScoped<IEventDataService, EventDataService>();
+
 
             await builder.Build().RunAsync();
         }
