@@ -7,8 +7,6 @@ namespace PokerTime.Shared.Entities
 {
     public class Host
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
         public Guid Id { get; set; }
         [Required]
         [StringLength(100)]

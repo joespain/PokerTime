@@ -3,8 +3,6 @@ using Microsoft.Extensions.Logging;
 using PokerTime.App.Client.Interfaces;
 using PokerTime.Shared.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PokerTime.App.Client.Pages
@@ -33,7 +31,7 @@ namespace PokerTime.App.Client.Pages
             try
             {
                 //set the current host.
-                Host = await HostDataService.GetHost(Guid.Parse("8c13e4c0-43d8-4e44-855b-0d6683cac1aa"));
+                Host = await HostDataService.GetHost(Guid.Parse("48b51074-220e-4275-b3f6-ed41b8319832"));
                 HostId = Host.Id;
 
                 Saved = false;

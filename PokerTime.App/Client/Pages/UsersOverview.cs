@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using PokerTime.App.Client.Interfaces;
 using PokerTime.Shared.Entities;
-using PokerTime.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

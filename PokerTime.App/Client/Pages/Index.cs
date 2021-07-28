@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using PokerTime.App.Client.Interfaces;
-using PokerTime.Shared.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PokerTime.App.Client.Pages

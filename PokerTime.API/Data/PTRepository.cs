@@ -244,7 +244,7 @@ namespace PokerTime.API.Data
         {
             IQueryable<Event> query = _context.Events
                 .Where(u => u.HostId == id)
-                .OrderBy(u => u.Name);
+                .OrderBy(u => u.Date);
 
             _logger.LogInformation(GetLogString("Getting", "Events", $"{id}", "", "host"));
 
@@ -255,7 +255,7 @@ namespace PokerTime.API.Data
         {
             var foundEvent = await _context.Events.FirstOrDefaultAsync(i => i.Id == id);
 
-            _logger.LogInformation(GetLogString("Getting", "Event", $"{id}", $"{foundEvent.Name}"));
+            _logger.LogInformation(GetLogString("Getting", "Event", $"{id}", ""));
 
             return foundEvent;
         }
@@ -264,7 +264,7 @@ namespace PokerTime.API.Data
         {
             var foundEvent = await _context.Events.FirstOrDefaultAsync(e => e.Id == id);
 
-            _logger.LogInformation(GetLogString("Deleting", "Event", $"{id}", $"{foundEvent.Name}"));
+            _logger.LogInformation(GetLogString("Deleting", "Event", $"{id}", ""));
 
             Delete(foundEvent);
             if (await _context.SaveChangesAsync() > 0) //Success

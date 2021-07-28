@@ -1,0 +1,54 @@
+﻿@page "/event"
+
+<h3>New Event</h3>
+
+@if (!Saved)
+{
+    <EditForm Model="@NewEvent" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+
+        <div class="form-group row">
+            <label for="structure" class="col-form-label">Select Tournament Structure: </label>
+
+            <InputSelect id="structure" @bind-Value="NewEvent.TournamentStructureId">
+                @foreach (var structure in TournamentStructures)
+                    {
+                    <option value="@structure.Id">@structure.Name</option>
+                    }
+            </InputSelect>
+        </div>
+        <h3>Invitees</h3>
+        @foreach (var invitee in Invitees)
+        {
+            <div class="form-group row">
+                <label for="Name" class="col-form-label">Name: </label>
+                <InputText id="Name" @bind-Value="@invitee.Name" />
+            </div>
+
+            <div class="form-group row">
+                <label for="Email" class="col-form-label">Email: </label>
+                <InputText id="Email" @bind-Value="@invitee.Email" />
+            </div>
+
+            <div class="form-group row">
+                <label for="Phone" class="col-form-label">Phone (optional): </label>
+                <InputText id="Phone" @bind-Value="@invitee.Phone" />
+            </div>
+
+        }
+
+
+        <div class="form-group row">
+            <a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddInvitee())">
+                Add Invitee
+            </a>
+        </div>
+    </EditForm>
+    <button type="submit" class="btn btn-primary edit-btn">Save Invitees</button>
+    <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToStructure">Cancel</a>
+
+}
+else
+{
+    <div class="alert @StatusClass">@Message</div>
+    <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToStructure">Cancel</a>
+}

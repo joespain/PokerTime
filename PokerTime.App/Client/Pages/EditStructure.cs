@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace PokerTime.App.Client.Pages
 {
-    public partial class EditStructure
+    public partial class EditStructure : ComponentBase
     {
-        //Host (User)
+        //Host
         public Guid HostId { get; set; }
         public Host Host { get; set; }
 
@@ -48,7 +48,7 @@ namespace PokerTime.App.Client.Pages
             {
                 Saved = false;
 
-                Host = await UserDataService.GetHost(Guid.Parse("8c13e4c0-43d8-4e44-855b-0d6683cac1aa"));
+                Host = await UserDataService.GetHost(Guid.Parse("48b51074-220e-4275-b3f6-ed41b8319832"));
                 HostId = Host.Id;
                 if(TournamentStructureId == 0)
                 {
@@ -108,9 +108,9 @@ namespace PokerTime.App.Client.Pages
 
         public async Task DeleteStructure()
         {
-            if (TournamentStructureId == 0)
+            if (TournamentStructureId != 0)
             {
-
+                await StructureDataService.DeleteStructure(TournamentStructureId, HostId);
             }
         }
 

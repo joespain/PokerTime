@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerTime.App.Client", "Pok
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerTime.Shared", "PokerTime.Shared\PokerTime.Shared.csproj", "{2B84AF1B-5B0D-4DE2-B59A-65546841CBDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokerTime.Testing", "PokerTime.Testing\PokerTime.Testing.csproj", "{6A5CDCA1-A653-4693-835E-3C9826632A11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerTime.Testing", "PokerTime.Testing\PokerTime.Testing.csproj", "{6A5CDCA1-A653-4693-835E-3C9826632A11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
