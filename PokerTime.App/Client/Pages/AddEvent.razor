@@ -1,15 +1,16 @@
 ﻿@page "/event"
+@page "/event/{EventId:int}"
 
 <h3>New Event</h3>
 
 @if (!Saved)
 {
-    <EditForm Model="@NewEvent" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+    <EditForm Model="@Event" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
 
         <div class="form-group row">
             <label for="structure" class="col-form-label">Select Tournament Structure: </label>
 
-            <InputSelect id="structure" @bind-Value="NewEvent.TournamentStructureId">
+            <InputSelect id="structure" @bind-Value="@Event.TournamentStructureId">
                 @foreach (var structure in TournamentStructures)
                     {
                     <option value="@structure.Id">@structure.Name</option>

@@ -16,13 +16,17 @@ namespace PokerTime.App.Client.Pages
         public Host Host { get; set; }
 
         //TournamentStructure
+        
+        public int TournamentStructureId { get; set; }
         public List<TournamentStructure> TournamentStructures { get; set; } = new List<TournamentStructure>();
 
         //Invitees
         public List<Invitee> Invitees { get; set; } = new List<Invitee>();
 
         //Event
-        public Event NewEvent { get; set; } = new Event();
+        [Parameter]
+        public int EventId { get; set; }
+        public Event Event { get; set; } = new Event();
 
         //Services
         [Inject]
@@ -50,10 +54,16 @@ namespace PokerTime.App.Client.Pages
         {
             try
             {
+
                 Saved = false;
 
                 Host = await UserDataService.GetHost(Guid.Parse("48b51074-220e-4275-b3f6-ed41b8319832"));
                 HostId = Host.Id;
+
+                if(EventId != 0)
+                {
+                    Event = await EventDataService.GetEvent(EventId, HostId);
+                }
 
                 TournamentStructures = (await StructureDataService.GetStructures(HostId)).ToList();
 
@@ -61,6 +71,9 @@ namespace PokerTime.App.Client.Pages
                 {
                     //Error, must add new structure
                 }
+
+                
+
 
                 Invitees = (await InviteeDataService.GetInvitees(HostId)).ToList();
 
@@ -83,8 +96,24 @@ namespace PokerTime.App.Client.Pages
 
         public async Task HandleValidSubmit()
         {
-            
-
+            try
+            {
+                Event.TournamentStructureId = TournamentStructureId;
+                Event.Invitees = Invitees;
+                Event.HostId = HostId;
+                if (Event.Id == 0)
+                {
+                    Event = await EventDataService.AddEvent(Event, HostId);
+                }
+                else
+                {
+                    await EventDataService.UpdateEvent(Event);
+                }
+            }
+            catch(Exception e)
+            {
+                Logger.LogError(e.Message);
+            }
         }
 
         public async Task HandleInvalidSubmit()
