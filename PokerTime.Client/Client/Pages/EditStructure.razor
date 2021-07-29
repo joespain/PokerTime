@@ -1,0 +1,64 @@
+﻿@page "/structures/{TournamentStructureId:int}"
+
+<section class="user-edit">
+    @if (!Saved && TournamentStructure != null)
+    {
+        <h3>Edit Structure</h3>
+
+        <EditForm Model="@TournamentStructure" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group row">
+                <label for="Name" class="col-sm-3">Name: </label>
+                <InputText id="StructureName" @bind-Value="@TournamentStructure.Name" placeholder="Enter Tournament Structure Name"></InputText>
+                <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => TournamentStructure.Name)" />
+            </div>
+
+
+
+            @foreach (var blindLevel in BlindLevels)
+            {
+                //<EditForm Model="@blindLevel">
+                <div class="form-group row">
+                    <label for="SmallBlind" class="col-sm-3">Small Blind: </label>
+                    <InputNumber id="SmallBlind" @bind-Value="@blindLevel.SmallBlind" placeholder="0"></InputNumber>
+                    <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => blindLevel.SmallBlind)" />
+
+                    <label for="BigBlind" class="col-sm-3">Big Blind: </label>
+                    <InputNumber id="BigBlind" @bind-Value="@blindLevel.BigBlind" placeholder="0"></InputNumber>
+                    <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => blindLevel.BigBlind)" />
+
+                    <label for="Ante" class="col-sm-3">Ante: </label>
+                    <InputNumber id="Ante" @bind-Value="@blindLevel.Ante" placeholder="0"></InputNumber>
+                    <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => blindLevel.Ante)" />
+
+                    <label for="Minutes" class="col-sm-3">Time (minutes): </label>
+                    <InputNumber id="Minutes" @bind-Value="@blindLevel.Minutes" placeholder="0"></InputNumber>
+                    <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => blindLevel.Minutes)" />
+                </div>
+                //</EditForm>
+
+
+
+            }
+            <div class="form-group row">
+                <a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddBlindLevel())">
+                    Add Blind Level
+                </a>
+            </div>
+        </EditForm>
+        <button @onclick="HandleValidSubmit" class="btn btn-primary edit-btn">Save</button>
+
+        <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToStructures">Cancel</a>
+
+        <a class="btn btn-danger" @onclick="@DeleteStructure">Delete</a>
+
+    }
+
+
+    else
+    {
+        <div class="alert @StatusClass">@Message</div>
+        <a class="btn btn-outline-primary" @onclick="@NavigateToStructures">Back to Tournament Structures</a>
+    }
+</section>

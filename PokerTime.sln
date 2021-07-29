@@ -5,13 +5,13 @@ VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerTime.API", "PokerTime.API\PokerTime.API.csproj", "{75A846A3-D675-4F65-9C7F-E7D4B54586FC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerTime.IDP", "PokerTime.IDP\PokerTime.IDP.csproj", "{66CCA21A-0C43-48A6-AD1F-E140F2ED1FBE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerTime.App.Client", "PokerTime.App\Client\PokerTime.App.Client.csproj", "{DCA3CBB2-9463-477A-A0A1-B91A53D3F1C6}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerTime.Shared", "PokerTime.Shared\PokerTime.Shared.csproj", "{2B84AF1B-5B0D-4DE2-B59A-65546841CBDD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerTime.Testing", "PokerTime.Testing\PokerTime.Testing.csproj", "{6A5CDCA1-A653-4693-835E-3C9826632A11}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer", "BlazorSecurity\src\IdentityServer\IdentityServer.csproj", "{A8E26DF8-4096-4E07-A26E-02FFD4928BFF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokerTime.App", "PokerTime.App\PokerTime.App.csproj", "{385BF8BF-FF15-4137-91A5-66133D299199}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,14 +23,6 @@ Global
 		{75A846A3-D675-4F65-9C7F-E7D4B54586FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75A846A3-D675-4F65-9C7F-E7D4B54586FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75A846A3-D675-4F65-9C7F-E7D4B54586FC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{66CCA21A-0C43-48A6-AD1F-E140F2ED1FBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{66CCA21A-0C43-48A6-AD1F-E140F2ED1FBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{66CCA21A-0C43-48A6-AD1F-E140F2ED1FBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{66CCA21A-0C43-48A6-AD1F-E140F2ED1FBE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DCA3CBB2-9463-477A-A0A1-B91A53D3F1C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DCA3CBB2-9463-477A-A0A1-B91A53D3F1C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DCA3CBB2-9463-477A-A0A1-B91A53D3F1C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DCA3CBB2-9463-477A-A0A1-B91A53D3F1C6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2B84AF1B-5B0D-4DE2-B59A-65546841CBDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2B84AF1B-5B0D-4DE2-B59A-65546841CBDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B84AF1B-5B0D-4DE2-B59A-65546841CBDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +31,14 @@ Global
 		{6A5CDCA1-A653-4693-835E-3C9826632A11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A5CDCA1-A653-4693-835E-3C9826632A11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A5CDCA1-A653-4693-835E-3C9826632A11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8E26DF8-4096-4E07-A26E-02FFD4928BFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8E26DF8-4096-4E07-A26E-02FFD4928BFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8E26DF8-4096-4E07-A26E-02FFD4928BFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8E26DF8-4096-4E07-A26E-02FFD4928BFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{385BF8BF-FF15-4137-91A5-66133D299199}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{385BF8BF-FF15-4137-91A5-66133D299199}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{385BF8BF-FF15-4137-91A5-66133D299199}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{385BF8BF-FF15-4137-91A5-66133D299199}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

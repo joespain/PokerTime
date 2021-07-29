@@ -1,0 +1,47 @@
+﻿@page "/usersoverview"
+
+<h3>All Users</h3>
+
+@if(AllUsers == null)
+{
+    <p>Loading all users...</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in AllUsers)
+            {
+            <tr>
+                <td></td>
+                <td>@user.Id</td>
+                <td>@user.Name</td>
+                <td>@user.Email</td>
+                <td>@user.Phone</td>
+                <td>
+                    <a class="btn btn-primary table-btn" href="@($"user/{user.Id}")">
+                        <span class="oi oi-pencil" aria-hidden="true"></span> Edit User
+                    </a>
+                </td>
+                <td>
+                    <a class="btn btn-primary table-btn" href="@($"user/{user.Id}/structures")">
+                        <span class="oi oi-pencil" aria-hidden="true"></span> Structures
+                    </a>
+                </td>
+                <td></td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}

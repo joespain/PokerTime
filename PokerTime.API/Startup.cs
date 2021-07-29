@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PokerTime.API.Data;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace PokerTime.API
 {
@@ -32,16 +33,32 @@ namespace PokerTime.API
 
             services.AddCors(options =>
             {
-                options.AddPolicy("Open",
-                    builder =>
+                options.AddPolicy("default", policy =>
                     {
-                        builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader();
+                        policy.WithOrigins("https://localhost:5015")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
                     });
             });
 
             services.AddControllers();
+
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer",
+                options =>
+                {
+                    options.Authority = "https://localhost:5001";
+                    options.Audience = "pokertimeapi";
+                });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("api-access", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireClaim("scope", "api-access");
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,7 +77,7 @@ namespace PokerTime.API
 
             app.UseRouting();
             app.UseAuthentication();
-            app.UseCors("Open");
+            app.UseCors("default");
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -14,6 +15,7 @@ namespace PokerTime.API.Controllers
 {
     [Route("api/users/{hostId:Guid}/tournamentstructures")]
     [ApiController]
+    [Authorize("api-access")]
     public class TournamentStructureController : Controller
     {
         private readonly IPTRepository _repository;

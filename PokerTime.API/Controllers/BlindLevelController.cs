@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -15,6 +16,7 @@ namespace PokerTime.API.Controllers
 
         [ApiController]
         [Route("api/Users/{HostId:Guid}/TournamentStructures/{structureId:int}/BlindLevels")]
+        [Authorize("api-access")]
         public class BlindLevelController : ControllerBase
         {
             private readonly IPTRepository _repository;
