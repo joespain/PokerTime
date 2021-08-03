@@ -21,25 +21,25 @@ namespace PokerTime.App.Services
         }
 
 
-        public async Task<IEnumerable<TournamentStructure>> GetStructures(Guid hostId)
+        public async Task<IEnumerable<TournamentStructure>> GetStructures()
         {
             return await JsonSerializer.DeserializeAsync<IEnumerable<TournamentStructure>>(
-                await _httpClient.GetStreamAsync($"api/users/{hostId}/tournamentstructures"),
+                await _httpClient.GetStreamAsync($"api/tournamentstructures"),
                 new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<TournamentStructure> GetStructure(int structureId, Guid hostId)
+        public async Task<TournamentStructure> GetStructure(int structureId)
         {
             return await JsonSerializer.DeserializeAsync<TournamentStructure>(
-                await _httpClient.GetStreamAsync($"api/users/{hostId}/tournamentstructures/{structureId}"),
+                await _httpClient.GetStreamAsync($"api/tournamentstructures/{structureId}"),
                 new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<TournamentStructure> AddStructure(TournamentStructure structure, Guid hostId)
+        public async Task<TournamentStructure> AddStructure(TournamentStructure structure)
         {
             var structureJson = new StringContent(JsonSerializer.Serialize(structure), Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync($"api/users/{hostId}/tournamentstructures/", structureJson);
+            var response = await _httpClient.PostAsync($"api/tournamentstructures/", structureJson);
 
             if (response.IsSuccessStatusCode)
             {
@@ -52,12 +52,12 @@ namespace PokerTime.App.Services
         {
             var structureJson = new StringContent(JsonSerializer.Serialize(structure), Encoding.UTF8, "application/json");
 
-            await _httpClient.PutAsync($"api/users/{structure.HostId}/tournamentstructures/{structure.Id}", structureJson);
+            await _httpClient.PutAsync($"api/tournamentstructures/{structure.Id}", structureJson);
         }
 
-        public async Task DeleteStructure(int structureId, Guid hostId)
+        public async Task DeleteStructure(int structureId)
         {
-            await _httpClient.DeleteAsync($"api/users/{hostId}/tournamentstructures/{structureId}");
+            await _httpClient.DeleteAsync($"api/tournamentstructures/{structureId}");
         }
     }
 }

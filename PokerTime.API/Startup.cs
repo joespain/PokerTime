@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using PokerTime.API.Data;
 using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace PokerTime.API
 {
@@ -15,6 +16,7 @@ namespace PokerTime.API
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         }
 
         public IConfiguration Configuration { get; }

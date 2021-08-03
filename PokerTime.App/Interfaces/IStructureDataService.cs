@@ -7,10 +7,10 @@ namespace PokerTime.App.Interfaces
 {
     public interface IStructureDataService
     {
-        Task<TournamentStructure> AddStructure(TournamentStructure structure, Guid hostId);
-        Task DeleteStructure(int structureId, Guid hostId);
-        Task<TournamentStructure> GetStructure(int structureId, Guid hostId);
-        Task<IEnumerable<TournamentStructure>> GetStructures(Guid hostId);
+        Task<TournamentStructure> AddStructure(TournamentStructure structure);
+        Task DeleteStructure(int structureId);
+        Task<TournamentStructure> GetStructure(int structureId);
+        Task<IEnumerable<TournamentStructure>> GetStructures();
         Task UpdateStructure(TournamentStructure structure);
     }
 }

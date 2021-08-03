@@ -8,9 +8,9 @@ namespace PokerTime.App.Interfaces
     public interface IHostDataService
     {
         Task<Host> AddHost(Host host);
-        Task DeleteHost(Guid Id);
+        Task DeleteHost();
         Task<IEnumerable<Host>> GetAllHosts();
-        Task<Host> GetHost(Guid Id);
+        Task<Host> GetHost();
         Task UpdateHost(Host host);
     }
 }

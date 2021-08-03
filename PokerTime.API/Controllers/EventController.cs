@@ -15,9 +15,9 @@ namespace PokerTime.API.Controllers
 {
 
     [ApiController]
-    [Route("api/users/{hostId:Guid}/events")]
+    [Route("api/events")]
     [Authorize("api-access")]
-    public class EventController : ControllerBase
+    public class EventController : PokerTimeControllerBase
     {
         private readonly IPTRepository _repository;
         private readonly IMapper _mapper;
@@ -29,11 +29,11 @@ namespace PokerTime.API.Controllers
             _linkGenerator = linkGenerator;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EventModel>>> GetEvents(Guid hostId)
+        public async Task<ActionResult<IEnumerable<EventModel>>> GetEvents()
         {
             try
             {
-                var events = await _repository.GetAllEventsByHostIdAsync(hostId);
+                var events = await _repository.GetAllEventsByHostIdAsync(getHostId());
 
                 if (events == null)
                 {
@@ -66,7 +66,7 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<EventModel>> AddEvent(Guid hostId, [FromBody] EventModel model)
+        public async Task<ActionResult<EventModel>> AddEvent([FromBody] EventModel model)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace PokerTime.API.Controllers
 
                 if (await _repository.SaveChangesAsync())
                 {
-                    return Created($"api/users/{hostId}/events/{newEvent.Id}", 
+                    return Created($"api/events/{newEvent.Id}", 
                         _mapper.Map<EventModel>(newEvent));
                 }
                 else

@@ -18,25 +18,25 @@ namespace PokerTime.App.Services
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<Invitee>> GetInvitees(Guid hostId)
+        public async Task<IEnumerable<Invitee>> GetInvitees()
         {
             return await JsonSerializer.DeserializeAsync<IEnumerable<Invitee>>(
-                await _httpClient.GetStreamAsync($"api/users/{hostId}/invitees"),
+                await _httpClient.GetStreamAsync($"api/invitees"),
                 new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<Invitee> GetInvitee(int inviteeId, Guid hostId)
+        public async Task<Invitee> GetInvitee(int inviteeId)
         {
             return await JsonSerializer.DeserializeAsync<Invitee>(
-                await _httpClient.GetStreamAsync($"api/users/{hostId}/invitees/{inviteeId}"),
+                await _httpClient.GetStreamAsync($"api/invitees/{inviteeId}"),
                 new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<Invitee> AddInvitee(Invitee invitee, Guid hostId)
+        public async Task<Invitee> AddInvitee(Invitee invitee)
         {
             var structureJson = new StringContent(JsonSerializer.Serialize(invitee), Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync($"api/users/{hostId}/invitees/", structureJson);
+            var response = await _httpClient.PostAsync($"api/invitees/", structureJson);
 
             if (response.IsSuccessStatusCode)
             {
@@ -49,12 +49,12 @@ namespace PokerTime.App.Services
         {
             var structureJson = new StringContent(JsonSerializer.Serialize(invitee), Encoding.UTF8, "application/json");
 
-            await _httpClient.PutAsync($"api/users/{invitee.HostId}/invitees/{invitee.Id}", structureJson);
+            await _httpClient.PutAsync($"api/invitees/{invitee.Id}", structureJson);
         }
 
-        public async Task DeleteInvitee(int inviteeId, Guid hostId)
+        public async Task DeleteInvitee(int inviteeId)
         {
-            await _httpClient.DeleteAsync($"api/users/{hostId}/invitees/{inviteeId}");
+            await _httpClient.DeleteAsync($"api/invitees/{inviteeId}");
         }
     }
 }

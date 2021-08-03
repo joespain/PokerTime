@@ -7,10 +7,10 @@ namespace PokerTime.App.Interfaces
 {
     public interface IBlindLevelDataService
     {
-        Task<BlindLevel> AddBlindLevel(BlindLevel blindLevel, Guid hostId);
-        Task DeleteStructure(BlindLevel blindLevel, Guid hostId);
-        Task<BlindLevel> GetBlindLevel(int structureId, Guid hostId);
-        Task<IEnumerable<BlindLevel>> GetBlindLevels(int structureId, Guid hostId);
-        Task UpdateBlindLevel(BlindLevel blindLevel, Guid hostId);
+        Task<BlindLevel> AddBlindLevel(BlindLevel blindLevel);
+        Task DeleteStructure(BlindLevel blindLevel);
+        Task<BlindLevel> GetBlindLevel(int structureId);
+        Task<IEnumerable<BlindLevel>> GetBlindLevels(int structureId);
+        Task UpdateBlindLevel(BlindLevel blindLevel);
     }
 }

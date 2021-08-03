@@ -7,10 +7,10 @@ namespace PokerTime.App.Interfaces
 {
     public interface IEventDataService
     {
-        Task<Event> AddEvent(Event newEvent, Guid hostId);
-        Task DeleteEvent(int eventId, Guid hostId);
-        Task<Event> GetEvent(int eventId, Guid hostId);
-        Task<IEnumerable<Event>> GetEvents(Guid hostId);
+        Task<Event> AddEvent(Event newEvent);
+        Task DeleteEvent(int eventId);
+        Task<Event> GetEvent(int eventId);
+        Task<IEnumerable<Event>> GetEvents();
         Task UpdateEvent(Event updateEvent);
     }
 }

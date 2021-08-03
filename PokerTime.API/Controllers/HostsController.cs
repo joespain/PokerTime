@@ -14,9 +14,9 @@ using System.Threading.Tasks;
 namespace PokerTime.API.Controllers
 {
     [ApiController]
-    [Route("api/users")]
+    [Route("api/hosts")]
     [Authorize("api-access")]
-    public class HostsController : ControllerBase
+    public class HostsController : PokerTimeControllerBase
     {
         private readonly IPTRepository _repository;
         private readonly IMapper _mapper;
@@ -28,32 +28,32 @@ namespace PokerTime.API.Controllers
             _linkGenerator = linkGenerator;
         }
 
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<HostModel>>> GetHosts()
+        //{
+        //    try
+        //    {
+        //        var users = await _repository.GetAllHosts();
+
+        //        return _mapper.Map<IEnumerable<HostModel>>(users).ToList();
+        //    }
+        //    catch(Exception e)
+        //    {
+        //        //replace with real error code
+        //        return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
+        //    }
+        //}
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HostModel>>> GetHosts()
+        public async Task<ActionResult<HostModel>> GetHost()
         {
             try
             {
-                var users = await _repository.GetAllHosts();
-
-                return _mapper.Map<IEnumerable<HostModel>>(users).ToList();
-            }
-            catch(Exception e)
-            {
-                //replace with real error code
-                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
-            }
-        }
-
-        [HttpGet("{hostId:Guid}")]
-        public async Task<ActionResult<HostModel>> GetHost(Guid hostId)
-        {
-            try
-            {
-                var result = await _repository.GetHostByIdAsync(hostId,true,true,true);
+                var result = await _repository.GetHostByIdAsync(getHostId());
 
                 if(result == null)
                 {
-                    return BadRequest("User does not exist.");
+                    return BadRequest("Host does not exist.");
                 }
 
                 return _mapper.Map<HostModel>(result);
@@ -65,39 +65,40 @@ namespace PokerTime.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<ActionResult<HostModel>> AddHost(HostModel model)
-        {
-            try
-            {
-                var newHost = _mapper.Map<Host>(model);
+        //[HttpPost]
+        //public async Task<ActionResult<HostModel>> AddHost(HostModel model)
+        //{
+        //    try
+        //    {
+        //        var newHost = _mapper.Map<Host>(model);
 
-                _repository.Add(newHost);
+        //        _repository.Add(newHost);
                 
-                if (await _repository.SaveChangesAsync())
-                {
-                    //Figure out why this linkgenerator isn't working.
-                    //var location = _linkGenerator.GetPathByAction(action: "Get", controller: "Users", values: new { userId = newUser.Id });
+        //        if (await _repository.SaveChangesAsync())
+        //        {
+        //            //Figure out why this linkgenerator isn't working.
+        //            //var location = _linkGenerator.GetPathByAction(action: "Get", controller: "Users", values: new { userId = newUser.Id });
 
-                    //if (location == null) return BadRequest("Error saving user, location");
+        //            //if (location == null) return BadRequest("Error saving user, location");
 
-                    return Created($"/users/{newHost.Id}", _mapper.Map<HostModel>(newHost));
-                }
-            }
-            catch (Exception e)
-            {
-                //replace with real error code
-                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
-            }
-            return BadRequest();
-        }
+        //            //Returning an empty string for the host location.
+        //            return Created("", _mapper.Map<HostModel>(newHost));
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        //replace with real error code
+        //        return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
+        //    }
+        //    return BadRequest();
+        //}
 
-        [HttpPut("{hostId:Guid}")]
-        public async Task<ActionResult<HostModel>> UpdateHost(Guid hostId, [FromBody] HostModel newHost)
+        [HttpPut]
+        public async Task<ActionResult<HostModel>> UpdateHost([FromBody] HostModel newHost)
         {
             try
             {
-                var oldHost = await _repository.GetHostByIdAsync(hostId);
+                var oldHost = await _repository.GetHostByIdAsync(newHost.Id);
                 if (oldHost == null)
                 {
                     return BadRequest("Host to update was not found.");
@@ -121,19 +122,19 @@ namespace PokerTime.API.Controllers
             }
         }
 
-        [HttpDelete("{hostId:Guid}")]
-        public async Task<ActionResult> DeleteHost(Guid hostId)
+        [HttpDelete()]
+        public async Task<ActionResult> DeleteHost()
         {
             try
             {
 
-                if(await _repository.DeleteHostByIdAsync(hostId))
+                if(await _repository.DeleteHostByIdAsync(getHostId()))
                 {
                     return NoContent();  //Success
                 }
                 else
                 {
-                    return BadRequest("Error deleting User.");
+                    return BadRequest("Error deleting host.");
                 }
                 
             }

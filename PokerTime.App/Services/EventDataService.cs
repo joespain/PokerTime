@@ -18,25 +18,25 @@ namespace PokerTime.App.Services
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<Event>> GetEvents(Guid hostId)
+        public async Task<IEnumerable<Event>> GetEvents()
         {
             return await JsonSerializer.DeserializeAsync<IEnumerable<Event>>(
-                await _httpClient.GetStreamAsync($"api/users/{hostId}/events"),
+                await _httpClient.GetStreamAsync($"api/events"),
                 new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<Event> GetEvent(int eventId, Guid hostId)
+        public async Task<Event> GetEvent(int eventId)
         {
             return await JsonSerializer.DeserializeAsync<Event>(
-                await _httpClient.GetStreamAsync($"api/users/{hostId}/events/{eventId}"),
+                await _httpClient.GetStreamAsync($"api/events/{eventId}"),
                 new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<Event> AddEvent(Event newEvent, Guid hostId)
+        public async Task<Event> AddEvent(Event newEvent)
         {
             var structureJson = new StringContent(JsonSerializer.Serialize(newEvent), Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync($"api/users/{hostId}/events/", structureJson);
+            var response = await _httpClient.PostAsync($"api/events/", structureJson);
 
             if (response.IsSuccessStatusCode)
             {
@@ -49,12 +49,12 @@ namespace PokerTime.App.Services
         {
             var structureJson = new StringContent(JsonSerializer.Serialize(updateEvent), Encoding.UTF8, "application/json");
 
-            await _httpClient.PutAsync($"api/users/{updateEvent.HostId}/events/{updateEvent.Id}", structureJson);
+            await _httpClient.PutAsync($"api/events/{updateEvent.Id}", structureJson);
         }
 
-        public async Task DeleteEvent(int eventId, Guid hostId)
+        public async Task DeleteEvent(int eventId)
         {
-            await _httpClient.DeleteAsync($"api/users/{hostId}/events/{eventId}");
+            await _httpClient.DeleteAsync($"api/events/{eventId}");
         }
     }
 }

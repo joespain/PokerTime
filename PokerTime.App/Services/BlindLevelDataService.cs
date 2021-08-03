@@ -19,25 +19,25 @@ namespace PokerTime.App.Services
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<BlindLevel>> GetBlindLevels(int structureId, Guid hostId)
+        public async Task<IEnumerable<BlindLevel>> GetBlindLevels(int structureId)
         {
             return await JsonSerializer.DeserializeAsync<IEnumerable<BlindLevel>>(
-                await _httpClient.GetStreamAsync($"api/users/{hostId}/tournamentstructures/{structureId}/blindlevels"),
+                await _httpClient.GetStreamAsync($"api/tournamentstructures/{structureId}/blindlevels"),
                 new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<BlindLevel> GetBlindLevel(int structureId, Guid hostId)
+        public async Task<BlindLevel> GetBlindLevel(int structureId)
         {
             return await JsonSerializer.DeserializeAsync<BlindLevel>(
-                await _httpClient.GetStreamAsync($"api/users/{hostId}/tournamentstructures/{structureId}"),
+                await _httpClient.GetStreamAsync($"api/tournamentstructures/{structureId}"),
                 new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<BlindLevel> AddBlindLevel(BlindLevel blindLevel, Guid hostId)
+        public async Task<BlindLevel> AddBlindLevel(BlindLevel blindLevel)
         {
             var blindLevelJson = new StringContent(JsonSerializer.Serialize(blindLevel), Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync($"api/users/{hostId}/tournamentstructures/{blindLevel.TournamentStructureId}/blindlevels", blindLevelJson);
+            var response = await _httpClient.PostAsync($"api/tournamentstructures/{blindLevel.TournamentStructureId}/blindlevels", blindLevelJson);
 
             if (response.IsSuccessStatusCode)
             {
@@ -46,16 +46,16 @@ namespace PokerTime.App.Services
             return null;
         }
 
-        public async Task UpdateBlindLevel(BlindLevel blindLevel, Guid hostId)
+        public async Task UpdateBlindLevel(BlindLevel blindLevel)
         {
             var structureJson = new StringContent(JsonSerializer.Serialize(blindLevel), Encoding.UTF8, "application/json");
 
-            await _httpClient.PutAsync($"api/users/{hostId}/tournamentstructures/{blindLevel.TournamentStructureId}/blindlevels/{blindLevel.Id}", structureJson);
+            await _httpClient.PutAsync($"api/tournamentstructures/{blindLevel.TournamentStructureId}/blindlevels/{blindLevel.Id}", structureJson);
         }
 
-        public async Task DeleteStructure(BlindLevel blindLevel, Guid hostId)
+        public async Task DeleteStructure(BlindLevel blindLevel)
         {
-            await _httpClient.DeleteAsync($"api/Users/{hostId}/TournamentStructures/{blindLevel.TournamentStructureId}/blindlevels/{blindLevel.Id}");
+            await _httpClient.DeleteAsync($"api/TournamentStructures/{blindLevel.TournamentStructureId}/blindlevels/{blindLevel.Id}");
         }
     }
 }

@@ -14,9 +14,9 @@ using System.Threading.Tasks;
 namespace PokerTime.API.Controllers
 {
     [ApiController]
-    [Route("api/users/{hostId:Guid}/invitees")]
+    [Route("api/invitees")]
     [Authorize("api-access")]
-    public class InviteeController : ControllerBase
+    public class InviteeController : PokerTimeControllerBase
     {
         private readonly IPTRepository _repository;
         private readonly IMapper _mapper;
@@ -29,11 +29,11 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<InviteeModel>>> GetInvitees(Guid hostId)
+        public async Task<ActionResult<IEnumerable<InviteeModel>>> GetInvitees()
         {
             try
             {
-                var invitees = await _repository.GetAllInviteesByHostIdAsync(hostId);
+                var invitees = await _repository.GetAllInviteesByHostIdAsync(getHostId());
 
                 return _mapper.Map<IEnumerable<InviteeModel>>(invitees).ToList();
             }
@@ -61,16 +61,16 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<InviteeModel>> AddInvitee(Guid hostId, [FromBody] InviteeModel model)
+        public async Task<ActionResult<InviteeModel>> AddInvitee([FromBody] InviteeModel model)
         {
             try
             {
                 //Make sure the host exists
-                var host = await _repository.GetHostByIdAsync(hostId);
+                var host = await _repository.GetHostByIdAsync(getHostId());
 
                 if (host == null) return BadRequest("Host not found.");
 
-                model.HostId = hostId;
+                model.HostId = host.Id;
 
                 var newInvitee = _mapper.Map<Invitee>(model);
 
@@ -81,7 +81,7 @@ namespace PokerTime.API.Controllers
                     //var location = _linkGenerator.GetPathByAction(HttpContext, "Get",
                     //"Invitees",
                     //values: new { userId, newInvitee.Id});
-                    return Created($"api/users/{hostId}/invitees/{newInvitee.Id}", _mapper.Map<InviteeModel>(newInvitee));
+                    return Created($"api/invitees/{newInvitee.Id}", _mapper.Map<InviteeModel>(newInvitee));
                 }
                 else
                 {

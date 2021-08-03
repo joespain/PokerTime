@@ -24,10 +24,10 @@ namespace PokerTime.App.Services
                 await _httpClient.GetStreamAsync($"api/users"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<Host> GetHost(Guid hostId)
+        public async Task<Host> GetHost()
         {
             return await JsonSerializer.DeserializeAsync<Host>(
-                await _httpClient.GetStreamAsync($"api/users/{hostId}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                await _httpClient.GetStreamAsync($"api/hosts"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
         public async Task<Host> AddHost(Host host)
@@ -48,12 +48,12 @@ namespace PokerTime.App.Services
         {
             var userJson = new StringContent(JsonSerializer.Serialize(host), Encoding.UTF8, "application/json");
 
-            await _httpClient.PutAsync($"api/users/{host.Id}", userJson);
+            await _httpClient.PutAsync($"api/users/", userJson);
         }
 
-        public async Task DeleteHost(Guid hostId)
+        public async Task DeleteHost()
         {
-            await _httpClient.DeleteAsync($"api/users/{hostId}");
+            await _httpClient.DeleteAsync($"api/hosts");
         }
 
     }
