@@ -14,40 +14,67 @@
                 <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => TournamentStructure.Name)" />
             </div>
 
+            <table>
+                <thead>
+                    <tr>
+                        <th>Level #</th>
+                        <th>Small Blind</th>
+                        <th>Big Blind</th>
+                        <th>Ante</th>
+                        <th>Minutes</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                
+
+                @foreach (var blindLevel in BlindLevels)
+                {
+
+            <tr>
+                <td>
+                    @(BlindLevels.IndexOf(blindLevel) + 1)
+                </td>
+                <td>
+                    @*<label for="SmallBlind">Small Blind: </label>*@
+                    <InputNumber id="SmallBlind" @bind-Value="@blindLevel.SmallBlind" placeholder="0" class="form-control"></InputNumber>
+                    <ValidationMessage For="@(() => blindLevel.SmallBlind)" />
+                </td>
+
+                <td>
+                    @*<label for="BigBlind">Big Blind: </label>*@
+                    <InputNumber id="BigBlind" @bind-Value="@blindLevel.BigBlind" placeholder="0" class="form-control"></InputNumber>
+                    <ValidationMessage For="@(() => blindLevel.BigBlind)" />
+                </td>
+
+                <td>
+                    @*<label for="Ante">Ante: </label>*@
+                    <InputNumber id="Ante" @bind-Value="@blindLevel.Ante" placeholder="0" class="form-control"></InputNumber>
+                    <ValidationMessage For="@(() => blindLevel.Ante)" />
+                </td>
+
+                <td>
+                    @*<label for="Minutes">Time (minutes): </label>*@
+                    <InputNumber id="Minutes" @bind-Value="@blindLevel.Minutes" placeholder="0" class="form-control"></InputNumber>
+                    <ValidationMessage For="@(() => blindLevel.Minutes)" />
+                </td>
+                <td><a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddBlindLevel(blindLevel))">Add</a></td>
+                <td><a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => DeleteBlindLevel(blindLevel))">Delete</a></td>
+            </tr>
+
+                        
+
+                    
+                }
 
 
-            @foreach (var blindLevel in BlindLevels)
-            {
-                //<EditForm Model="@blindLevel">
-                <div class="form-group row">
-                    <label for="SmallBlind" class="col-sm-3">Small Blind: </label>
-                    <InputNumber id="SmallBlind" @bind-Value="@blindLevel.SmallBlind" placeholder="0"></InputNumber>
-                    <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => blindLevel.SmallBlind)" />
-
-                    <label for="BigBlind" class="col-sm-3">Big Blind: </label>
-                    <InputNumber id="BigBlind" @bind-Value="@blindLevel.BigBlind" placeholder="0"></InputNumber>
-                    <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => blindLevel.BigBlind)" />
-
-                    <label for="Ante" class="col-sm-3">Ante: </label>
-                    <InputNumber id="Ante" @bind-Value="@blindLevel.Ante" placeholder="0"></InputNumber>
-                    <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => blindLevel.Ante)" />
-
-                    <label for="Minutes" class="col-sm-3">Time (minutes): </label>
-                    <InputNumber id="Minutes" @bind-Value="@blindLevel.Minutes" placeholder="0"></InputNumber>
-                    <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => blindLevel.Minutes)" />
-                </div>
-                //</EditForm>
-
-
-
-            }
+            </table>
             <div class="form-group row">
-                <a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddBlindLevel())">
+                <a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddBlindLevel(new PokerTime.Shared.Entities.BlindLevel()))">
                     Add Blind Level
                 </a>
             </div>
         </EditForm>
-        <button @onclick="HandleValidSubmit" class="btn btn-primary edit-btn">Save</button>
+        <button @onclick="@HandleValidSubmit" class="btn btn-primary edit-btn">Save</button>
 
         <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToStructures">Cancel</a>
 

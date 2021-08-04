@@ -31,7 +31,7 @@ namespace PokerTime.App.Pages
             try
             {
                 //set the current host.
-                Host = await HostDataService.GetHost(Guid.Parse("48b51074-220e-4275-b3f6-ed41b8319832"));
+                Host = await HostDataService.GetHost();
                 HostId = Host.Id;
 
                 Saved = false;
@@ -59,7 +59,7 @@ namespace PokerTime.App.Pages
 
         protected async Task DeleteHost()
         {
-            await HostDataService.DeleteHost(Host.Id);
+            await HostDataService.DeleteHost();
 
             StatusClass = "alert-success";
             Message = "User deleted successfully.";
@@ -67,7 +67,7 @@ namespace PokerTime.App.Pages
         }
         protected void NavigateToOverview()
         {
-            NavigationManager.NavigateTo("/users");
+            NavigationManager.NavigateTo("/hosts");
         }
     }
 }

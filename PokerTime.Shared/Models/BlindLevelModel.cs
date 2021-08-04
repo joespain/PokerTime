@@ -8,13 +8,13 @@ namespace PokerTime.Shared.Models
         [Required]
         public int TournamentStructureId { get; set; }
         [Required]
-        public int LevelNumber { get; set; }
-        [Required]
         public int SmallBlind { get; set; }
         [Required]
         public int BigBlind { get; set; }
         public int Ante { get; set; }
         [Required]
         public int Minutes { get; set; }
+        [Required]
+        public int SequenceNum { get; set; }
     }
 }

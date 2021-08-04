@@ -37,12 +37,12 @@ namespace PokerTime.App.Pages
             try
             {
                 //Set the current host
-                Host = await UserDataService.GetHost(Guid.Parse("48b51074-220e-4275-b3f6-ed41b8319832"));
+                Host = await UserDataService.GetHost();
                 HostId = Host.Id;
 
                 Saved = false;
                 
-                TournamentStructures = (await StructureDataService.GetStructures(HostId)).ToList();
+                TournamentStructures = (await StructureDataService.GetStructures()).ToList();
 
                 if(TournamentStructures == null)
                 {
@@ -57,7 +57,7 @@ namespace PokerTime.App.Pages
 
         protected async Task NewStructure()
         {
-            var newStructure = await StructureDataService.AddStructure(new TournamentStructure() { Name = "New Tournament Structure"}, HostId);
+            var newStructure = await StructureDataService.AddStructure(new TournamentStructure() { Name = "New Tournament Structure"});
 
             NavigationManager.NavigateTo($"structures/{newStructure.Id}");
         }
@@ -70,7 +70,7 @@ namespace PokerTime.App.Pages
 
         protected void Delete(int structureId)
         {
-            StructureDataService.DeleteStructure(structureId, HostId);
+            StructureDataService.DeleteStructure(structureId);
         }
 
     }

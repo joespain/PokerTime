@@ -8,5 +8,6 @@
         public int BigBlind { get; set; }
         public int Ante { get; set; }
         public int Minutes { get; set; }
+        public int SequenceNum { get; set; }
     }
 }

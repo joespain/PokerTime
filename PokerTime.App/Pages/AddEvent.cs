@@ -57,25 +57,22 @@ namespace PokerTime.App.Pages
 
                 Saved = false;
 
-                Host = await UserDataService.GetHost(Guid.Parse("48b51074-220e-4275-b3f6-ed41b8319832"));
+                Host = await UserDataService.GetHost();
                 HostId = Host.Id;
 
                 if(EventId != 0)
                 {
-                    Event = await EventDataService.GetEvent(EventId, HostId);
+                    Event = await EventDataService.GetEvent(EventId);
                 }
 
-                TournamentStructures = (await StructureDataService.GetStructures(HostId)).ToList();
+                TournamentStructures = (await StructureDataService.GetStructures()).ToList();
 
                 if(TournamentStructures == null)
                 {
                     //Error, must add new structure
                 }
 
-                
-
-
-                Invitees = (await InviteeDataService.GetInvitees(HostId)).ToList();
+                Invitees = (await InviteeDataService.GetInvitees()).ToList();
 
                 if(Invitees == null)
                 {
@@ -103,7 +100,7 @@ namespace PokerTime.App.Pages
                 Event.HostId = HostId;
                 if (Event.Id == 0)
                 {
-                    Event = await EventDataService.AddEvent(Event, HostId);
+                    Event = await EventDataService.AddEvent(Event);
                 }
                 else
                 {

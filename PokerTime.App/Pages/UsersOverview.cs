@@ -27,7 +27,7 @@ namespace PokerTime.App.Pages
         {
             try
             {
-                AllUsers = (await UserDataService.GetAllHosts()).ToList();
+                //AllUsers = (await UserDataService.GetAllHosts()).ToList();
             }
             catch (Exception e)
             {
