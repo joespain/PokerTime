@@ -49,7 +49,7 @@
                 <td>
                     @*<label for="Ante">Ante: </label>*@
                     <InputNumber id="Ante" @bind-Value="@blindLevel.Ante" placeholder="0" class="form-control"></InputNumber>
-                    <ValidationMessage For="@(() => blindLevel.Ante)" />
+                    @*<ValidationMessage For="@(() => blindLevel.Ante)" />*@
                 </td>
 
                 <td>
@@ -69,7 +69,7 @@
 
             </table>
             <div class="form-group row">
-                <a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddBlindLevel(new PokerTime.Shared.Entities.BlindLevel()))">
+                <a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddBlindLevel())">
                     Add Blind Level
                 </a>
             </div>

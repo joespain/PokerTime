@@ -13,7 +13,6 @@ namespace PokerTime.Shared.Entities
         public string Email { get; set; }
         public string Phone { get; set; }
 
-        public ICollection<Event> Events { get;set; }
         public Guid HostId { get; set; }
     }
 }

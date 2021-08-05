@@ -27,9 +27,10 @@ namespace PokerTime.App.Services
 
         public async Task<Event> GetEvent(int eventId)
         {
-            return await JsonSerializer.DeserializeAsync<Event>(
+            var gottenEvent = await JsonSerializer.DeserializeAsync<Event>(
                 await _httpClient.GetStreamAsync($"api/events/{eventId}"),
                 new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            return gottenEvent;
         }
 
         public async Task<Event> AddEvent(Event newEvent)
@@ -40,7 +41,10 @@ namespace PokerTime.App.Services
 
             if (response.IsSuccessStatusCode)
             {
-                return await JsonSerializer.DeserializeAsync<Event>(await response.Content.ReadAsStreamAsync());
+                var returnedEvent = await JsonSerializer.DeserializeAsync<Event>(await response.Content.ReadAsStreamAsync(), 
+                    new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+
+                return returnedEvent;
             }
             return null;
         }

@@ -18,14 +18,9 @@ namespace PokerTime.API.Controllers
     [Authorize("api-access")]
     public class InviteeController : PokerTimeControllerBase
     {
-        private readonly IPTRepository _repository;
-        private readonly IMapper _mapper;
-        private readonly LinkGenerator _linkGenerator;
-        public InviteeController(IPTRepository repository, IMapper mapper, LinkGenerator linkGenerator)
+        public InviteeController(IPTRepository repository, IMapper mapper, LinkGenerator linkGenerator) : base(repository, mapper, linkGenerator)
         {
-            _repository = repository;
-            _mapper = mapper;
-            _linkGenerator = linkGenerator;
+
         }
 
         [HttpGet]

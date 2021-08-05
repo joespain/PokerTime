@@ -16,6 +16,7 @@ namespace PokerTime.App
             builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddScoped<CustomAuthorizationMessageHandler>();
+            builder.Services.AddSingleton<AppDataService>();
 
             //Add Data Services
             builder.Services.AddHttpClient<IBlindLevelDataService, BlindLevelDataService>(client =>
@@ -42,6 +43,8 @@ namespace PokerTime.App
             {
                 client.BaseAddress = new Uri("https://localhost:44328");
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
+
+            
 
             //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 

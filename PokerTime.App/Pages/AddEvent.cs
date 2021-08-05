@@ -26,6 +26,7 @@ namespace PokerTime.App.Pages
         //Event
         [Parameter]
         public int EventId { get; set; }
+        public int NewEventId { get; set; }
         public Event Event { get; set; } = new Event();
 
         //Services
@@ -54,9 +55,6 @@ namespace PokerTime.App.Pages
         {
             try
             {
-
-                Saved = false;
-
                 Host = await UserDataService.GetHost();
                 HostId = Host.Id;
 
@@ -64,10 +62,14 @@ namespace PokerTime.App.Pages
                 {
                     Event = await EventDataService.GetEvent(EventId);
                 }
+                else
+                {
+                    Event = new Event();
+                }
 
                 TournamentStructures = (await StructureDataService.GetStructures()).ToList();
 
-                if(TournamentStructures == null)
+                if (TournamentStructures == null)
                 {
                     //Error, must add new structure
                 }
@@ -95,9 +97,15 @@ namespace PokerTime.App.Pages
         {
             try
             {
+                Event.Date = DateTime.Today;
                 Event.TournamentStructureId = TournamentStructureId;
-                Event.Invitees = Invitees;
+                
                 Event.HostId = HostId;
+                Event.EventLinkId = Guid.NewGuid();
+
+                await UpdateInvitees();
+                await EmailInvitees();
+
                 if (Event.Id == 0)
                 {
                     Event = await EventDataService.AddEvent(Event);
@@ -106,11 +114,34 @@ namespace PokerTime.App.Pages
                 {
                     await EventDataService.UpdateEvent(Event);
                 }
+                BeginEvent();
             }
             catch(Exception e)
             {
                 Logger.LogError(e.Message);
             }
+        }
+
+        public async Task UpdateInvitees()
+        {
+            foreach (var invitee in Invitees)
+            {
+                if (invitee.Id == 0)
+                {
+                    invitee.HostId = HostId;
+                    await InviteeDataService.AddInvitee(invitee);
+                }
+                else
+                {
+                    await InviteeDataService.UpdateInvitee(invitee);
+                }
+            }
+        }
+
+        public async Task EmailInvitees()
+        {
+            //Email invites
+            
         }
 
         public async Task HandleInvalidSubmit()
@@ -121,6 +152,16 @@ namespace PokerTime.App.Pages
         public void NavigateToStructure()
         {
 
+        }
+
+        public void RemoveInvitee(Invitee invitee)
+        {
+            Invitees.Remove(invitee);
+        }
+
+        public void BeginEvent()
+        {
+            NavigationManager.NavigateTo($"/events/{Event.Id}/{Event.EventLinkId}");
         }
     }
 }

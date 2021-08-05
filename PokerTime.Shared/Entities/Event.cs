@@ -8,9 +8,9 @@ namespace PokerTime.Shared.Entities
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
+        public Guid EventLinkId { get; set; }
 
         public Guid HostId { get; set; }
         public int TournamentStructureId { get; set; }
-        public ICollection<Invitee> Invitees { get; set; }
     }
 }

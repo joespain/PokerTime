@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PokerTime.API.Controllers
 {
-    public class PokerTimeControllerBase : ControllerBase
+    public abstract class PokerTimeControllerBase : ControllerBase
     {
         protected readonly IPTRepository _repository;
         protected readonly IMapper _mapper;

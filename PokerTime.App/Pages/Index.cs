@@ -9,12 +9,11 @@ namespace PokerTime.App.Pages
         [Inject]
         public IHostDataService HostDataService { get; set; }
 
-        //public List<Host> Users { get; set; }
 
 
         protected override async Task OnInitializedAsync()
         {
-            //Users = (await UserDataService.GetAllUsers()).ToList();
+
         }
 
     }

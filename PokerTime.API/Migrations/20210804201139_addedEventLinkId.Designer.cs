@@ -3,21 +3,38 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PokerTime.API.Data;
 
 namespace PokerTime.API.Migrations
 {
     [DbContext(typeof(PTContext))]
-    partial class PTContextModelSnapshot : ModelSnapshot
+    [Migration("20210804201139_addedEventLinkId")]
+    partial class addedEventLinkId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("EventInvitee", b =>
+                {
+                    b.Property<int>("EventsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InviteesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EventsId", "InviteesId");
+
+                    b.HasIndex("InviteesId");
+
+                    b.ToTable("EventInvitee");
+                });
 
             modelBuilder.Entity("PokerTime.Shared.Entities.BlindLevel", b =>
                 {
@@ -105,7 +122,7 @@ namespace PokerTime.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("bde4a64e-0f2e-4832-812c-299ba52ede6b"),
+                            Id = new Guid("1cb984ea-96b7-4a35-8966-96786b385534"),
                             Email = "JimboSpain@gmail.com",
                             IsPaidUser = true,
                             Name = "Jim Spain",
@@ -167,6 +184,21 @@ namespace PokerTime.API.Migrations
                     b.HasIndex("HostId");
 
                     b.ToTable("TournamentStructures");
+                });
+
+            modelBuilder.Entity("EventInvitee", b =>
+                {
+                    b.HasOne("PokerTime.Shared.Entities.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PokerTime.Shared.Entities.Invitee", null)
+                        .WithMany()
+                        .HasForeignKey("InviteesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("PokerTime.Shared.Entities.BlindLevel", b =>

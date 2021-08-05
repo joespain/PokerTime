@@ -6,53 +6,62 @@
 
 <h3>New Event</h3>
 
-@if (!Saved)
-{
-    <EditForm Model="@Event" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
 
-        <div class="form-group row">
-            <label for="structure" class="col-form-label">Select Tournament Structure: </label>
+<EditForm Model="@Event" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+    @*<DataAnnotationsValidator />
+        <ValidationSummary />*@
+    <div class="form-group row">
+        <label for="structure" class="col-form-label">Select Tournament Structure: </label>
 
-            <InputSelect id="structure" @bind-Value="@Event.TournamentStructureId">
-                @foreach (var structure in TournamentStructures)
-                    {
-                    <option value="@structure.Id">@structure.Name</option>
-                    }
-            </InputSelect>
-        </div>
-        <h3>Invitees</h3>
+        <InputSelect id="structure" @bind-Value="@TournamentStructureId">
+            @foreach (var structure in TournamentStructures)
+                {
+                <option value="@structure.Id">@structure.Name</option>
+                }
+        </InputSelect>
+    </div>
+    <h3>Invitees</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone (optional)</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+
+
         @foreach (var invitee in Invitees)
         {
-            <div class="form-group row">
-                <label for="Name" class="col-form-label">Name: </label>
-                <InputText id="Name" @bind-Value="@invitee.Name" />
-            </div>
+            <tr>
+                
+                <td><InputText id="Name" @bind-Value="@invitee.Name" /></td>
 
-            <div class="form-group row">
-                <label for="Email" class="col-form-label">Email: </label>
-                <InputText id="Email" @bind-Value="@invitee.Email" />
-            </div>
+                
+                <td><InputText id="Email" @bind-Value="@invitee.Email" /></td>
 
-            <div class="form-group row">
-                <label for="Phone" class="col-form-label">Phone (optional): </label>
-                <InputText id="Phone" @bind-Value="@invitee.Phone" />
-            </div>
+                
+                <td><InputText id="Phone" @bind-Value="@invitee.Phone" /></td>
+                <td>
+                    <a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => RemoveInvitee(invitee))">
+                    Remove
+                    </a>
+                </td>
+            </tr>
 
         }
+    </table>
+</EditForm>
 
+    <div class="form-group row">
+        <a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddInvitee())">
+            Add Invitee
+        </a>
+    </div>
 
-        <div class="form-group row">
-            <a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddInvitee())">
-                Add Invitee
-            </a>
-        </div>
-    </EditForm>
-    <button type="submit" class="btn btn-primary edit-btn">Save Invitees</button>
+    <button type="submit" @onclick="HandleValidSubmit" class="btn btn-primary edit-btn">Save Invitees</button>
     <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToStructure">Cancel</a>
 
-}
-else
-{
-    <div class="alert @StatusClass">@Message</div>
-    <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToStructure">Cancel</a>
-}

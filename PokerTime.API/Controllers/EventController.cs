@@ -13,21 +13,16 @@ using System.Threading.Tasks;
 
 namespace PokerTime.API.Controllers
 {
-
     [ApiController]
     [Route("api/events")]
     [Authorize("api-access")]
     public class EventController : PokerTimeControllerBase
     {
-        private readonly IPTRepository _repository;
-        private readonly IMapper _mapper;
-        private readonly LinkGenerator _linkGenerator;
-        public EventController(IPTRepository repository, IMapper mapper, LinkGenerator linkGenerator)
+        public EventController(IPTRepository repository, IMapper mapper, LinkGenerator linkGenerator) : base(repository, mapper, linkGenerator)
         {
-            _repository = repository;
-            _mapper = mapper;
-            _linkGenerator = linkGenerator;
+
         }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EventModel>>> GetEvents()
         {
@@ -75,8 +70,7 @@ namespace PokerTime.API.Controllers
 
                 if (await _repository.SaveChangesAsync())
                 {
-                    return Created($"api/events/{newEvent.Id}", 
-                        _mapper.Map<EventModel>(newEvent));
+                    return Created($"api/events/{newEvent.Id}", _mapper.Map<EventModel>(newEvent));
                 }
                 else
                 {

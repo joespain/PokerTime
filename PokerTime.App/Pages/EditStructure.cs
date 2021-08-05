@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using PokerTime.App.Interfaces;
-using PokerTime.App.Services;
 using PokerTime.Shared.Entities;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PokerTime.App.Pages
@@ -76,11 +73,8 @@ namespace PokerTime.App.Pages
                     else
                     {
                         BlindLevels = (List<BlindLevel>)TournamentStructure.BlindLevels;
-
                     }
-
                 }
-                
             }
             catch(Exception e)
             {
@@ -101,12 +95,18 @@ namespace PokerTime.App.Pages
             BlindLevels.Insert(BlindLevels.IndexOf(blindLevel)+1, new BlindLevel());
         }
 
+        public void AddBlindLevel()
+        {
+            BlindLevels.Add(new BlindLevel());
+        }
+
         public async Task DeleteStructure()
         {
             if (TournamentStructureId != 0)
             {
                 await StructureDataService.DeleteStructure(TournamentStructureId);
             }
+            NavigateToStructures();
         }
 
         public async Task HandleValidSubmit()

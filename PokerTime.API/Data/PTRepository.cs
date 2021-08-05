@@ -281,7 +281,7 @@ namespace PokerTime.API.Data
         {
             IQueryable<BlindLevel> query = _context.BlindLevels
                 .Where(b => b.TournamentStructureId == id)
-                .OrderBy(b => b.Id);
+                .OrderBy(b => b.SequenceNum);
 
             _logger.LogInformation(GetLogString("Getting", "BlindLevels", $"{id}", "", "TournamentStructure"));
 
