@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using PokerTime.App.Interfaces;
 using PokerTime.Shared.Entities;
+using PokerTime.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,10 +19,11 @@ namespace PokerTime.App.Pages
         //TournamentStructure
         [Parameter]
         public int TournamentStructureId { get; set; }
-        public TournamentStructure TournamentStructure { get; set; } = new TournamentStructure();
+        public TournamentStructureModel TSModel { get; set; } = new TournamentStructureModel();
 
-        //Blind Levels
-        public List<BlindLevel> BlindLevels { get; set; } = new List<BlindLevel>();
+
+        ////Blind Levels
+        //public List<BlindLevelModel> BlindLevels { get; set; } = new List<BlindLevelModel>();
 
         //Services
         [Inject]
@@ -33,6 +36,8 @@ namespace PokerTime.App.Pages
         public ILogger<EditStructure> Logger { get; set; }
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+        [Inject]
+        public IMapper Mapper { get; set; }
 
         //used to store state of screen
         protected string Message = string.Empty;
@@ -51,28 +56,22 @@ namespace PokerTime.App.Pages
                 if(TournamentStructureId == 0)
                 {
                     //Create new Structure & Blind Levels
-                    //await AddNewTournamentStructure();
 
+                    TSModel.HostId = HostId;
+                    TSModel.DateCreated = DateTime.Today;
 
-                    TournamentStructure.HostId = HostId;
-                    TournamentStructure.DateCreated = DateTime.Today;
-
-                    //TournamentStructureId = TournamentStructure.Id;
-
-                    BlindLevels.Add(new BlindLevel());
+                    TSModel.BlindLevels.Add(new BlindLevelModel());
                 }
                 else
                 {
                     //Get existing Structure & Blind Levels
-                    TournamentStructure = await StructureDataService.GetStructure(TournamentStructureId);
+                    var existingStructure = await StructureDataService.GetStructure(TournamentStructureId);
+                    TSModel = Mapper.Map<TournamentStructureModel>(existingStructure);
 
-                    if(TournamentStructure.BlindLevels == null)
+                    if(TSModel.BlindLevels == null)
                     {
-                        BlindLevels.Add(new BlindLevel());
-                    }
-                    else
-                    {
-                        BlindLevels = (List<BlindLevel>)TournamentStructure.BlindLevels;
+                        //Add an initial blind level if the structure is new.
+                        TSModel.BlindLevels.Add(new BlindLevelModel());
                     }
                 }
             }
@@ -84,20 +83,23 @@ namespace PokerTime.App.Pages
 
         public async Task AddTournamentStructure()
         {
-            //Adds a blank tournament structure
-            TournamentStructure = await StructureDataService.AddStructure(TournamentStructure);
+            //Adds a new tournament structure
 
-            TournamentStructureId = TournamentStructure.Id;
+            TSModel = Mapper.Map<TournamentStructureModel>(
+                await StructureDataService.AddStructure(
+                    Mapper.Map<TournamentStructure>(TSModel)));
+
+            TournamentStructureId = TSModel.Id;
         }
 
-        public void AddBlindLevel(BlindLevel blindLevel)
+        public void AddBlindLevel(BlindLevelModel blindLevel)
         {
-            BlindLevels.Insert(BlindLevels.IndexOf(blindLevel)+1, new BlindLevel());
+            TSModel.BlindLevels.Insert(TSModel.BlindLevels.IndexOf(blindLevel)+1, new BlindLevelModel());
         }
 
         public void AddBlindLevel()
         {
-            BlindLevels.Add(new BlindLevel());
+            TSModel.BlindLevels.Add(new BlindLevelModel());
         }
 
         public async Task DeleteStructure()
@@ -111,23 +113,38 @@ namespace PokerTime.App.Pages
 
         public async Task HandleValidSubmit()
         {
-            //Add the SequenceNumbers for the blindlevels to ensure they are saved in order
-            int sequenceNum = 1;
-            foreach (var blindLevel in BlindLevels)
-            {
-                blindLevel.SequenceNum = sequenceNum;
-                sequenceNum++;
-            }
-            TournamentStructure.BlindLevels = BlindLevels;
 
-            if (TournamentStructure.Id == 0)
+            if (TSModel.Id == 0)
             {
-                TournamentStructure = await StructureDataService.AddStructure(TournamentStructure);
+                //New TournamentStructure
+                int sequenceNum = 1;
+                foreach (var blindLevel in TSModel.BlindLevels)
+                {
+                    blindLevel.SequenceNum = sequenceNum;
+                    sequenceNum++;
+                }
+                //Convert from the Model to
+                TSModel = Mapper.Map<TournamentStructureModel>(
+                    await StructureDataService.AddStructure(
+                        Mapper.Map<TournamentStructure>(TSModel)));
             }
             else
             {
-                await StructureDataService.UpdateStructure(TournamentStructure);
+                //Update existing TournamentStructure
+                int sequenceNum = 1;
+                foreach (var blindLevel in TSModel.BlindLevels)
+                {
+                    blindLevel.TournamentStructureId = TSModel.Id;
+                    blindLevel.SequenceNum = sequenceNum;
+                    sequenceNum++;
+                }
+                await StructureDataService.UpdateStructure(
+                    Mapper.Map<TournamentStructure>(TSModel));
             }
+
+            
+
+
             //Go back to the structures overview screen
             NavigateToStructures();
         }
@@ -142,9 +159,9 @@ namespace PokerTime.App.Pages
             NavigationManager.NavigateTo("/structures");
         }
 
-        public void DeleteBlindLevel(BlindLevel blindLevel)
+        public void DeleteBlindLevel(BlindLevelModel blindLevel)
         {
-            BlindLevels.Remove(blindLevel);
+            TSModel.BlindLevels.Remove(blindLevel);
         }
 
     }

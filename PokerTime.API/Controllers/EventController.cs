@@ -66,7 +66,10 @@ namespace PokerTime.API.Controllers
             try
             {
                 var newEvent = _mapper.Map<Event>(model);
+                newEvent.Invitees = null;
+
                 _repository.Add(newEvent);
+
 
                 if (await _repository.SaveChangesAsync())
                 {
@@ -120,19 +123,19 @@ namespace PokerTime.API.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{eventId:int}")]
         public async Task<ActionResult> DeleteEvent(int eventId)
         {
             try
             {
-                if (eventId == 0) return BadRequest("No invitee to delete.");
+                if (eventId == 0) return BadRequest("No event to delete.");
                 if (await _repository.DeleteEventByIdAsync(eventId))
                 {
                     return NoContent();  //Success
                 }
                 else
                 {
-                    return BadRequest("Error deleting invitee.");
+                    return BadRequest("Error deleting event.");
                 }
             }
             catch (Exception e)

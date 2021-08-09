@@ -253,7 +253,9 @@ namespace PokerTime.API.Data
 
         public async Task<Event> GetEventByIdAsync(int id)
         {
-            var foundEvent = await _context.Events.FirstOrDefaultAsync(i => i.Id == id);
+            var foundEvent = await _context.Events
+                .Include(e => e.Invitees)
+                .FirstOrDefaultAsync(i => i.Id == id);
 
             _logger.LogInformation(GetLogString("Getting", "Event", $"{id}", ""));
 

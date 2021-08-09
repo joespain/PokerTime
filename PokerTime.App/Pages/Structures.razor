@@ -1,10 +1,11 @@
 ﻿@page "/structures"
+@attribute [Authorize]
 
 <h3>Structures</h3>
 
 @if (TournamentStructures == null)
 {
-    <p>Loading...</p>
+    <div class="spinner"></div>
 }
 else
 {

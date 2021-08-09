@@ -1,0 +1,70 @@
+﻿@page "/events/"
+
+<h3>Events</h3>
+
+@if (FutureEvents == null || PastEvents == null)
+{
+    <div class="spinner"></div>
+}
+else
+{
+    <a class="btn-outline-primary" href="/events/0">New Event</a>
+
+    <h4>Future Events</h4>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <td>Event Name</td>
+                <td>Date</td>
+                <td>Time</td>
+                <td></td>
+            </tr>
+        </thead>
+
+        @foreach (var theEvent in FutureEvents)
+        {
+            <tr>
+                <td>@theEvent.Name</td>
+                <td>@theEvent.Date.Date</td>
+                <td>@theEvent.Date.TimeOfDay</td>
+                <td>
+                    <a class="btn btn-outline-primary btn-outline-primary" @onclick="@(() => StartEvent(theEvent))">Start</a>
+
+                    <a class="btn btn-outline-primary btn-outline-light" @onclick="@(() => EditEvent(theEvent))">Edit</a>
+
+                    <a class="btn btn-outline-primary btn-outline-warning" @onclick="@(() => DeleteEvent(theEvent))">Delete</a>
+                </td>
+            </tr>
+        }
+
+    </table>
+
+    <h4>Past Events</h4>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <td>Event Name</td>
+                <td>Date</td>
+                <td>Time</td>
+                <td></td>
+            </tr>
+        </thead>
+
+        @foreach (var theEvent in PastEvents)
+        {
+            <tr>
+                <td>@theEvent.Name</td>
+                <td>@theEvent.Date.Date</td>
+                <td>@theEvent.Date.TimeOfDay</td>
+                <td>
+                    <a class="btn btn-outline-primary btn-outline-primary" @onclick="@(() => StartEvent(theEvent))">Start</a>
+
+                    <a class="btn btn-outline-primary btn-outline-light" @onclick="@(() => EditEvent(theEvent))">Edit</a>
+
+                    <a class="btn btn-outline-primary btn-outline-warning" @onclick="@(() => DeleteEvent(theEvent))">Delete</a>
+                </td>
+            </tr>
+        }
+
+    </table>
+}

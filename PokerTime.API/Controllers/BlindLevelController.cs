@@ -99,32 +99,36 @@ namespace PokerTime.API.Controllers
             }
         }
 
-        [HttpPut("{blindLevelId:int}")]
-        public async Task<ActionResult<BlindLevelModel>> UpdateBlindLevel(int blindLevelId, [FromBody] BlindLevelModel newBlindLevel)
+        [HttpPut]
+        public async Task<ActionResult<IEnumerable<BlindLevelModel>>> UpdateBlindLevel([FromBody] IEnumerable<BlindLevelModel> BlindLevels)
         {
             try
             {
-                //Make sure the Id URI is the same as the model.Id. If they're different, something's wrong.
-                if (blindLevelId != newBlindLevel.Id)
+                foreach(var blindLevel in BlindLevels)
                 {
-                    return BadRequest("Error updating TournamentStructure.");
+                    if(blindLevel.Id == 0)
+                    {
+                        _repository.Add(blindLevel);
+                    }
+                    else
+                    {
+                        //If the old structure doesn't exist, it's either deleted or got wrong id.
+                        var oldBlindLevel = await _repository.GetBlindLevelByIdAsync(blindLevel.Id);
+                        //if (oldBlindLevel == null)
+                        //{
+                        //    return BadRequest("BlindLevel does not exist.");
+                        //}
+                        //Mapper applies the changes of the model onto the entity, updating the entity in the process.
+                        _mapper.Map(blindLevel, oldBlindLevel);
+                        await _repository.SaveChangesAsync();
+                    }
                 }
-
-                //If the old structure doesn't exist, it's either deleted or got wrong id.
-                var oldBlindLevel = await _repository.GetBlindLevelByIdAsync(newBlindLevel.Id);
-                if (oldBlindLevel == null)
-                {
-                    return BadRequest("Tournament Structure does not exist.");
-                }
-
-                //Mapper applies the changes of the model onto the entity, updating the entity in the process.
-                _mapper.Map(newBlindLevel, oldBlindLevel);
 
                 if (await _repository.SaveChangesAsync())
                 {
-                    return _mapper.Map<BlindLevelModel>(newBlindLevel);
+                    return Ok(BlindLevels);
                 }
-                else return BadRequest("Error updating the Tournament Structure.");
+                else return BadRequest("Error updating the Blind Levels.");
             }
             catch (Exception e)
             {

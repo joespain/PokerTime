@@ -12,8 +12,8 @@ namespace PokerTime.Shared.Models
         public string Name { get; set; }
         public int NumberOfEvents { get; set; }
         public DateTime DateCreated { get; set; }
-
-        public ICollection<BlindLevelModel> BlindLevels { get; set; }
+        [ValidateComplexType]
+        public List<BlindLevelModel> BlindLevels { get; set; }
         public Guid HostId { get; set; }
     }
 }

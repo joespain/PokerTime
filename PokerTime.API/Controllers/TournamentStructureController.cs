@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using PokerTime.API.Data;
@@ -107,7 +108,25 @@ namespace PokerTime.API.Controllers
                 var oldStructure = await _repository.GetTournamentStructureByIdAsync(newStructure.Id);
                 if (oldStructure == null)
                 {
-                    return BadRequest("Tournament Structure does not exist.");
+                    return NotFound();
+                }
+
+                //Update or add new blind levels
+                if (newStructure.BlindLevels != null)
+                {
+                    foreach(var blindLevel in newStructure.BlindLevels)
+                    {
+                        if(blindLevel.Id == 0)
+                        {
+                            var newBlindLevel = _mapper.Map<BlindLevel>(blindLevel);
+                            _repository.Add(newBlindLevel);
+                        }
+                        else
+                        {
+                            var oldBlindLevel = await _repository.GetBlindLevelByIdAsync(blindLevel.Id);
+                            _mapper.Map(blindLevel, oldBlindLevel);
+                        }
+                    }
                 }
 
                 //Mapper applies the changes of the model onto the entity, updating the entity in the process.

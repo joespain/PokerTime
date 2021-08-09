@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PokerTime.App.Pages
 {
-    public partial class Structures
+    public partial class Structures : ComponentBase
     {
         public Guid HostId { get; set; }
         public Host Host { get; set; }

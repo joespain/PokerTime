@@ -1,91 +1,98 @@
 ﻿@page "/structures/{TournamentStructureId:int}"
 
 <section class="user-edit">
-    @if (!Saved && TournamentStructure != null)
+    @if (TSModel == null || TSModel.BlindLevels == null)
     {
-        <h3>Edit Structure</h3>
-
-        <EditForm Model="@TournamentStructure" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div class="form-group row">
-                <label for="Name" class="col-sm-3">Name: </label>
-                <InputText id="StructureName" @bind-Value="@TournamentStructure.Name" placeholder="Enter Tournament Structure Name"></InputText>
-                <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => TournamentStructure.Name)" />
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Level #</th>
-                        <th>Small Blind</th>
-                        <th>Big Blind</th>
-                        <th>Ante</th>
-                        <th>Minutes</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                
-
-                @foreach (var blindLevel in BlindLevels)
-                {
-
-            <tr>
-                <td>
-                    @(BlindLevels.IndexOf(blindLevel) + 1)
-                </td>
-                <td>
-                    @*<label for="SmallBlind">Small Blind: </label>*@
-                    <InputNumber id="SmallBlind" @bind-Value="@blindLevel.SmallBlind" placeholder="0" class="form-control"></InputNumber>
-                    <ValidationMessage For="@(() => blindLevel.SmallBlind)" />
-                </td>
-
-                <td>
-                    @*<label for="BigBlind">Big Blind: </label>*@
-                    <InputNumber id="BigBlind" @bind-Value="@blindLevel.BigBlind" placeholder="0" class="form-control"></InputNumber>
-                    <ValidationMessage For="@(() => blindLevel.BigBlind)" />
-                </td>
-
-                <td>
-                    @*<label for="Ante">Ante: </label>*@
-                    <InputNumber id="Ante" @bind-Value="@blindLevel.Ante" placeholder="0" class="form-control"></InputNumber>
-                    @*<ValidationMessage For="@(() => blindLevel.Ante)" />*@
-                </td>
-
-                <td>
-                    @*<label for="Minutes">Time (minutes): </label>*@
-                    <InputNumber id="Minutes" @bind-Value="@blindLevel.Minutes" placeholder="0" class="form-control"></InputNumber>
-                    <ValidationMessage For="@(() => blindLevel.Minutes)" />
-                </td>
-                <td><a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddBlindLevel(blindLevel))">Add</a></td>
-                <td><a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => DeleteBlindLevel(blindLevel))">Delete</a></td>
-            </tr>
-
-                        
-
-                    
-                }
-
-
-            </table>
-            <div class="form-group row">
-                <a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddBlindLevel())">
-                    Add Blind Level
-                </a>
-            </div>
-        </EditForm>
-        <button @onclick="@HandleValidSubmit" class="btn btn-primary edit-btn">Save</button>
-
-        <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToStructures">Cancel</a>
-
-        <a class="btn btn-danger" @onclick="@DeleteStructure">Delete</a>
-
+        <div class="spinner"></div>
     }
-
-
     else
     {
-        <div class="alert @StatusClass">@Message</div>
-        <a class="btn btn-outline-primary" @onclick="@NavigateToStructures">Back to Tournament Structures</a>
+        @if (!Saved)
+        {
+            <h3>Edit Structure</h3>
+
+            <EditForm Model="@TSModel" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="@HandleInvalidSubmit">
+                <ObjectGraphDataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-group row">
+                    <label for="Name" class="col-sm-3">Structure Name: </label>
+                    <InputText id="StructureName" @bind-Value="@TSModel.Name" placeholder="Enter Structure Name"></InputText>
+
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Level #</th>
+                            <th>Small Blind</th>
+                            <th>Big Blind</th>
+                            <th>Ante</th>
+                            <th>Minutes</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+
+                    @foreach (var blindLevel in TSModel.BlindLevels)
+                    {
+
+                        <tr>
+                            <td>
+                                @(TSModel.BlindLevels.IndexOf(blindLevel) + 1)
+                            </td>
+                            <td>
+                                @*<label for="SmallBlind">Small Blind: </label>*@
+                                <InputNumber id="SmallBlind" @bind-Value="@blindLevel.SmallBlind" placeholder="0" class="form-control"></InputNumber>
+                            </td>
+
+                            <td>
+                                @*<label for="BigBlind">Big Blind: </label>*@
+                                <InputNumber id="BigBlind" @bind-Value="@blindLevel.BigBlind" placeholder="0" class="form-control"></InputNumber>
+                            </td>
+
+                            <td>
+                                @*<label for="Ante">Ante: </label>*@
+                                <InputNumber id="Ante" @bind-Value="@blindLevel.Ante" placeholder="0" class="form-control"></InputNumber>
+                            </td>
+
+                            <td>
+                                @*<label for="Minutes">Time (minutes): </label>*@
+                                <InputNumber id="Minutes" @bind-Value="@blindLevel.Minutes" placeholder="0" class="form-control"></InputNumber>
+                            </td>
+                            <td><a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddBlindLevel(blindLevel))">Add</a></td>
+                            <td><a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => DeleteBlindLevel(blindLevel))">Delete</a></td>
+                        </tr>
+
+
+
+
+                    }
+
+
+                </table>
+                <div class="form-group row">
+                    <a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddBlindLevel())">
+                        Add Blind Level
+                    </a>
+                </div>
+
+                <input type="submit" class="btn btn-primary edit-btn" value="Save"/>
+                <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToStructures">Cancel</a>
+
+                <a class="btn btn-danger" @onclick="@DeleteStructure">Delete</a>
+            </EditForm>
+            
+
+            
+
+        }
+
+
+        else
+        {
+            <div class="alert @StatusClass">@Message</div>
+            <a class="btn btn-outline-primary" @onclick="@NavigateToStructures">Back to Tournament Structures</a>
+        }
     }
+
 </section>

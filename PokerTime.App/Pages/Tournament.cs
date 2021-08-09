@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 using PokerTime.App.Interfaces;
 using PokerTime.Shared.Entities;
 using System;
@@ -41,7 +42,7 @@ namespace PokerTime.App.Pages
         [Inject]
         public IBlindLevelDataService BlindLevelDataService { get; set; }
         [Inject]
-        public ILogger<AddEvent> Logger { get; set; }
+        public ILogger<EditEvent> Logger { get; set; }
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
@@ -65,6 +66,7 @@ namespace PokerTime.App.Pages
                 }
 
                 Structure = await StructureDataService.GetStructure(Event.TournamentStructureId);
+
                 if (Structure == null)
                 {
                     //error
@@ -124,12 +126,11 @@ namespace PokerTime.App.Pages
             StateHasChanged();
         }
 
-        public Task TimeExpired()
+        public async Task TimeExpired()
         {
-            //What to do when time expires
+            await PlaySound();
             IterateBlindLevel();
-
-            return Task.CompletedTask;
+            await StartStopTimer();
         }
 
         public async Task StartStopTimer()
@@ -146,6 +147,7 @@ namespace PokerTime.App.Pages
 
             await Timer();
         }
+
 
         public void IterateBlindLevel()
         {
@@ -166,6 +168,10 @@ namespace PokerTime.App.Pages
             StateHasChanged();
         }
 
+        public async Task PlaySound()
+        {
+            await _jsRuntime.InvokeAsync<string>("PlayAudio", "chime");
+        }
 
 
 

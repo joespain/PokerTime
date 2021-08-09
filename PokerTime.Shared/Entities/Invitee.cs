@@ -14,5 +14,6 @@ namespace PokerTime.Shared.Entities
         public string Phone { get; set; }
 
         public Guid HostId { get; set; }
+        public ICollection<Event> Events { get; set; }
     }
 }

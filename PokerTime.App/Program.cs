@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using PokerTime.App.Data;
 using PokerTime.App.Interfaces;
 using PokerTime.App.Services;
 using System;
@@ -17,6 +19,7 @@ namespace PokerTime.App
 
             builder.Services.AddScoped<CustomAuthorizationMessageHandler>();
             builder.Services.AddSingleton<AppDataService>();
+            builder.Services.AddAutoMapper(typeof(EntityProfile));
 
             //Add Data Services
             builder.Services.AddHttpClient<IBlindLevelDataService, BlindLevelDataService>(client =>

@@ -8,12 +8,14 @@ namespace PokerTime.Shared.Models
         [Required]
         public int TournamentStructureId { get; set; }
         [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Small Blind must be greater than 0.")]
         public int SmallBlind { get; set; }
         [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Big Blind must be greater than 0.")]
         public int BigBlind { get; set; }
         public int Ante { get; set; }
         [Required]
-        [Range(1,int.MaxValue,ErrorMessage ="Please enter a value greater than 0")]
+        [Range(1,int.MaxValue,ErrorMessage ="Minutes must be greater than 0.")]
         public int Minutes { get; set; }
         [Required]
         public int SequenceNum { get; set; }

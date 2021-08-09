@@ -126,13 +126,13 @@ namespace PokerTime.API.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<ActionResult> DeleteInvitee(int id)
+        [HttpDelete("{inviteeId:int}")]
+        public async Task<ActionResult> DeleteInvitee(int inviteeId)
         {
             try
             {
-                if (id == 0) return BadRequest("No invitee to delete.");
-                if(await _repository.DeleteInviteeByIdAsync(id))
+                if (inviteeId == 0) return BadRequest("No invitee to delete.");
+                if(await _repository.DeleteInviteeByIdAsync(inviteeId))
                 {
                     return NoContent();  //Success
                 }
