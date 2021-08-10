@@ -32,6 +32,8 @@ namespace PokerTime.API.Data
         Task<IEnumerable<Event>> GetAllEventsByHostIdAsync(Guid id);
         Task<Event> GetEventByIdAsync(int id);
         Task<bool> DeleteEventByIdAsync(int id);
+        Task<bool> AddNewEvent(Event theEvent);
+        //Task<bool> UpdateEvent(Event theEvent);
 
         //BlindLevels
 

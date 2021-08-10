@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Detached.Mappers.EntityFramework;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PokerTime.Shared.Entities;
 using System;
@@ -275,6 +276,26 @@ namespace PokerTime.API.Data
             }
             else return false;
         }
+
+        public async Task<bool> AddNewEvent(Event theEvent)
+        {
+            _context.Update(theEvent);
+            if (await _context.SaveChangesAsync() > 0) //Success
+            {
+                return true;
+            }
+            else return false;
+        }
+
+        //public async Task<bool> UpdateEvent(Event theEvent)
+        //{
+        //    _context.Update(theEvent);
+        //    if (await _context.SaveChangesAsync() > 0) //Success
+        //    {
+        //        return true;
+        //    }
+        //    else return false;
+        //}
 
 
         //BlindLevels

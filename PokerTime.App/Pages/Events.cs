@@ -18,11 +18,8 @@ namespace PokerTime.App.Pages
         public List<Event> FutureEvents { get; set; } = new List<Event>();
         public List<Event> PastEvents { get; set; } = new List<Event>();
 
-        //Timer
-        public TimeSpan TimeLeft { get; set; } = new TimeSpan();
-        public bool IsTimerRunning { get; set; } = false;
-        public string ButtonName { get; set; } = "Start";
-
+        //Other
+        public bool CanShowScreen { get; set; } = false;
 
         //Services
         [Inject]
@@ -45,19 +42,16 @@ namespace PokerTime.App.Pages
 
                 if(listOfEvents != null)
                 {
-                    PastEvents = listOfEvents.Where(e => e.Date < DateTime.Now).ToList();
-                    FutureEvents = listOfEvents.Where(e => e.Date > DateTime.Now).ToList();
-
-                    PastEvents.Sort((x, y) => y.Date.CompareTo(x.Date));
-
-                    FutureEvents.Sort((x, y) => y.Date.CompareTo(x.Date));
-
+                    PastEvents = listOfEvents.Where(e => e.Date < DateTime.Now)
+                        .OrderBy(e => e.Date).ToList();
+                    FutureEvents = listOfEvents.Where(e => e.Date > DateTime.Now)
+                        .OrderBy(e => e.Date).ToList();
                 }
                 else
                 {
                     //No events
                 }
-                
+                CanShowScreen = true;
             }
             catch (Exception e)
             {
@@ -68,13 +62,25 @@ namespace PokerTime.App.Pages
 
         public async Task DeleteEvent(Event eventToDelete)
         {
+            if (PastEvents.Contains(eventToDelete))
+            {
+                PastEvents.Remove(eventToDelete);
+            }
+            else
+            {
+                FutureEvents.Remove(eventToDelete);
+            }
             await EventDataService.DeleteEvent(eventToDelete.Id);
-            StateHasChanged();
         }
 
         public void StartEvent(Event theEvent) 
         {
             NavigationManager.NavigateTo($"/events/{theEvent.Id}/{theEvent.EventLinkId}");
+        }
+
+        public void NewEvent()
+        {
+            NavigationManager.NavigateTo($"/events/0");
         }
 
         public void EditEvent(Event theEvent)

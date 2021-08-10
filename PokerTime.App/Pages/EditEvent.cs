@@ -60,7 +60,8 @@ namespace PokerTime.App.Pages
                 if(EventId != 0)
                 {
                     Event = Mapper.Map<EventModel>(await EventDataService.GetEvent(EventId));
-                    if(Event.Invitees == null)
+
+                    if (Event.Invitees == null)
                     {
                         Event.Invitees = Mapper.Map<List<InviteeModel>>(await InviteeDataService.GetInvitees());
                     }
@@ -68,6 +69,8 @@ namespace PokerTime.App.Pages
                 else
                 {
                     Event = new EventModel();
+                    Event.Date = DateTime.Today;
+                    Event.Time = DateTime.Now;
                     Event.Invitees = Mapper.Map<List<InviteeModel>>(await InviteeDataService.GetInvitees());
                     if(Event.Invitees == null)
                     {
@@ -81,7 +84,6 @@ namespace PokerTime.App.Pages
                 {
                     //Error, must add new structure
                 }
-                Event.Date = DateTime.Today;
             }
             catch (Exception e)
             {
@@ -89,15 +91,12 @@ namespace PokerTime.App.Pages
             }
         }
 
-        public void AddInvitee()
-        {
-            Event.Invitees.Add(new InviteeModel() { HostId = HostId });
-        }
-
         public async Task HandleValidSubmit()
         {
             try
             {
+                var invitees = Event.Invitees;
+
                 if(Event.HostId == new Guid())
                 {
                     Event.HostId = HostId;
@@ -117,7 +116,7 @@ namespace PokerTime.App.Pages
                 {
                     await EventDataService.UpdateEvent(Mapper.Map<Event>(Event));
                 }
-                await UpdateInvitees();
+                
                 await EmailInvitees();
                 BeginEvent();
             }
@@ -127,22 +126,28 @@ namespace PokerTime.App.Pages
             }
         }
 
-        public async Task UpdateInvitees()
+        public async Task UpdateInvitees(List<InviteeModel> invitees)
         {
-            foreach (var invitee in Event.Invitees)
+            foreach (var invitee in invitees)
             {
                 if (invitee.Id == 0)
                 {
                     invitee.HostId = HostId;
-                    invitee.Events.Add(Event);
+                    //invitee.Events.Add(Event);
                     await InviteeDataService.AddInvitee(Mapper.Map<Invitee>(invitee));
                 }
                 else
                 {
-                    invitee.Events.Add(Event);
+                    //invitee.Events.Add(Event);
                     await InviteeDataService.UpdateInvitee(Mapper.Map<Invitee>(invitee));
                 }
+                Event.Invitees.Add(invitee);
             }
+        }
+
+        public void AddInvitee()
+        {
+            Event.Invitees.Add(new InviteeModel() { HostId = HostId });
         }
 
         public async Task UpdateStructure()
@@ -170,9 +175,9 @@ namespace PokerTime.App.Pages
 
         }
 
-        public void NavigateToStructure()
+        public void NavigateToEvents()
         {
-
+            NavigationManager.NavigateTo("/events");
         }
 
         public void RemoveInvitee(InviteeModel invitee)

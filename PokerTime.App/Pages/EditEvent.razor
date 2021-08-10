@@ -36,7 +36,7 @@ else
     </div>
 
     <div class="form row">
-        <InputDate id="eventDate" @bind-Value="@Event.Date"></InputDate>
+        <InputDate id="eventDate" @bind-Value="@Event.Date" format-value="MM-dd-yy"></InputDate>
         <input type="time" @bind-value="@Event.Time">
     </div>
 
@@ -82,8 +82,10 @@ else
         </a>
     </div>
 
+    <input type="submit" class="btn btn-primary edit-btn" value="Save Event" />
     <input type="submit" class="btn btn-primary edit-btn" value="Begin Event" />
-    <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToStructure">Cancel</a>
+    <a class="btn btn-outline-primary edit-outline-btn" @onclick="@EmailInvitees">Email Invitees</a>
+    <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToEvents">Cancel</a>
 </EditForm>
 }
 

@@ -8,6 +8,7 @@ using PokerTime.API.Data;
 using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.IdentityModel.Tokens.Jwt;
+using Detached.Mappers.EntityFramework;
 
 namespace PokerTime.API
 {

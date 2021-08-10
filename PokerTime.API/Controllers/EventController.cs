@@ -66,12 +66,8 @@ namespace PokerTime.API.Controllers
             try
             {
                 var newEvent = _mapper.Map<Event>(model);
-                newEvent.Invitees = null;
 
-                _repository.Add(newEvent);
-
-
-                if (await _repository.SaveChangesAsync())
+                if (await _repository.AddNewEvent(newEvent))
                 {
                     return Created($"api/events/{newEvent.Id}", _mapper.Map<EventModel>(newEvent));
                 }
@@ -88,34 +84,57 @@ namespace PokerTime.API.Controllers
         }
 
         [HttpPut("{eventId:int}")]
-        public async Task<ActionResult<EventModel>> UpdateEvent(int eventId, [FromBody] EventModel newEvent)
+        public async Task<ActionResult<EventModel>> UpdateEvent(int eventId, [FromBody] EventModel eventToUpdateModel)
         {
             try
             {
+                var eventToUpdate = _mapper.Map<Event>(eventToUpdateModel);
+
                 //Make sure the Id URI is the same as the model.Id. If they're different, something's wrong.
-                if (eventId != newEvent.Id)
+                if (eventId != eventToUpdate.Id)
                 {
-                    return BadRequest("Error updating Event.");
+                    return BadRequest("Error updating event.");
                 }
 
-                //If the old event doesn't exist, it's either deleted or got wrong id.
-                var oldEvent = await _repository.GetEventByIdAsync(newEvent.Id);
-                if (oldEvent == null)
+                var oldEvent = await _repository.GetEventByIdAsync(eventToUpdate.Id);
+                if(oldEvent == null)
                 {
-                    return BadRequest("Event to update was not found.");
+                    return BadRequest("Error updating event.");
                 }
 
-                //Mapper applies the changes of the model onto the entity, updating the entity in the process.
-                _mapper.Map(newEvent, oldEvent);
-
-                if (await _repository.SaveChangesAsync())
+                var inviteesToUpdate = new List<Invitee>();
+                foreach(var invitee in eventToUpdate.Invitees) //Add new invitees, if applicable
                 {
-                    return _mapper.Map<EventModel>(newEvent);
+                    //if (!invitee.Events.Contains(eventToUpdate))
+                    //{
+                    //    //invitee.Events.Add(eventToUpdate);
+                    //}
+
+                    if(invitee.Id == 0)
+                    {
+                        _repository.Add(invitee);
+                    }
+                    else
+                    {
+                        inviteesToUpdate.Add(invitee);
+                    }
+                }
+                await UpdateInvitees(inviteesToUpdate);
+
+                //eventToUpdate.Invitees.Clear();
+                //oldEvent.Invitees.Clear();
+
+                _mapper.Map(eventToUpdate, oldEvent); //Save changes from eventToUpdate onto oldEvent
+
+                if (await _repository.SaveChangesAsync()) //Returns true if update is successful
+                {
+                    return _mapper.Map<EventModel>(eventToUpdate);
                 }
                 else
                 {
-                    return BadRequest("Error updating the Event.");
+                    return BadRequest("Error updating the event.");
                 }
+                
             }
             catch (Exception e)
             {
@@ -143,6 +162,13 @@ namespace PokerTime.API.Controllers
                 //Update with real status code errors
                 return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
             }
+        }
+
+        private async Task UpdateInvitees(List<Invitee> invitees)
+        {
+            List<Invitee> oldInvitees = (await _repository.GetAllInviteesByHostIdAsync(getHostId())).ToList();
+            _mapper.Map(invitees, oldInvitees);
+            await _repository.SaveChangesAsync();
         }
     }
 }

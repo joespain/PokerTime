@@ -23,13 +23,13 @@ namespace PokerTime.API.Migrations
                         column: x => x.EventsId,
                         principalTable: "Events",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_EventInvitee_Invitees_InviteesId",
                         column: x => x.InviteesId,
                         principalTable: "Invitees",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
