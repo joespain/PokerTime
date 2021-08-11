@@ -21,6 +21,6 @@ namespace PokerTime.Shared.Models
         [Range(1, int.MaxValue, ErrorMessage = "Please select a Structure.")]
         public int TournamentStructureId { get; set; }
         [ValidateComplexType]
-        public ICollection<InviteeModel> Invitees { get; set; }
+        public List<InviteeModel> Invitees { get; set; }
     }
 }

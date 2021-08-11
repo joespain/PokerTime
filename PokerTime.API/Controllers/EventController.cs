@@ -89,44 +89,13 @@ namespace PokerTime.API.Controllers
             try
             {
                 var eventToUpdate = _mapper.Map<Event>(eventToUpdateModel);
-
-                //Make sure the Id URI is the same as the model.Id. If they're different, something's wrong.
+                ////Make sure the Id URI is the same as the model.Id. If they're different, something's wrong.
                 if (eventId != eventToUpdate.Id)
                 {
                     return BadRequest("Error updating event.");
                 }
 
-                var oldEvent = await _repository.GetEventByIdAsync(eventToUpdate.Id);
-                if(oldEvent == null)
-                {
-                    return BadRequest("Error updating event.");
-                }
-
-                var inviteesToUpdate = new List<Invitee>();
-                foreach(var invitee in eventToUpdate.Invitees) //Add new invitees, if applicable
-                {
-                    //if (!invitee.Events.Contains(eventToUpdate))
-                    //{
-                    //    //invitee.Events.Add(eventToUpdate);
-                    //}
-
-                    if(invitee.Id == 0)
-                    {
-                        _repository.Add(invitee);
-                    }
-                    else
-                    {
-                        inviteesToUpdate.Add(invitee);
-                    }
-                }
-                await UpdateInvitees(inviteesToUpdate);
-
-                //eventToUpdate.Invitees.Clear();
-                //oldEvent.Invitees.Clear();
-
-                _mapper.Map(eventToUpdate, oldEvent); //Save changes from eventToUpdate onto oldEvent
-
-                if (await _repository.SaveChangesAsync()) //Returns true if update is successful
+                if (await _repository.UpdateEvent(eventToUpdate)) //Returns true if update is successful
                 {
                     return _mapper.Map<EventModel>(eventToUpdate);
                 }

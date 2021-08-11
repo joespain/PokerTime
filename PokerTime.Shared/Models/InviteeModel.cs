@@ -15,6 +15,6 @@ namespace PokerTime.Shared.Models
         public string Phone { get; set; }
 
         public Guid HostId { get; set; }
-        public ICollection<EventModel> Events {get;set;}
+        public List<EventModel> Events {get;set;}
     }
 }

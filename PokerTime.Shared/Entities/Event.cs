@@ -17,6 +17,6 @@ namespace PokerTime.Shared.Entities
         public Guid HostId { get; set; }
         [Required]
         public int TournamentStructureId { get; set; }
-        public ICollection<Invitee> Invitees { get; set; }
+        public List<Invitee> Invitees { get; set; }
     }
 }

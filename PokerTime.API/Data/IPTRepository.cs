@@ -33,7 +33,7 @@ namespace PokerTime.API.Data
         Task<Event> GetEventByIdAsync(int id);
         Task<bool> DeleteEventByIdAsync(int id);
         Task<bool> AddNewEvent(Event theEvent);
-        //Task<bool> UpdateEvent(Event theEvent);
+        Task<bool> UpdateEvent(Event theEvent);
 
         //BlindLevels
 

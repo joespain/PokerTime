@@ -256,7 +256,7 @@ namespace PokerTime.API.Data
         {
             var foundEvent = await _context.Events
                 .Include(e => e.Invitees)
-                .FirstOrDefaultAsync(i => i.Id == id);
+                .FirstOrDefaultAsync(e => e.Id == id);
 
             _logger.LogInformation(GetLogString("Getting", "Event", $"{id}", ""));
 
@@ -287,15 +287,64 @@ namespace PokerTime.API.Data
             else return false;
         }
 
-        //public async Task<bool> UpdateEvent(Event theEvent)
-        //{
-        //    _context.Update(theEvent);
-        //    if (await _context.SaveChangesAsync() > 0) //Success
-        //    {
-        //        return true;
-        //    }
-        //    else return false;
-        //}
+        public async Task<bool> UpdateEvent(Event eventToUpdate)
+        {
+            
+            var oldEvent = _context.Events
+                .Include(e => e.Invitees)
+                .Single(e => e.Id == eventToUpdate.Id);
+
+            var oldInvitees = _context.Invitees
+                .Include(i => i.Events)
+                .Where(i => i.Events.Contains(oldEvent)).ToList();
+
+            foreach(var invitee in eventToUpdate.Invitees)
+            {
+                if (invitee.Id == 0)
+                {
+                    invitee.Events.Add(oldEvent);
+                    _context.Add(invitee);
+                }
+                else if (oldInvitees.Find(i => i.Id == invitee.Id) == null)
+                {
+                    invitee.Events.Add(oldEvent);
+                    _context.Invitees.Update(invitee);
+                }
+                else
+                {
+                    var originalInvitee = oldInvitees.Find(i => i.Id == invitee.Id);
+                    originalInvitee.Name = invitee.Name;
+                    originalInvitee.Phone = invitee.Phone;
+                    originalInvitee.Email = invitee.Email;
+                    _context.Invitees.Update(originalInvitee);
+                }
+            }
+
+            foreach(var invitee in oldInvitees)
+            {
+                if (eventToUpdate.Invitees.Find(i => i.Id == invitee.Id) == null)
+                {
+                    invitee.Events.Remove(oldEvent);
+                    _context.Invitees.Update(invitee);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            oldEvent.Name = eventToUpdate.Name;
+            oldEvent.Date = eventToUpdate.Date;
+            oldEvent.Time = eventToUpdate.Time;
+            oldEvent.TournamentStructureId = eventToUpdate.TournamentStructureId;
+           // _context.Entry(oldEvent.Invitees).State = EntityState.Modified;
+
+            _context.Events.Attach(oldEvent);
+
+            if (await _context.SaveChangesAsync() > 0) //Success
+            {
+                return true;
+            }
+            else return false;
+        }
 
 
         //BlindLevels
