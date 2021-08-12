@@ -65,9 +65,9 @@ namespace PokerTime.App.Pages
             Message = "User deleted successfully.";
             Saved = true;
         }
-        protected void NavigateToOverview()
+        protected void NavigateToIndex()
         {
-            NavigationManager.NavigateTo("/hosts");
+            NavigationManager.NavigateTo("/index.html");
         }
     }
 }

@@ -18,6 +18,7 @@ namespace PokerTime.API.Data
         public DbSet<Event> Events { get; set; }
         public DbSet<Invitee> Invitees { get; set; }
         public DbSet<BlindLevel> BlindLevels { get; set; }
+        public DbSet<TournamentTracking> TournamentTrackings { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

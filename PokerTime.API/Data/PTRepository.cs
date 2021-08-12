@@ -68,7 +68,7 @@ namespace PokerTime.API.Data
             return await query.ToListAsync();
         }
 
-        public async Task<Host> GetHostByIdAsync(Guid id, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false)
+        public async Task<Host> GetHostByIdAsync(Guid id)
         {
             //Is there a better way of doing this? I hate this huge if/else statement
 
@@ -79,7 +79,7 @@ namespace PokerTime.API.Data
             if (foundHost == null)
                 return null;
 
-            _logger.LogInformation(GetLogString("Getting", "Host", $"{id}", $"{foundHost.Name}"));
+            _logger.LogInformation($"Getting Host {id}");
 
             return foundHost;
         }
@@ -150,7 +150,7 @@ namespace PokerTime.API.Data
         {
             var foundHost = await _context.Hosts.FirstOrDefaultAsync(u => u.Id == id);
 
-            _logger.LogInformation(GetLogString("Deleting", "Host", $"{id}", $"{foundHost.Name}"));
+            _logger.LogInformation($"Deleting Host {id}.");
 
             Delete(foundHost);
             if (await _context.SaveChangesAsync() > 0) //Success
@@ -165,7 +165,7 @@ namespace PokerTime.API.Data
         public async Task<IEnumerable<TournamentStructure>> GetTournamentStructuresByHostIdAsync(Guid id)
         {
 
-            _logger.LogInformation(GetLogString("Getting", "TournamentStructures", $"{id}", "", $"Host"));
+            _logger.LogInformation($"Getting TournamentStructures for Host {id}.");
 
             IQueryable<TournamentStructure> query = _context.TournamentStructures
                 .Include(s => s.BlindLevels)
@@ -177,7 +177,7 @@ namespace PokerTime.API.Data
 
         public async Task<TournamentStructure> GetTournamentStructureByIdAsync(int id)
         {
-            _logger.LogInformation(GetLogString("Getting", "TournamentStructure", $"{id}", "", $"Host"));
+            _logger.LogInformation($"Getting TournamentStructure {id}.");
 
             IQueryable<TournamentStructure> query = _context.TournamentStructures
                 .Include(s => s.BlindLevels)
@@ -191,7 +191,7 @@ namespace PokerTime.API.Data
             var foundTournamentStructure = await _context.TournamentStructures.FirstOrDefaultAsync(s => s.Id == id);
             if (foundTournamentStructure == null) return false;
 
-            _logger.LogInformation(GetLogString("Deleting", "TournamentStructure", $"{id}", $"{foundTournamentStructure.Name}"));
+            _logger.LogInformation($"Deleting TournamentStructure {foundTournamentStructure.Name}, {id}");
 
             Delete(foundTournamentStructure);
 
@@ -212,14 +212,14 @@ namespace PokerTime.API.Data
                 .Where(u => u.HostId == id)
                 .OrderBy(u => u.Name);
 
-            _logger.LogInformation(GetLogString("Getting","Invitees",$"{id}", "", "host"));
+            _logger.LogInformation($"Getting Invitees for Host {id}");
 
             return await query.ToListAsync();
         }
 
         public async Task<Invitee> GetInviteeByIdAsync(int id)
         {
-            _logger.LogInformation($"Getting invitee with Id: {id}");
+            _logger.LogInformation($"Getting invitee with Id: {id}.");
 
             return await _context.Invitees.FirstOrDefaultAsync(i => i.Id == id);
         }
@@ -228,7 +228,7 @@ namespace PokerTime.API.Data
         {
             var foundInvitee = await _context.Invitees.FirstOrDefaultAsync(u => u.Id == id);
 
-            _logger.LogInformation(GetLogString("Deleting", "Invitee", $"{id}", $"{foundInvitee.Name}"));
+            _logger.LogInformation($"Deleting Invitee {id}.");
 
             Delete(foundInvitee);
             if (await _context.SaveChangesAsync() > 0) //Success
@@ -247,7 +247,7 @@ namespace PokerTime.API.Data
                 .Where(u => u.HostId == id)
                 .OrderBy(u => u.Date);
 
-            _logger.LogInformation(GetLogString("Getting", "Events", $"{id}", "", "host"));
+            _logger.LogInformation($"Getting Events for Host {id}");
 
             return await query.ToListAsync();
         }
@@ -258,7 +258,7 @@ namespace PokerTime.API.Data
                 .Include(e => e.Invitees)
                 .FirstOrDefaultAsync(e => e.Id == id);
 
-            _logger.LogInformation(GetLogString("Getting", "Event", $"{id}", ""));
+            _logger.LogInformation($"Getting Event {id}.");
 
             return foundEvent;
         }
@@ -267,7 +267,7 @@ namespace PokerTime.API.Data
         {
             var foundEvent = await _context.Events.FirstOrDefaultAsync(e => e.Id == id);
 
-            _logger.LogInformation(GetLogString("Deleting", "Event", $"{id}", ""));
+            _logger.LogInformation($"Deleting Event {id}.");
 
             Delete(foundEvent);
             if (await _context.SaveChangesAsync() > 0) //Success
@@ -280,6 +280,9 @@ namespace PokerTime.API.Data
         public async Task<bool> AddNewEvent(Event theEvent)
         {
             _context.Update(theEvent);
+
+            _logger.LogInformation($"Adding new event.");
+
             if (await _context.SaveChangesAsync() > 0) //Success
             {
                 return true;
@@ -339,6 +342,8 @@ namespace PokerTime.API.Data
 
             _context.Events.Attach(oldEvent);
 
+            _logger.LogInformation($"Updating Event {oldEvent.Id}");
+
             if (await _context.SaveChangesAsync() > 0) //Success
             {
                 return true;
@@ -355,7 +360,7 @@ namespace PokerTime.API.Data
                 .Where(b => b.TournamentStructureId == id)
                 .OrderBy(b => b.SequenceNum);
 
-            _logger.LogInformation(GetLogString("Getting", "BlindLevels", $"{id}", "", "TournamentStructure"));
+            _logger.LogInformation($"Getting BlindLevels for TournamentStructure {id}");
 
             return await query.ToListAsync();
         }
@@ -364,7 +369,7 @@ namespace PokerTime.API.Data
         {
             var foundBlindLevel = await _context.BlindLevels.FirstOrDefaultAsync(b => b.Id == id);
 
-            _logger.LogInformation(GetLogString("Getting", "BlindLevel", $"{id}", ""));
+            _logger.LogInformation($"Getting BlindLevel {id}");
 
             return foundBlindLevel;
         }
@@ -373,7 +378,7 @@ namespace PokerTime.API.Data
         {
             var foundBlindLevel = await _context.BlindLevels.FirstOrDefaultAsync(b => b.Id == id);
 
-            _logger.LogInformation(GetLogString("Deleting", "BlindLevel", $"{id}", ""));
+            _logger.LogInformation($"Deleting BlindLevel {id}.");
 
             Delete(foundBlindLevel);
             if (await _context.SaveChangesAsync() > 0) //Success
@@ -383,18 +388,29 @@ namespace PokerTime.API.Data
             else return false;
         }
 
+        //TournamentTracking
 
-
-
-        //Log methods
-        public string GetLogString(string action, string type, string id, string name)
+        public async Task<TournamentTracking> GetTournamentTrackingById(Guid id)
         {
-            return $"{action} {type}: {id}, {name} at {DateTime.Now}";
+            var TournamentTracker = await _context.TournamentTrackings.FirstOrDefaultAsync(t => t.Id == id);
+
+            _logger.LogInformation($"Getting TournamentTracking for Tournament {id}.");
+
+            return TournamentTracker;
         }
 
-        public string GetLogString(string action, string type, string id, string name, string forObject)
+
+        public async Task<bool> UpdateTournamentTracking(TournamentTracking tracker)
         {
-            return $"{action} {type} for {forObject}: {id}, at {DateTime.Now}";
+            _context.TournamentTrackings.Update(tracker);
+
+            _logger.LogInformation($"Updating TournamentTracking for Tournament {tracker.Id}");
+
+            if (await _context.SaveChangesAsync() > 0) //Success
+            {
+                return true;
+            }
+            else return false;
         }
 
 

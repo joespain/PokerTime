@@ -15,7 +15,7 @@ namespace PokerTime.API.Data
         //Users 
         Task<IEnumerable<Host>> GetAllHosts(bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
         Task<Host> GetHostByEmailAsync(string email, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
-        Task<Host> GetHostByIdAsync(Guid id, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
+        Task<Host> GetHostByIdAsync(Guid id);
         Task<bool> DeleteHostByIdAsync(Guid id);
 
         //TournamentStructures 
@@ -40,6 +40,10 @@ namespace PokerTime.API.Data
         Task<IEnumerable<BlindLevel>> GetBlindLevelsByStructureIdAsync(int id);
         Task<BlindLevel> GetBlindLevelByIdAsync(int id);
         Task<bool> DeleteBlindLevelByIdAsync(int id);
+
+        //TournamentTracking
+        Task<TournamentTracking> GetTournamentTrackingById(Guid id);
+        Task<bool> UpdateTournamentTracking(TournamentTracking tracker);
 
         //Save
         Task<bool> SaveChangesAsync();

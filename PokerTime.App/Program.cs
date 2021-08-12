@@ -47,9 +47,11 @@ namespace PokerTime.App
                 client.BaseAddress = new Uri("https://localhost:44328");
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
-            
+            builder.Services.AddHttpClient<ITournamentTrackingDataService, TournamentTrackingDataService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:44328");
+            });
 
-            //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
             builder.Services.AddOidcAuthentication(options =>
             {
