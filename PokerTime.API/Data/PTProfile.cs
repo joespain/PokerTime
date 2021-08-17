@@ -23,6 +23,9 @@ namespace PokerTime.API.Data
             this.CreateMap<Invitee, InviteeModel>()
                 .ReverseMap();
 
+            this.CreateMap<TournamentTracking, TournamentTrackingModel>()
+                .ReverseMap();
+
 
         }
     }

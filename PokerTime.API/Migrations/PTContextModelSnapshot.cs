@@ -16,13 +16,13 @@ namespace PokerTime.API.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.8")
+                .HasAnnotation("ProductVersion", "5.0.9")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("EventInvitee", b =>
                 {
-                    b.Property<int>("EventsId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("EventsId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("InviteesId")
                         .HasColumnType("int");
@@ -68,16 +68,12 @@ namespace PokerTime.API.Migrations
 
             modelBuilder.Entity("PokerTime.Shared.Entities.Event", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("EventLinkId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("HostId")
                         .HasColumnType("uniqueidentifier");
@@ -127,7 +123,7 @@ namespace PokerTime.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e0eab422-54c4-4a3f-bdbd-0808cbd6a4ec"),
+                            Id = new Guid("0e9771b9-2112-4256-8594-7cd3af8d34ee"),
                             Email = "JimboSpain@gmail.com",
                             IsPaidUser = true,
                             Name = "Jim Spain",
@@ -209,8 +205,8 @@ namespace PokerTime.API.Migrations
                     b.Property<int?>("NextBlindLevelId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("TimeRemaining")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("TimeRemaining")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
 

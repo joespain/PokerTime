@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using PokerTime.App.Interfaces;
+using PokerTime.Shared.Email;
 using PokerTime.Shared.Entities;
 using PokerTime.Shared.Models;
 using System;
@@ -22,9 +23,10 @@ namespace PokerTime.App.Pages
 
         //Event
         [Parameter]
-        public int EventId { get; set; }
+        public Guid EventId { get; set; }
         public int NewEventId { get; set; }
         public EventModel Event { get; set; } = new EventModel();
+        public bool IsNewEvent { get; set; }
 
         //Services
         [Inject]
@@ -36,7 +38,7 @@ namespace PokerTime.App.Pages
         [Inject]
         public IStructureDataService StructureDataService { get; set; }
         [Inject]
-        public IBlindLevelDataService BlindLevelDataService { get; set; }
+        public IEmailDataService EmailDataService { get; set; }
         [Inject]
         public ILogger<EditEvent> Logger { get; set; }
         [Inject]
@@ -57,8 +59,9 @@ namespace PokerTime.App.Pages
                 Host = await UserDataService.GetHost();
                 HostId = Host.Id;
 
-                if(EventId != 0)
+                if(EventId != new Guid()) //If existing Event
                 {
+                    IsNewEvent = false;
                     Event = Mapper.Map<EventModel>(await EventDataService.GetEvent(EventId));
 
                     if (Event.Invitees == null)
@@ -66,9 +69,10 @@ namespace PokerTime.App.Pages
                         Event.Invitees = Mapper.Map<List<InviteeModel>>(await InviteeDataService.GetInvitees());
                     }
                 }
-                else
+                else //If new Event
                 {
-                    Event = new EventModel();
+                    IsNewEvent = true;
+                    Event.Id = Guid.NewGuid();
                     Event.Date = DateTime.Today;
                     Event.Time = DateTime.Now;
                     Event.Invitees = Mapper.Map<List<InviteeModel>>(await InviteeDataService.GetInvitees());
@@ -101,16 +105,13 @@ namespace PokerTime.App.Pages
                 {
                     Event.HostId = HostId;
                 }
-                if (Event.EventLinkId == new Guid())
-                {
-                   Event.EventLinkId = Guid.NewGuid();
-                }
 
-                if (Event.Id == 0)
+                if (IsNewEvent)
                 {
                     Event = Mapper.Map<EventModel>(
                         await EventDataService.AddEvent(
                             Mapper.Map<Event>(Event)));
+                    IsNewEvent = false;
                 }
                 else
                 {
@@ -161,18 +162,18 @@ namespace PokerTime.App.Pages
 
         public async Task EmailInvitee(InviteeModel invitee)
         {
-            //Email single invitee
+            var email = new MailRequest();
+            email.ToEmail = invitee.Email;
+            email.Subject = "Join the PokerTime Tournament";
+            email.Body = $"Join our tournament by clicking the following link: https://localhost:5015/tournament/{Event.Id}";
+
+            await EmailDataService.SendEmail(email);
         }
 
         public async Task EmailInvitees()
         {
             //Email all invitees
             
-        }
-
-        public async Task HandleInvalidSubmit()
-        {
-
         }
 
         public void NavigateToEvents()
@@ -187,7 +188,7 @@ namespace PokerTime.App.Pages
 
         public void BeginEvent()
         {
-            NavigationManager.NavigateTo($"/events/{Event.Id}/{Event.EventLinkId}");
+            NavigationManager.NavigateTo($"/events/inprogress/{Event.Id}");
         }
     }
 }

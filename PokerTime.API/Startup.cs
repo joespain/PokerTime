@@ -9,6 +9,8 @@ using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.IdentityModel.Tokens.Jwt;
 using Detached.Mappers.EntityFramework;
+using PokerTime.Shared.Email;
+using PokerTime.Shared.Converters;
 
 namespace PokerTime.API
 {
@@ -27,8 +29,8 @@ namespace PokerTime.API
         {
             services.AddDbContext<PTContext>();
             services.AddScoped<IPTRepository, PTRepository>();
-            //services.AddScoped<LinkGenerator, >
-            //services.AddScoped<ILinkGenerator, LinkGenerator>;
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddTransient<IMailService, MailService>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddControllersWithViews()
                     .AddNewtonsoftJson(options =>
@@ -44,7 +46,9 @@ namespace PokerTime.API
                     });
             });
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                options.JsonSerializerOptions.Converters.Add(new TimeSpanToStringConverter()));
 
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer",

@@ -44,7 +44,7 @@ namespace PokerTime.API.Controllers
         {
             try
             {
-                var result = await _repository.GetHostByIdAsync(getHostId());
+                var result = await _repository.GetHostByIdAsync(GetHostId());
 
                 if(result == null)
                 {
@@ -123,7 +123,7 @@ namespace PokerTime.API.Controllers
             try
             {
 
-                if(await _repository.DeleteHostByIdAsync(getHostId()))
+                if(await _repository.DeleteHostByIdAsync(GetHostId()))
                 {
                     return NoContent();  //Success
                 }

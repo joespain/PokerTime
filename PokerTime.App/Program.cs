@@ -1,11 +1,9 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using PokerTime.App.Data;
 using PokerTime.App.Interfaces;
 using PokerTime.App.Services;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace PokerTime.App
@@ -20,6 +18,12 @@ namespace PokerTime.App
             builder.Services.AddScoped<CustomAuthorizationMessageHandler>();
             builder.Services.AddSingleton<AppDataService>();
             builder.Services.AddAutoMapper(typeof(EntityProfile));
+
+
+
+            //builder.Services.AddControllers()
+            //    .AddJsonOptions(options =>
+            //    options.JsonSerializerOptions.Converters.Add(new TimeSpanToStringConverter()));
 
             //Add Data Services
             builder.Services.AddHttpClient<IBlindLevelDataService, BlindLevelDataService>(client =>
@@ -51,6 +55,12 @@ namespace PokerTime.App
             {
                 client.BaseAddress = new Uri("https://localhost:44328");
             });
+                //.AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
+
+            builder.Services.AddHttpClient<IEmailDataService, EmailDataService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:44328");
+            }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
 
             builder.Services.AddOidcAuthentication(options =>

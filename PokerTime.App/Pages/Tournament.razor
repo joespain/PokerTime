@@ -1,4 +1,4 @@
-﻿@page "/events/{EventId:int}/{EventLinkId}"
+﻿@page "/events/inprogress/{EventId:guid}"
 @inject IJSRuntime _jsRuntime
 
 @attribute [Authorize]
@@ -18,6 +18,6 @@
 
 <p><a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => StartStopTimer())">@ButtonName</a></p>
 
-<audio id="chime" src="../sounds/EndOfBlindLevel.ogg"/>
+<audio id="chime" src="../sounds/EndOfBlindLevel.ogg" />
 
 

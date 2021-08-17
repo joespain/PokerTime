@@ -1,20 +1,23 @@
-﻿@page "/tournament/{tournamentId}"
+﻿@page "/tournament/{TrackerId:guid}"
 @inject IJSRuntime _jsRuntime
 
-@if (!Tracker.IsTournamentRunning) 
-{ 
+
+@if (!Tracker.IsTournamentRunning)
+{
+    <p>Game Over</p>
 }
+else
+{
+    <h1>@TimeLeft.ToString("mm':'ss")</h1>
 
-<h1>@TimeLeft.ToString("mm':'ss")</h1>
+    <p>Blinds: @Tracker.CurrentBlindLevel.SmallBlind / @Tracker.CurrentBlindLevel.BigBlind</p>
+    <p>Ante: @Tracker.CurrentBlindLevel.Ante</p>
 
-<p>Blinds: @Tracker.CurrentBlindLevel.SmallBlind / @Tracker.CurrentBlindLevel.BigBlind</p>
-<p>Ante: @Tracker.CurrentBlindLevel.Ante</p>
+    <p></p>
 
-<p></p>
-
-<p>Next Level:</p>
-<p>Blinds: @Tracker.NextBlindLevel.SmallBlind / @Tracker.NextBlindLevel.BigBlind</p>
-<p>Ante: @Tracker.NextBlindLevel.Ante</p>
-
+    <p>Next Level:</p>
+    <p>Blinds: @Tracker.NextBlindLevel.SmallBlind / @Tracker.NextBlindLevel.BigBlind</p>
+    <p>Ante: @Tracker.NextBlindLevel.Ante</p>
+}
 
 <audio id="chime" src="../sounds/EndOfBlindLevel.ogg" />

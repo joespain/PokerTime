@@ -30,8 +30,8 @@ namespace PokerTime.API.Data
 
         //Events 
         Task<IEnumerable<Event>> GetAllEventsByHostIdAsync(Guid id);
-        Task<Event> GetEventByIdAsync(int id);
-        Task<bool> DeleteEventByIdAsync(int id);
+        Task<Event> GetEventByIdAsync(Guid id);
+        Task<bool> DeleteEventByIdAsync(Guid id);
         Task<bool> AddNewEvent(Event theEvent);
         Task<bool> UpdateEvent(Event theEvent);
 
@@ -42,8 +42,10 @@ namespace PokerTime.API.Data
         Task<bool> DeleteBlindLevelByIdAsync(int id);
 
         //TournamentTracking
+        Task<bool> AddTournamentTracking(TournamentTracking tracking);
         Task<TournamentTracking> GetTournamentTrackingById(Guid id);
         Task<bool> UpdateTournamentTracking(TournamentTracking tracker);
+        //Task AddTournamentTracking(TournamentTracking tracker);
 
         //Save
         Task<bool> SaveChangesAsync();

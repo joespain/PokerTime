@@ -27,7 +27,7 @@ namespace PokerTime.App.Pages
 
         //Services
         [Inject]
-        public IHostDataService UserDataService { get; set; }
+        public IHostDataService HostDataService { get; set; }
         [Inject]
         public IStructureDataService StructureDataService { get; set; }
         [Inject]
@@ -51,15 +51,15 @@ namespace PokerTime.App.Pages
             {
                 Saved = false;
 
-                Host = await UserDataService.GetHost();
+                Host = await HostDataService.GetHost();
                 HostId = Host.Id;
-                if(TournamentStructureId == 0)
+                if(TournamentStructureId == 0) //Create new Structure & Blind Levels
                 {
-                    //Create new Structure & Blind Levels
-
+                    TSModel = new TournamentStructureModel();
                     TSModel.HostId = HostId;
                     TSModel.DateCreated = DateTime.Today;
-
+                    TSModel.Name = "";
+                    TSModel.BlindLevels = new List<BlindLevelModel>();
                     TSModel.BlindLevels.Add(new BlindLevelModel());
                 }
                 else

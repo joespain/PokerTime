@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace PokerTime.App.Services
+namespace PokerTime.App.Interfaces
 {
     public interface ITournamentTrackingDataService
     {

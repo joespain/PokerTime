@@ -25,7 +25,7 @@ namespace PokerTime.App.Services
                 new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<Event> GetEvent(int eventId)
+        public async Task<Event> GetEvent(Guid eventId)
         {
             var gottenEvent = await JsonSerializer.DeserializeAsync<Event>(
                 await _httpClient.GetStreamAsync($"api/events/{eventId}"),
@@ -56,7 +56,7 @@ namespace PokerTime.App.Services
             await _httpClient.PutAsync($"api/events/{updateEvent.Id}", structureJson);
         }
 
-        public async Task DeleteEvent(int eventId)
+        public async Task DeleteEvent(Guid eventId)
         {
             await _httpClient.DeleteAsync($"api/events/{eventId}");
         }

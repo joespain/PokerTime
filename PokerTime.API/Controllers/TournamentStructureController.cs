@@ -29,7 +29,7 @@ namespace PokerTime.API.Controllers
         {
             try
             {
-                var results = await _repository.GetTournamentStructuresByHostIdAsync(getHostId());
+                var results = await _repository.GetTournamentStructuresByHostIdAsync(GetHostId());
 
                 return _mapper.Map<IEnumerable<TournamentStructureModel>>(results).ToList();
             }
@@ -62,7 +62,7 @@ namespace PokerTime.API.Controllers
             try
             {
                 //Get the host to attach to the Tournament Structure
-                var host = await _repository.GetHostByIdAsync(getHostId());
+                var host = await _repository.GetHostByIdAsync(GetHostId());
 
                 if (host == null) return BadRequest("Host does not exist.");
 

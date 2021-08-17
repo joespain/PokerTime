@@ -252,7 +252,7 @@ namespace PokerTime.API.Data
             return await query.ToListAsync();
         }
 
-        public async Task<Event> GetEventByIdAsync(int id)
+        public async Task<Event> GetEventByIdAsync(Guid id)
         {
             var foundEvent = await _context.Events
                 .Include(e => e.Invitees)
@@ -263,7 +263,7 @@ namespace PokerTime.API.Data
             return foundEvent;
         }
 
-        public async Task<bool> DeleteEventByIdAsync(int id)
+        public async Task<bool> DeleteEventByIdAsync(Guid id)
         {
             var foundEvent = await _context.Events.FirstOrDefaultAsync(e => e.Id == id);
 
@@ -279,7 +279,20 @@ namespace PokerTime.API.Data
 
         public async Task<bool> AddNewEvent(Event theEvent)
         {
-            _context.Update(theEvent);
+            foreach(var invitee in theEvent.Invitees)
+            {
+                if(invitee.Id == 0)
+                {
+                    _context.Invitees.Add(invitee);
+                }
+                else
+                {
+                    _context.Entry(invitee).State = EntityState.Modified;
+                }
+            }
+            //await _context.SaveChangesAsync();
+
+            _context.Events.Add(theEvent);
 
             _logger.LogInformation($"Adding new event.");
 
@@ -390,18 +403,36 @@ namespace PokerTime.API.Data
 
         //TournamentTracking
 
+        public async Task<bool> AddTournamentTracking(TournamentTracking tracking)
+        {
+            _context.Entry(tracking.CurrentBlindLevel).State = EntityState.Modified;
+            _context.Entry(tracking.NextBlindLevel).State = EntityState.Modified;
+            _context.TournamentTrackings.Add(tracking);
+
+            _logger.LogInformation($"Adding TournamentTracking for Tournament {tracking.Id}.");
+
+            if (await _context.SaveChangesAsync() > 0)
+            {
+                return true;
+            }
+            else return false;
+        }
+
         public async Task<TournamentTracking> GetTournamentTrackingById(Guid id)
         {
-            var TournamentTracker = await _context.TournamentTrackings.FirstOrDefaultAsync(t => t.Id == id);
+            var TournamentTracker = await _context.TournamentTrackings
+                .Include(t => t.CurrentBlindLevel)
+                .Include(t => t.NextBlindLevel)
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             _logger.LogInformation($"Getting TournamentTracking for Tournament {id}.");
 
             return TournamentTracker;
         }
 
-
         public async Task<bool> UpdateTournamentTracking(TournamentTracking tracker)
         {
+            //_context.Entry(tracker).State = EntityState.Modified;
             _context.TournamentTrackings.Update(tracker);
 
             _logger.LogInformation($"Updating TournamentTracking for Tournament {tracker.Id}");

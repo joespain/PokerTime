@@ -6,14 +6,12 @@ namespace PokerTime.Shared.Models
 {
     public class EventModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [Required]
         [StringLength(75)]
         public string Name { get; set; }
         public DateTime Date { get; set; }
         public DateTime Time { get; set; }
-        [Required]
-        public Guid EventLinkId { get; set; }
 
         [Required]
         public Guid HostId { get; set; }

@@ -1,8 +1,6 @@
-﻿using PokerTime.Shared.Entities;
-using PokerTime.Shared.Models;
+﻿using PokerTime.App.Interfaces;
+using PokerTime.Shared.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -29,7 +27,7 @@ namespace PokerTime.App.Services
         {
             var structureJson = new StringContent(JsonSerializer.Serialize(tracking), Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync($"api/tournamenttracking/", structureJson);
+            var response = await _httpClient.PostAsync("api/tournamenttracking", structureJson);
 
             if (response.IsSuccessStatusCode)
             {

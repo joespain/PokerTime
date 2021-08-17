@@ -10,16 +10,31 @@ using PokerTime.API.Data;
 namespace PokerTime.API.Migrations
 {
     [DbContext(typeof(PTContext))]
-    [Migration("20210805194224_removedInviteesFromEvent")]
-    partial class removedInviteesFromEvent
+    [Migration("20210817173241_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.8")
+                .HasAnnotation("ProductVersion", "5.0.9")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("EventInvitee", b =>
+                {
+                    b.Property<Guid>("EventsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("InviteesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EventsId", "InviteesId");
+
+                    b.HasIndex("InviteesId");
+
+                    b.ToTable("EventInvitee");
+                });
 
             modelBuilder.Entity("PokerTime.Shared.Entities.BlindLevel", b =>
                 {
@@ -55,19 +70,22 @@ namespace PokerTime.API.Migrations
 
             modelBuilder.Entity("PokerTime.Shared.Entities.Event", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("EventLinkId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("HostId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(75)
+                        .HasColumnType("nvarchar(75)");
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("TournamentStructureId")
                         .HasColumnType("int");
@@ -107,7 +125,7 @@ namespace PokerTime.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("bde4a64e-0f2e-4832-812c-299ba52ede6b"),
+                            Id = new Guid("0e9771b9-2112-4256-8594-7cd3af8d34ee"),
                             Email = "JimboSpain@gmail.com",
                             IsPaidUser = true,
                             Name = "Jim Spain",
@@ -171,6 +189,51 @@ namespace PokerTime.API.Migrations
                     b.ToTable("TournamentStructures");
                 });
 
+            modelBuilder.Entity("PokerTime.Shared.Entities.TournamentTracking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("CurrentBlindLevelId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsTimerRunning")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTournamentRunning")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("NextBlindLevelId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("TimeRemaining")
+                        .HasColumnType("time");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CurrentBlindLevelId");
+
+                    b.HasIndex("NextBlindLevelId");
+
+                    b.ToTable("TournamentTrackings");
+                });
+
+            modelBuilder.Entity("EventInvitee", b =>
+                {
+                    b.HasOne("PokerTime.Shared.Entities.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PokerTime.Shared.Entities.Invitee", null)
+                        .WithMany()
+                        .HasForeignKey("InviteesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("PokerTime.Shared.Entities.BlindLevel", b =>
                 {
                     b.HasOne("PokerTime.Shared.Entities.TournamentStructure", null)
@@ -205,6 +268,21 @@ namespace PokerTime.API.Migrations
                         .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PokerTime.Shared.Entities.TournamentTracking", b =>
+                {
+                    b.HasOne("PokerTime.Shared.Entities.BlindLevel", "CurrentBlindLevel")
+                        .WithMany()
+                        .HasForeignKey("CurrentBlindLevelId");
+
+                    b.HasOne("PokerTime.Shared.Entities.BlindLevel", "NextBlindLevel")
+                        .WithMany()
+                        .HasForeignKey("NextBlindLevelId");
+
+                    b.Navigation("CurrentBlindLevel");
+
+                    b.Navigation("NextBlindLevel");
                 });
 
             modelBuilder.Entity("PokerTime.Shared.Entities.Host", b =>

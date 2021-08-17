@@ -75,12 +75,12 @@ namespace PokerTime.App.Pages
 
         public void StartEvent(Event theEvent) 
         {
-            NavigationManager.NavigateTo($"/events/{theEvent.Id}/{theEvent.EventLinkId}");
+            NavigationManager.NavigateTo($"/events/inprogress/{theEvent.Id}");
         }
 
         public void NewEvent()
         {
-            NavigationManager.NavigateTo($"/events/0");
+            NavigationManager.NavigateTo($"/events/{new Guid()}");
         }
 
         public void EditEvent(Event theEvent)

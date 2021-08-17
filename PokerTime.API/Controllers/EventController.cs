@@ -28,7 +28,7 @@ namespace PokerTime.API.Controllers
         {
             try
             {
-                var events = await _repository.GetAllEventsByHostIdAsync(getHostId());
+                var events = await _repository.GetAllEventsByHostIdAsync(GetHostId());
 
                 if (events == null)
                 {
@@ -44,12 +44,12 @@ namespace PokerTime.API.Controllers
             }
         }
 
-        [HttpGet("{eventId:int}")]
-        public async Task<ActionResult<EventModel>> GetEvent(int eventId)
+        [HttpGet("{eventId:guid}")]
+        public async Task<ActionResult<EventModel>> GetEvent(Guid eventId)
         {
             try
             {
-                if (eventId == 0) return BadRequest("Event not found.");
+                if (eventId == Guid.NewGuid()) return BadRequest("Event not found.");
 
                 return _mapper.Map<EventModel>(await _repository.GetEventByIdAsync(eventId));
             }
@@ -66,8 +66,33 @@ namespace PokerTime.API.Controllers
             try
             {
                 var newEvent = _mapper.Map<Event>(model);
+                bool allInviteesAreNew = true;
 
-                if (await _repository.AddNewEvent(newEvent))
+                foreach(var invitee in newEvent.Invitees)
+                {
+                    if(invitee.Id != 0)
+                    {
+                        allInviteesAreNew = false;
+                    }
+                }
+
+                if (allInviteesAreNew)
+                {
+                    _repository.Add(newEvent);
+                }
+                else
+                {
+                    if(await _repository.AddNewEvent(newEvent))
+                    {
+                        return Created($"api/events/{newEvent.Id}", _mapper.Map<EventModel>(newEvent));
+                    }
+                    else
+                    {
+                        return BadRequest("Error adding event.");
+                    }
+                }
+
+                if(await _repository.SaveChangesAsync())
                 {
                     return Created($"api/events/{newEvent.Id}", _mapper.Map<EventModel>(newEvent));
                 }
@@ -83,8 +108,8 @@ namespace PokerTime.API.Controllers
             }
         }
 
-        [HttpPut("{eventId:int}")]
-        public async Task<ActionResult<EventModel>> UpdateEvent(int eventId, [FromBody] EventModel eventToUpdateModel)
+        [HttpPut("{eventId:guid}")]
+        public async Task<ActionResult<EventModel>> UpdateEvent(Guid eventId, [FromBody] EventModel eventToUpdateModel)
         {
             try
             {
@@ -111,12 +136,12 @@ namespace PokerTime.API.Controllers
             }
         }
 
-        [HttpDelete("{eventId:int}")]
-        public async Task<ActionResult> DeleteEvent(int eventId)
+        [HttpDelete("{eventId:guid}")]
+        public async Task<ActionResult> DeleteEvent(Guid eventId)
         {
             try
             {
-                if (eventId == 0) return BadRequest("No event to delete.");
+                if (eventId == Guid.NewGuid()) return BadRequest("No event to delete.");
                 if (await _repository.DeleteEventByIdAsync(eventId))
                 {
                     return NoContent();  //Success
@@ -135,7 +160,7 @@ namespace PokerTime.API.Controllers
 
         private async Task UpdateInvitees(List<Invitee> invitees)
         {
-            List<Invitee> oldInvitees = (await _repository.GetAllInviteesByHostIdAsync(getHostId())).ToList();
+            List<Invitee> oldInvitees = (await _repository.GetAllInviteesByHostIdAsync(GetHostId())).ToList();
             _mapper.Map(invitees, oldInvitees);
             await _repository.SaveChangesAsync();
         }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
@@ -12,6 +13,7 @@ namespace PokerTime.API.Controllers
 {
     [Route("api/tournamenttracking")]
     [ApiController]
+    //[Authorize("api-access")]
     public class TournamentTrackingController : PokerTimeControllerBase
     {
         public TournamentTrackingController(IPTRepository repository, IMapper mapper, LinkGenerator linkGenerator) : base(repository, mapper, linkGenerator)
@@ -42,17 +44,28 @@ namespace PokerTime.API.Controllers
             {
                 var newTournamentTracker = _mapper.Map<TournamentTracking>(model);
 
-                _repository.Add(newTournamentTracker);
-
-                if (await _repository.SaveChangesAsync())
+                if(await _repository.GetTournamentTrackingById(newTournamentTracker.Id) == null)
                 {
-                    return Created($"api/tournamenttracking/{newTournamentTracker.Id}",
-                        _mapper.Map<TournamentStructureModel>(newTournamentTracker));
+                    if (await _repository.AddTournamentTracking(newTournamentTracker))
+                    {
+                        return Created($"api/tournamenttracking/{newTournamentTracker.Id}",
+                            _mapper.Map<TournamentTrackingModel>(newTournamentTracker));
+                    }
+                    else
+                    {
+                        return BadRequest("Failed to add new TournamentTracking.");
+                    }
                 }
                 else
                 {
-                    return BadRequest("Failed to add new TournamentTracking.");
+                    if (await _repository.UpdateTournamentTracking(newTournamentTracker))
+                    {
+                        return _mapper.Map<TournamentTrackingModel>(newTournamentTracker);
+                    }
+                    else return BadRequest("Error updating the Tournament Tracking.");
                 }
+
+                
             }
             catch (Exception e)
             {
@@ -63,14 +76,14 @@ namespace PokerTime.API.Controllers
 
 
         [HttpPut("{tournamentId}")]
-        public async Task<ActionResult<TournamentTrackingModel>> UpdateTournamentTracker([FromBody] TournamentTrackingModel model)
+        public async Task<ActionResult<TournamentTrackingModel>> UpdateTournamentTracker(Guid tournamentId, [FromBody] TournamentTrackingModel model)
         {
             try
             {
-                var trackerToUpdate = await _repository.GetTournamentTrackingById(model.Id);
-                _mapper.Map(model, trackerToUpdate);
+                //var trackerToUpdate = await _repository.GetTournamentTrackingById(tournamentId);
+                var trackerToUpdate = _mapper.Map<TournamentTracking>(model);
 
-                if (await _repository.SaveChangesAsync())
+                if (await _repository.UpdateTournamentTracking(trackerToUpdate))
                 {
                     return _mapper.Map<TournamentTrackingModel>(trackerToUpdate);
                 }

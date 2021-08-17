@@ -22,10 +22,10 @@ namespace PokerTime.API.Controllers
             _linkGenerator = linkGenerator;
         }
 
-        public Guid getHostId()
+        public Guid GetHostId()
         {
             //Re-do with code to obtain HostId from IDP
-            return Guid.Parse("48b51074-220e-4275-b3f6-ed41b8319832");
+            return Guid.Parse("0e9771b9-2112-4256-8594-7cd3af8d34ee");
         }
 
     }

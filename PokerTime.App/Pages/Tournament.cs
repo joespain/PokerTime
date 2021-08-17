@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using PokerTime.App.Interfaces;
+using PokerTime.App.Services;
 using PokerTime.Shared.Entities;
 using System;
 using System.Collections.Generic;
@@ -23,15 +24,17 @@ namespace PokerTime.App.Pages
 
         //Event
         [Parameter]
-        public string EventLinkId { get; set; }
-        [Parameter]
-        public int EventId { get; set; }
+        public Guid EventId { get; set; }
         public Event Event { get; set; }
 
         //Timer
         public TimeSpan TimeLeft { get; set; } = new TimeSpan();
         public bool IsTimerRunning { get; set; } = false;
+        public bool IsTournamentRunning { get; set; } = true;
         public string ButtonName { get; set; } = "Start";
+
+        //TournamentTracking
+        public TournamentTracking TournamentTracker { get; set; } = new TournamentTracking();
 
 
         //Services
@@ -41,6 +44,8 @@ namespace PokerTime.App.Pages
         public IStructureDataService StructureDataService { get; set; }
         [Inject]
         public IBlindLevelDataService BlindLevelDataService { get; set; }
+        [Inject]
+        public ITournamentTrackingDataService TournamentTrackingDataService { get; set; }
         [Inject]
         public ILogger<EditEvent> Logger { get; set; }
         [Inject]
@@ -53,7 +58,7 @@ namespace PokerTime.App.Pages
         {
             try
             {
-                if (EventId == 0)
+                if (EventId == new Guid())
                 {
                     //error
                     Logger.LogDebug("No event ID");
@@ -66,7 +71,6 @@ namespace PokerTime.App.Pages
                 }
 
                 Structure = await StructureDataService.GetStructure(Event.TournamentStructureId);
-
                 if (Structure == null)
                 {
                     //error
@@ -86,6 +90,7 @@ namespace PokerTime.App.Pages
                 ButtonName = "Start";
 
                 SetTimer();
+                await UpdateTournamentTracker(true);
             }
             catch (Exception e)
             {
@@ -106,21 +111,30 @@ namespace PokerTime.App.Pages
 
         public async Task Timer()
         {
+            int fiveSecondTimer = 1;
             while ((TimeLeft > new TimeSpan()) && IsTimerRunning)
             {
-                await Task.Delay(1000);
-                TimeLeft = TimeLeft.Subtract(new TimeSpan(0, 0, 1));
-                StateHasChanged();
+                while(fiveSecondTimer < 5)
+                {
+                    await Task.Delay(1000);
+                    TimeLeft = TimeLeft.Subtract(new TimeSpan(0, 0, 1));
+                    StateHasChanged();
+                    fiveSecondTimer++;
+                }
+                await UpdateTournamentTracker();
+                fiveSecondTimer = 1;
             }
 
             if(TimeLeft == new TimeSpan())
             {
                 //Time Ended
                 await TimeExpired();
+                await UpdateTournamentTracker();
             }
             else
             {
                 //Host stopped timer
+                await UpdateTournamentTracker();
             }
 
             StateHasChanged();
@@ -153,7 +167,8 @@ namespace PokerTime.App.Pages
         {
             if (NextBlindLevel == null)
             {
-                //How to handle end of list
+                //End of Tournament
+                IsTournamentRunning = false;
             }
             else
             {
@@ -164,8 +179,12 @@ namespace PokerTime.App.Pages
                     //How to handle having no data in NextBlindLevel
                 }
             }
-            SetTimer();
-            StateHasChanged();
+
+            if (IsTournamentRunning)
+            {
+                SetTimer();
+                StateHasChanged();
+            }
         }
 
         public async Task PlaySound()
@@ -173,7 +192,24 @@ namespace PokerTime.App.Pages
             await _jsRuntime.InvokeAsync<string>("PlayAudio", "chime");
         }
 
+        public async Task UpdateTournamentTracker(bool isFirstTracking = false)
+        {
+            TournamentTracker.Id = Event.Id;
+            TournamentTracker.IsTimerRunning = IsTimerRunning;
+            TournamentTracker.IsTournamentRunning = IsTournamentRunning;
+            TournamentTracker.CurrentBlindLevel = CurrentBlindLevel;
+            TournamentTracker.NextBlindLevel = NextBlindLevel;
+            TournamentTracker.TimeRemaining = TimeLeft;
 
+            if (await TournamentTrackingDataService.GetTournamentTracking(EventId) == null)
+            {
+                TournamentTracker = await TournamentTrackingDataService.AddTournamentTracking(TournamentTracker);
+            }
+            else
+            {
+                await TournamentTrackingDataService.UpdateTournamentTracking(TournamentTracker);
+            }
+        }
 
 
     }
