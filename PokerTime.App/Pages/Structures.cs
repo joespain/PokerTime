@@ -55,11 +55,11 @@ namespace PokerTime.App.Pages
             }
         }
 
-        protected async Task NewStructure()
+        protected void NewStructure()
         {
-            var newStructure = await StructureDataService.AddStructure(new TournamentStructure() { Name = "New Tournament Structure"});
+            //var newStructure = await StructureDataService.AddStructure(new TournamentStructure() { Name = "New Tournament Structure"});
 
-            NavigationManager.NavigateTo($"structures/{newStructure.Id}");
+            NavigationManager.NavigateTo($"structures/0");
         }
 
         protected void Edit(int structureId)

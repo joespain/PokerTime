@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using PokerTime.API.Data;
 using PokerTime.Shared.Entities;
 using PokerTime.Shared.Models;
@@ -80,14 +81,25 @@ namespace PokerTime.API.Controllers
         {
             try
             {
-                //var trackerToUpdate = await _repository.GetTournamentTrackingById(tournamentId);
-                var trackerToUpdate = _mapper.Map<TournamentTracking>(model);
 
-                if (await _repository.UpdateTournamentTracking(trackerToUpdate))
+                if (!await _repository.DoesTournamentTrackingExist(model.Id)) //If the tracking does not already exist in the database
                 {
-                    return _mapper.Map<TournamentTrackingModel>(trackerToUpdate);
+                    if (await _repository.AddTournamentTracking(_mapper.Map<TournamentTracking>(model)))
+                    {
+                        return Ok(model);
+                    }
+                    else return BadRequest("Error updating the Tournament Tracking.");
                 }
-                else return BadRequest("Error updating the Tournament Tracking.");
+                else
+                {
+
+                    if (await _repository.UpdateTournamentTracking(_mapper.Map<TournamentTracking>(model)))
+                    {
+                        return Ok(model);
+                    }
+                    else return BadRequest("Error updating the Tournament Tracking.");
+                }
+
 
             }
             catch(Exception e)

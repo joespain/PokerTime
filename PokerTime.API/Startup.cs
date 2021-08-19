@@ -28,6 +28,7 @@ namespace PokerTime.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<PTContext>();
+
             services.AddScoped<IPTRepository, PTRepository>();
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddTransient<IMailService, MailService>();
@@ -48,7 +49,9 @@ namespace PokerTime.API
 
             services.AddControllers()
                 .AddJsonOptions(options =>
-                options.JsonSerializerOptions.Converters.Add(new TimeSpanToStringConverter()));
+                options.JsonSerializerOptions.Converters.Add(new TimeSpanToStringConverter()))
+                .AddJsonOptions(options =>
+                options.JsonSerializerOptions.Converters.Add(new DateTimeToStringConverter()));
 
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer",

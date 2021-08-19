@@ -18,8 +18,7 @@ namespace PokerTime.App
             builder.Services.AddScoped<CustomAuthorizationMessageHandler>();
             builder.Services.AddSingleton<AppDataService>();
             builder.Services.AddAutoMapper(typeof(EntityProfile));
-
-
+            //builder.Services.AddHostedService<TimerService>();
 
             //builder.Services.AddControllers()
             //    .AddJsonOptions(options =>
@@ -55,7 +54,7 @@ namespace PokerTime.App
             {
                 client.BaseAddress = new Uri("https://localhost:44328");
             });
-                //.AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
+            //.AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IEmailDataService, EmailDataService>(client =>
             {

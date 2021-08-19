@@ -82,8 +82,8 @@ else
         </a>
     </div>
 
-    <input type="submit" class="btn btn-primary edit-btn" value="Save Event" />
-    <input type="submit" class="btn btn-primary edit-btn" value="Begin Event" />
+    <input type="submit" class="btn btn-primary edit-btn" value="Save Event" @onclick="@(() => IsSave = true)" />
+    <input type="submit" class="btn btn-primary edit-btn" value="Begin Event" @onclick="@(() => IsSave = false)"/>
     <a class="btn btn-outline-primary edit-outline-btn" @onclick="@EmailInvitees">Email Invitees</a>
     <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToEvents">Cancel</a>
 </EditForm>

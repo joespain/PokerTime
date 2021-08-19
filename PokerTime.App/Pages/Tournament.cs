@@ -90,7 +90,7 @@ namespace PokerTime.App.Pages
                 ButtonName = "Start";
 
                 SetTimer();
-                await UpdateTournamentTracker(true);
+                await UpdateTournamentTracker();
             }
             catch (Exception e)
             {
@@ -104,17 +104,14 @@ namespace PokerTime.App.Pages
         public void SetTimer()
         {
             TimeLeft = new TimeSpan(0, CurrentBlindLevel.Minutes, 0);
-            IsTimerRunning = false;
-            ButtonName = "Start";
         }
-
 
         public async Task Timer()
         {
-            int fiveSecondTimer = 1;
+            int fiveSecondTimer = 0;
             while ((TimeLeft > new TimeSpan()) && IsTimerRunning)
             {
-                while(fiveSecondTimer < 5)
+                while(fiveSecondTimer < 5 && IsTimerRunning && TimeLeft > new TimeSpan())
                 {
                     await Task.Delay(1000);
                     TimeLeft = TimeLeft.Subtract(new TimeSpan(0, 0, 1));
@@ -122,7 +119,7 @@ namespace PokerTime.App.Pages
                     fiveSecondTimer++;
                 }
                 await UpdateTournamentTracker();
-                fiveSecondTimer = 1;
+                fiveSecondTimer = 0;
             }
 
             if(TimeLeft == new TimeSpan())
@@ -143,7 +140,7 @@ namespace PokerTime.App.Pages
         public async Task TimeExpired()
         {
             await PlaySound();
-            IterateBlindLevel();
+            await IterateBlindLevel();
             await StartStopTimer();
         }
 
@@ -152,10 +149,12 @@ namespace PokerTime.App.Pages
             IsTimerRunning = !IsTimerRunning;
             if (IsTimerRunning)
             {
+                TournamentTracker.Time = DateTime.UtcNow;
                 ButtonName = "Stop";
             }
             else
             {
+                TournamentTracker.Time = DateTime.UtcNow;
                 ButtonName = "Start";
             }
 
@@ -163,12 +162,13 @@ namespace PokerTime.App.Pages
         }
 
 
-        public void IterateBlindLevel()
+        public async Task IterateBlindLevel()
         {
-            if (NextBlindLevel == null)
+            if (NextBlindLevel == new BlindLevel())
             {
                 //End of Tournament
                 IsTournamentRunning = false;
+                await UpdateTournamentTracker();
             }
             else
             {
@@ -176,13 +176,14 @@ namespace PokerTime.App.Pages
                 NextBlindLevel = BlindLevels.ElementAt(BlindLevels.IndexOf(CurrentBlindLevel) + 1);
                 if (NextBlindLevel == null)
                 {
-                    //How to handle having no data in NextBlindLevel
+                    NextBlindLevel = new BlindLevel();
                 }
             }
 
             if (IsTournamentRunning)
             {
                 SetTimer();
+                await Timer();
                 StateHasChanged();
             }
         }
@@ -192,7 +193,7 @@ namespace PokerTime.App.Pages
             await _jsRuntime.InvokeAsync<string>("PlayAudio", "chime");
         }
 
-        public async Task UpdateTournamentTracker(bool isFirstTracking = false)
+        public async Task UpdateTournamentTracker()
         {
             TournamentTracker.Id = Event.Id;
             TournamentTracker.IsTimerRunning = IsTimerRunning;
@@ -200,17 +201,8 @@ namespace PokerTime.App.Pages
             TournamentTracker.CurrentBlindLevel = CurrentBlindLevel;
             TournamentTracker.NextBlindLevel = NextBlindLevel;
             TournamentTracker.TimeRemaining = TimeLeft;
-
-            if (await TournamentTrackingDataService.GetTournamentTracking(EventId) == null)
-            {
-                TournamentTracker = await TournamentTrackingDataService.AddTournamentTracking(TournamentTracker);
-            }
-            else
-            {
-                await TournamentTrackingDataService.UpdateTournamentTracking(TournamentTracker);
-            }
+            
+            await TournamentTrackingDataService.UpdateTournamentTracking(TournamentTracker);
         }
-
-
     }
 }

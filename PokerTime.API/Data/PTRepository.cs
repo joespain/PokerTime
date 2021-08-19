@@ -1,5 +1,4 @@
-﻿using Detached.Mappers.EntityFramework;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PokerTime.Shared.Entities;
 using System;
@@ -353,7 +352,7 @@ namespace PokerTime.API.Data
             oldEvent.TournamentStructureId = eventToUpdate.TournamentStructureId;
            // _context.Entry(oldEvent.Invitees).State = EntityState.Modified;
 
-            _context.Events.Attach(oldEvent);
+            _context.Events.Update(oldEvent);
 
             _logger.LogInformation($"Updating Event {oldEvent.Id}");
 
@@ -420,19 +419,21 @@ namespace PokerTime.API.Data
 
         public async Task<TournamentTracking> GetTournamentTrackingById(Guid id)
         {
-            var TournamentTracker = await _context.TournamentTrackings
+            var tournamentTracker = await _context.TournamentTrackings
                 .Include(t => t.CurrentBlindLevel)
                 .Include(t => t.NextBlindLevel)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             _logger.LogInformation($"Getting TournamentTracking for Tournament {id}.");
 
-            return TournamentTracker;
+            _context.Entry(tournamentTracker).State = EntityState.Detached;
+            return tournamentTracker;
         }
 
         public async Task<bool> UpdateTournamentTracking(TournamentTracking tracker)
         {
-            //_context.Entry(tracker).State = EntityState.Modified;
+            _context.Entry(tracker.CurrentBlindLevel).State = EntityState.Unchanged;
+            _context.Entry(tracker.NextBlindLevel).State = EntityState.Unchanged;
             _context.TournamentTrackings.Update(tracker);
 
             _logger.LogInformation($"Updating TournamentTracking for Tournament {tracker.Id}");
@@ -444,6 +445,21 @@ namespace PokerTime.API.Data
             else return false;
         }
 
+        public async Task<bool> DoesTournamentTrackingExist(Guid id)
+        {
+            var existingTracking  = await _context.TournamentTrackings.FirstOrDefaultAsync(t => t.Id == id);
+            if (existingTracking == null)
+            {
+                return false;
+            }
+            else
+            {
+                _context.Entry(existingTracking).State = EntityState.Detached;
+                return true;
+            }
+            
+            
+        }
 
     }
 }

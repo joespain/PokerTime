@@ -2,7 +2,11 @@
 @inject IJSRuntime _jsRuntime
 
 
-@if (!Tracker.IsTournamentRunning)
+@if (Tracker == null)
+{
+    <div class="spinner"></div>
+}
+else if(!Tracker.IsTournamentRunning)
 {
     <p>Game Over</p>
 }

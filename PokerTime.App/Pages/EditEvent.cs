@@ -27,6 +27,7 @@ namespace PokerTime.App.Pages
         public int NewEventId { get; set; }
         public EventModel Event { get; set; } = new EventModel();
         public bool IsNewEvent { get; set; }
+        public bool IsSave { get; set; } = false;
 
         //Services
         [Inject]
@@ -39,6 +40,8 @@ namespace PokerTime.App.Pages
         public IStructureDataService StructureDataService { get; set; }
         [Inject]
         public IEmailDataService EmailDataService { get; set; }
+        [Inject]
+        public ITournamentTrackingDataService TournamentTrackingDataService { get; set; }
         [Inject]
         public ILogger<EditEvent> Logger { get; set; }
         [Inject]
@@ -119,7 +122,16 @@ namespace PokerTime.App.Pages
                 }
                 
                 await EmailInvitees();
-                BeginEvent();
+
+                if (IsSave)
+                {
+                    NavigationManager.NavigateTo("/events");
+                }
+                else
+                {
+                    BeginEvent();
+                }
+                
             }
             catch(Exception e)
             {
@@ -190,5 +202,29 @@ namespace PokerTime.App.Pages
         {
             NavigationManager.NavigateTo($"/events/inprogress/{Event.Id}");
         }
+
+        //public async Task AddTournamentTracker()
+        //{
+        //    TournamentTracking TournamentTracker = new();
+
+        //    TournamentTracker.Id = Event.Id;
+        //    TournamentTracker.IsTimerRunning = false;
+        //    TournamentTracker.IsTournamentRunning = true;
+        //    TournamentTracker.CurrentBlindLevel = null;
+        //    TournamentTracker.NextBlindLevel = null;
+        //    TournamentTracker.TimeRemaining = new();
+        //    TournamentTracker.Time = new();
+
+        //    var oldTracking = await TournamentTrackingDataService.GetTournamentTracking(EventId);
+        //    if (oldTracking == null) //Check to make sure it doesn't already exist.
+        //    {
+                
+        //        TournamentTracker = await TournamentTrackingDataService.AddTournamentTracking(TournamentTracker);
+        //    }
+        //    else
+        //    {
+        //        await TournamentTrackingDataService.UpdateTournamentTracking(TournamentTracker);
+        //    }
+        //}
     }
 }

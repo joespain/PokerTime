@@ -3,18 +3,28 @@
 
 @attribute [Authorize]
 
-<h3>@Structure.Name</h3>
+@if (IsTournamentRunning) { 
+    <h3>@Structure.Name</h3>
 
-<h1>@TimeLeft.ToString("mm':'ss")</h1>
+    <h1>@TimeLeft.ToString("mm':'ss")</h1>
 
-<p>Blinds: @CurrentBlindLevel.SmallBlind / @CurrentBlindLevel.BigBlind</p>
-<p>Ante: @CurrentBlindLevel.Ante</p>
+    <p>Blinds: @CurrentBlindLevel.SmallBlind / @CurrentBlindLevel.BigBlind</p>
+    <p>Ante: @CurrentBlindLevel.Ante</p>
 
-<p></p>
+    <p></p>
 
-<p>Next Level:</p>
-<p>Blinds: @NextBlindLevel.SmallBlind / @NextBlindLevel.BigBlind</p>
-<p>Ante: @NextBlindLevel.Ante</p>
+    @if (NextBlindLevel != null)
+    {
+        <p>Next Level:</p>
+        <p>Blinds: @NextBlindLevel.SmallBlind / @NextBlindLevel.BigBlind</p>
+        <p>Ante: @NextBlindLevel.Ante</p>
+    }
+    else
+    {
+        <p>No more Blind Levels</p>
+    }
+}
+
 
 <p><a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => StartStopTimer())">@ButtonName</a></p>
 

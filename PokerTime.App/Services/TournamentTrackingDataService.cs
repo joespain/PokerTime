@@ -18,9 +18,12 @@ namespace PokerTime.App.Services
 
         public async Task<TournamentTracking> GetTournamentTracking(Guid trackingId)
         {
-            return await JsonSerializer.DeserializeAsync<TournamentTracking>(
-                await _httpClient.GetStreamAsync($"api/tournamenttracking/{trackingId}"),
+            var TournamentTrackerJson = await _httpClient.GetStreamAsync($"api/tournamenttracking/{trackingId}");
+            
+            var TournamentTracker = await JsonSerializer.DeserializeAsync<TournamentTracking>(TournamentTrackerJson,
                 new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+
+            return TournamentTracker;
         }
 
         public async Task<TournamentTracking> AddTournamentTracking(TournamentTracking tracking)

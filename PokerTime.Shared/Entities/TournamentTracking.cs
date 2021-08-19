@@ -11,6 +11,7 @@ namespace PokerTime.Shared.Entities
         public bool IsTimerRunning { get; set; }
         [System.Text.Json.Serialization.JsonConverter(typeof(TimeSpanToStringConverter))]
         public TimeSpan TimeRemaining { get; set; }
+        public DateTime Time { get; set; }
         public BlindLevel CurrentBlindLevel { get; set; }
         public BlindLevel NextBlindLevel { get; set; }
 

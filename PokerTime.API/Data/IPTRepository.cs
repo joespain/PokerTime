@@ -45,7 +45,7 @@ namespace PokerTime.API.Data
         Task<bool> AddTournamentTracking(TournamentTracking tracking);
         Task<TournamentTracking> GetTournamentTrackingById(Guid id);
         Task<bool> UpdateTournamentTracking(TournamentTracking tracker);
-        //Task AddTournamentTracking(TournamentTracking tracker);
+        Task<bool> DoesTournamentTrackingExist(Guid id);
 
         //Save
         Task<bool> SaveChangesAsync();
