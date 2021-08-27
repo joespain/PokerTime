@@ -1,3 +1,4 @@
+using BlazorStrap;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using PokerTime.App.Data;
@@ -18,11 +19,8 @@ namespace PokerTime.App
             builder.Services.AddScoped<CustomAuthorizationMessageHandler>();
             builder.Services.AddSingleton<AppDataService>();
             builder.Services.AddAutoMapper(typeof(EntityProfile));
-            //builder.Services.AddHostedService<TimerService>();
-
-            //builder.Services.AddControllers()
-            //    .AddJsonOptions(options =>
-            //    options.JsonSerializerOptions.Converters.Add(new TimeSpanToStringConverter()));
+            builder.Services.AddTransient<TimerService>();
+            builder.Services.AddBootstrapCss();
 
             //Add Data Services
             builder.Services.AddHttpClient<IBlindLevelDataService, BlindLevelDataService>(client =>
@@ -53,7 +51,7 @@ namespace PokerTime.App
             builder.Services.AddHttpClient<ITournamentTrackingDataService, TournamentTrackingDataService>(client =>
             {
                 client.BaseAddress = new Uri("https://localhost:44328");
-            });
+            }); //This Http client does not have the Custom Auth Message Handler as it needs to be accessed by users who are not logged in.
             //.AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IEmailDataService, EmailDataService>(client =>

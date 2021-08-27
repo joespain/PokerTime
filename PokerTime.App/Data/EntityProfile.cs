@@ -21,7 +21,9 @@ namespace PokerTime.App.Data
                 .ReverseMap();
 
             this.CreateMap<Invitee, InviteeModel>()
+                .ForMember(im => im.IsDisabled, i => i.Ignore()) //Do not map the IsDisabled property to the Invitee.
                 .ReverseMap();
+                
 
         }
     }

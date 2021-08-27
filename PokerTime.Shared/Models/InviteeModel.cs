@@ -16,5 +16,7 @@ namespace PokerTime.Shared.Models
 
         public Guid HostId { get; set; }
         public List<EventModel> Events {get;set;}
+        //IsDisabled is used on the razor pages to enable/disable the form input.
+        public bool IsDisabled { get; set; }  
     }
 }

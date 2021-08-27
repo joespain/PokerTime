@@ -15,6 +15,8 @@ namespace PokerTime.App.Pages
         public TournamentTracking Tracker { get; set; } = null;
         [Parameter]
         public Guid TrackerId { get; set; }
+        [Parameter]
+        public EventCallback<bool> CheckServer { get; set; }
 
         //Timer
         public TimeSpan TimeLeft { get; set; } = new TimeSpan();
@@ -65,13 +67,13 @@ namespace PokerTime.App.Pages
                     TimeLeft = TimeLeft.Subtract(new TimeSpan(0, 0, 1));
                     StateHasChanged();
                     fiveSecondTimer++;
-                    if(fiveSecondTimer == 5 && TimeLeft > new TimeSpan())
+                    if (fiveSecondTimer == 5 && TimeLeft > new TimeSpan())
                     {
-                        await CheckTracker();
+                        await CheckServer.InvokeAsync(true);
                         fiveSecondTimer = 0;
                     }
                 }
-                if(Tracker.IsTimerRunning)
+                if (Tracker.IsTimerRunning)
                 {
                     await TimeExpired();
                     await CheckTracker();
@@ -99,14 +101,14 @@ namespace PokerTime.App.Pages
             {
                 if (Tracker.IsTimerRunning) //If the timer is running, subtract the time the timer started from current time to adjust for lag
                 {
-                    TimeLeft -= (DateTime.UtcNow - Tracker.Time) - new TimeSpan(0,0,1);
+                    TimeLeft -= (DateTime.UtcNow - Tracker.Time) - new TimeSpan(0, 0, 1);
                     await Timer();
                 }
                 else
                 {
                     TimeLeft = Tracker.TimeRemaining;
                 }
-                
+
                 //if(currentBL != Tracker.CurrentBlindLevel)
                 //{
                 //    await TimeExpired();

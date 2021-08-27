@@ -23,11 +23,11 @@ namespace PokerTime.App.Pages
         public List<Host> AllUsers { get; set; }
 
 
-        protected override async Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
             try
             {
-                //AllUsers = (await UserDataService.GetAllHosts()).ToList();
+
             }
             catch (Exception e)
             {

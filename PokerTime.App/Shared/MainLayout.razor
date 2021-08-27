@@ -1,7 +1,14 @@
 ﻿@inherits LayoutComponentBase
+@inject IBootstrapCss BootstrapCss
+
+<style>
+    .sidebar-main {
+        background-image: linear-gradient(1deg, #272b30 25%, rgb(187 0 0));
+    }
+</style>
 
 <div class="page">
-    <div class="sidebar">
+    <div class="sidebar-main">
         <NavMenu />
     </div>
 
@@ -15,3 +22,21 @@
         </div>
     </div>
 </div>
+
+@code{
+    private bool isServerSide = false;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await BootstrapCss.SetBootstrapCss("Slate", "4.3.1");
+        }
+        catch(Exception)
+        {
+            isServerSide = true;
+        }
+    }
+
+}
+
+
