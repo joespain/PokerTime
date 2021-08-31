@@ -55,7 +55,7 @@ namespace PokerTime.App.Pages
                 HostId = Host.Id;
                 if(TournamentStructureId == 0) //Create new Structure & Blind Levels
                 {
-                    TSModel = new TournamentStructureModel();
+                    TSModel = new();
                     TSModel.HostId = HostId;
                     TSModel.DateCreated = DateTime.Today;
                     TSModel.Name = "";
@@ -147,11 +147,6 @@ namespace PokerTime.App.Pages
 
             //Go back to the structures overview screen
             NavigateToStructures();
-        }
-
-        public async Task HandleInvalidSubmit()
-        {
-
         }
 
         public void NavigateToStructures()

@@ -21,6 +21,9 @@ namespace PokerTime.App.Pages
         //TournamentStructure
         public List<TournamentStructureModel> TournamentStructures { get; set; } = new List<TournamentStructureModel>();
 
+        //Invitees
+        public List<InviteeModel> PriorInvitees { get; set; } = new List<InviteeModel>();
+
         //Event
         [Parameter]
         public Guid EventId { get; set; }
@@ -71,6 +74,10 @@ namespace PokerTime.App.Pages
                     {
                         Event.Invitees = Mapper.Map<List<InviteeModel>>(await InviteeDataService.GetInvitees());
                     }
+                    foreach (var invitee in Event.Invitees)
+                    {
+                        invitee.IsDisabled = true;
+                    }
                 }
                 else //If new Event
                 {
@@ -78,14 +85,22 @@ namespace PokerTime.App.Pages
                     Event.Id = Guid.NewGuid();
                     Event.Date = DateTime.Today;
                     Event.Time = DateTime.Now;
-                    Event.Invitees = Mapper.Map<List<InviteeModel>>(await InviteeDataService.GetInvitees());
+                    PriorInvitees = Mapper.Map<List<InviteeModel>>(await InviteeDataService.GetInvitees()).ToList();
                     if(Event.Invitees == null)
                     {
-                        Event.Invitees.Add(new InviteeModel() { HostId = HostId });
+                        Event.Invitees.Add(new InviteeModel()
+                        {
+                            HostId = HostId,
+                            IsDisabled = false
+                        }) ;
                     }
                 }
 
                 TournamentStructures = Mapper.Map<List<TournamentStructureModel>>(await StructureDataService.GetStructures());
+
+                await GetOtherInvitees();
+
+                
 
                 if (TournamentStructures == null)
                 {
@@ -139,6 +154,34 @@ namespace PokerTime.App.Pages
             }
         }
 
+        public async Task GetOtherInvitees()
+        {
+            //This method populates the PriorInvitees property, which contains all other invitees the Host has
+            //that have not been used in the current event.
+            PriorInvitees = Mapper.Map<List<InviteeModel>>(await InviteeDataService.GetInvitees());
+            foreach(var thisEventInvitee in Event.Invitees.ToList())
+            {
+                foreach(var priorInvitee in PriorInvitees.ToList())
+                {
+                    if(thisEventInvitee.Id == priorInvitee.Id)
+                    {
+                        PriorInvitees.Remove(priorInvitee);
+                    }
+                    else
+                    {
+                        priorInvitee.IsDisabled = true;
+                    }
+                }
+            }
+        }
+
+        public void AddPriorInvitee(InviteeModel Invitee)
+        {
+            Event.Invitees.Add(Invitee);
+            PriorInvitees.Remove(Invitee);
+            StateHasChanged();
+        }
+
         public async Task UpdateInvitees(List<InviteeModel> invitees)
         {
             foreach (var invitee in invitees)
@@ -146,12 +189,10 @@ namespace PokerTime.App.Pages
                 if (invitee.Id == 0)
                 {
                     invitee.HostId = HostId;
-                    //invitee.Events.Add(Event);
                     await InviteeDataService.AddInvitee(Mapper.Map<Invitee>(invitee));
                 }
                 else
                 {
-                    //invitee.Events.Add(Event);
                     await InviteeDataService.UpdateInvitee(Mapper.Map<Invitee>(invitee));
                 }
                 Event.Invitees.Add(invitee);
@@ -160,7 +201,18 @@ namespace PokerTime.App.Pages
 
         public void AddInvitee()
         {
-            Event.Invitees.Add(new InviteeModel() { HostId = HostId });
+            Event.Invitees.Add(new InviteeModel()
+            {
+                HostId = HostId,
+                IsDisabled = false
+            });
+        }
+
+        public void EditInvitee(InviteeModel invitee)
+        {
+            //This disables/enables the text boxes to be edited.
+            invitee.IsDisabled = !invitee.IsDisabled;
+            StateHasChanged();
         }
 
         public async Task UpdateStructure()
@@ -170,7 +222,6 @@ namespace PokerTime.App.Pages
             structure.NumberOfEvents += 1;
             await StructureDataService.UpdateStructure(Mapper.Map<TournamentStructure>(structure));
         }
-
 
         public async Task EmailInvitee(InviteeModel invitee)
         {
@@ -184,8 +235,10 @@ namespace PokerTime.App.Pages
 
         public async Task EmailInvitees()
         {
-            //Email all invitees
-            
+            foreach(var invitee in Event.Invitees)
+            {
+                await EmailInvitee(invitee);
+            }
         }
 
         public void NavigateToEvents()
@@ -196,6 +249,10 @@ namespace PokerTime.App.Pages
         public void RemoveInvitee(InviteeModel invitee)
         {
             Event.Invitees.Remove(invitee);
+            if(invitee.Id != 0)
+            {
+                PriorInvitees.Add(invitee);
+            }
         }
 
         public void BeginEvent()
@@ -203,28 +260,6 @@ namespace PokerTime.App.Pages
             NavigationManager.NavigateTo($"/events/inprogress/{Event.Id}");
         }
 
-        //public async Task AddTournamentTracker()
-        //{
-        //    TournamentTracking TournamentTracker = new();
-
-        //    TournamentTracker.Id = Event.Id;
-        //    TournamentTracker.IsTimerRunning = false;
-        //    TournamentTracker.IsTournamentRunning = true;
-        //    TournamentTracker.CurrentBlindLevel = null;
-        //    TournamentTracker.NextBlindLevel = null;
-        //    TournamentTracker.TimeRemaining = new();
-        //    TournamentTracker.Time = new();
-
-        //    var oldTracking = await TournamentTrackingDataService.GetTournamentTracking(EventId);
-        //    if (oldTracking == null) //Check to make sure it doesn't already exist.
-        //    {
-                
-        //        TournamentTracker = await TournamentTrackingDataService.AddTournamentTracking(TournamentTracker);
-        //    }
-        //    else
-        //    {
-        //        await TournamentTrackingDataService.UpdateTournamentTracking(TournamentTracker);
-        //    }
-        //}
+       
     }
 }

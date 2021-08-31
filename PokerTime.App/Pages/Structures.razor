@@ -10,21 +10,17 @@
 else
 {
 
-    <a class="btn btn-block" @onclick="@NewStructure">
-        <span class="oi oi-plus"></span>New Structure
-    </a>
 
-    <table>
-        <thead>
+    <BSTable IsHoverable="true">
+        <BSTableHead TableHeadType="TableHeadType.Dark">
             <tr>
                 <th></th>
-                <th>Name</th>
-                <th>Date Created</th>
-                <th>No. of Events</th>
-                <th></th>
+                <th scope="col">Name</th>
+                <th scope="col">Date Created</th>
+                <th scope="col">No. of Events</th>
                 <th></th>
             </tr>
-        </thead>
+        </BSTableHead>
         <tbody>
             @foreach (var structure in TournamentStructures)
             {
@@ -34,20 +30,18 @@ else
                     <td>@structure.DateCreated.ToShortDateString()</td>
                     <td>@structure.NumberOfEvents</td>
                     <td>
-                        <a class="btn btn-primary table-btn" href="@($"/structures/{structure.Id}")">
+                        <BSButton Color="Color.Primary" OnClick="@(() => EditStructure(structure.Id))">
                             <span class="oi oi-pencil" aria-hidden="true"></span> Edit
-                        </a>
-                    </td>
-                    <td>
-                        <a class="btn btn-primary table-btn" href="@($"/events")">
-                            <span class="oi oi-pencil" aria-hidden="true"></span> New Event
-                        </a>
+                        </BSButton>
                     </td>
                     <td></td>
                 </tr>
             }
         </tbody>
-    </table>
+    </BSTable>
+    <BSButton @onclick="@NewStructure" Color="Color.Primary">
+        <span class="oi oi-plus"></span> New Structure
+    </BSButton>
 }
 
 

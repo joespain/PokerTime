@@ -1,5 +1,27 @@
 ﻿@page "/structures/{TournamentStructureId:int}"
 
+
+<style>
+    .form-control-structure {
+        display: block;
+        width: 100px;
+        height: 35px;
+        padding: 0.25rem 0.25rem;
+        font-size: 0.9375rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #52575C;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+        transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+    }
+</style>
+
 <section class="user-edit">
     @if (TSModel == null || TSModel.BlindLevels == null)
     {
@@ -11,76 +33,73 @@
         {
             <h3>Edit Structure</h3>
 
-            <EditForm Model="@TSModel" OnValidSubmit="@HandleValidSubmit">
+            <BSForm Model="@TSModel" OnValidSubmit="@HandleValidSubmit">
                 <ObjectGraphDataAnnotationsValidator />
                 <ValidationSummary />
-                <div class="form-group row">
-                    <label for="Name" class="col-sm-3">Structure Name: </label>
-                    <InputText id="StructureName" @bind-Value="@TSModel.Name" placeholder="Enter Structure Name"></InputText>
 
-                </div>
+                <BSContainer>
+                    <BSRow>
+                        <BSCol>
+                            <label for="StructureName" class="col-sm-3">Structure Name: </label>
+                            <InputText id="StructureName" @bind-Value="@TSModel.Name" placeholder="Enter Structure Name"></InputText>
+                        </BSCol>
+                    </BSRow>
+                </BSContainer>
 
-                <table>
-                    <thead>
+                <BSTable IsHoverable="true">
+                    <BSTableHead TableHeadType="TableHeadType.Dark">
                         <tr>
-                            <th>Level #</th>
-                            <th>Small Blind</th>
-                            <th>Big Blind</th>
-                            <th>Ante</th>
-                            <th>Minutes</th>
-                            <th></th>
+                            <th scope="col">Level #</th>
+                            <th scope="col">Small Blind</th>
+                            <th scope="col">Big Blind</th>
+                            <th scope="col">Ante</th>
+                            <th scope="col">Time (Mins)</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
                         </tr>
-                    </thead>
+                    </BSTableHead>
 
+                    <tbody>
+                        @foreach (var blindLevel in TSModel.BlindLevels)
+                        {
 
-                    @foreach (var blindLevel in TSModel.BlindLevels)
-                    {
+                            <tr>
+                                <td>
+                                    @(TSModel.BlindLevels.IndexOf(blindLevel) + 1)
+                                </td>
+                                <td>
+                                    <BSInput InputType="InputType.Number" id="SmallBlind" @bind-Value="@blindLevel.SmallBlind" ValidateOnChange="true" ValidateOnInput="true" class="form-control-structure"></BSInput>
+                                </td>
 
-                        <tr>
-                            <td>
-                                @(TSModel.BlindLevels.IndexOf(blindLevel) + 1)
-                            </td>
-                            <td>
-                                @*<label for="SmallBlind">Small Blind: </label>*@
-                                <InputNumber id="SmallBlind" @bind-Value="@blindLevel.SmallBlind" placeholder="0" class="form-control"></InputNumber>
-                            </td>
+                                <td>
+                                    <BSInput InputType="InputType.Number" id="BigBlind" @bind-Value="@blindLevel.BigBlind" ValidateOnChange="true" ValidateOnInput="true" class="form-control-structure"></BSInput>
+                                </td>
 
-                            <td>
-                                @*<label for="BigBlind">Big Blind: </label>*@
-                                <InputNumber id="BigBlind" @bind-Value="@blindLevel.BigBlind" placeholder="0" class="form-control"></InputNumber>
-                            </td>
+                                <td>
+                                    <BSInput InputType="InputType.Number" id="Ante" @bind-Value="@blindLevel.Ante" class="form-control-structure"></BSInput>
+                                </td>
 
-                            <td>
-                                @*<label for="Ante">Ante: </label>*@
-                                <InputNumber id="Ante" @bind-Value="@blindLevel.Ante" placeholder="0" class="form-control"></InputNumber>
-                            </td>
+                                <td>
+                                    <BSInput InputType="InputType.Number" id="Minutes" @bind-Value="@blindLevel.Minutes" ValidateOnChange="true" ValidateOnInput="true" class="form-control-structure"></BSInput>
+                                </td>
+                                <td><BSButton Color="Color.Success" Size="Size.ExtraSmall" IsOutline="true" @onclick="@(() => AddBlindLevel(blindLevel))"><span class="oi oi-plus"></span></BSButton></td>
+                                <td><BSButton Color="Color.Danger" Size="Size.ExtraSmall" IsOutline="true" @onclick="@(() => DeleteBlindLevel(blindLevel))"><span class="oi oi-x"></span></BSButton></td>
+                            </tr>
+                        }
 
-                            <td>
-                                @*<label for="Minutes">Time (minutes): </label>*@
-                                <InputNumber id="Minutes" @bind-Value="@blindLevel.Minutes" placeholder="0" class="form-control"></InputNumber>
-                            </td>
-                            <td><a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddBlindLevel(blindLevel))">Add</a></td>
-                            <td><a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => DeleteBlindLevel(blindLevel))">Delete</a></td>
-                        </tr>
+                    </tbody>
+                </BSTable>
 
-
-
-
-                    }
-
-
-                </table>
                 <div class="form-group row">
-                    <a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => AddBlindLevel())">
+                    <BSButton Color="Color.Secondary" IsOutline="true" @onclick="@(() => AddBlindLevel())">
                         Add Blind Level
-                    </a>
+                    </BSButton>
                 </div>
 
-                <input type="submit" class="btn btn-primary edit-btn" value="Save"/>
-                <a class="btn btn-outline-primary edit-outline-btn" @onclick="@NavigateToStructures">Cancel</a>
-
-                <a class="btn btn-danger" @onclick="@DeleteStructure">Delete</a>
-            </EditForm>
+                <BSButton Color="Color.Primary" ButtonType="ButtonType.Submit">Save</BSButton>
+                <BSButton Color="Color.Secondary" @onclick="@NavigateToStructures" IsOutline="true">Cancel</BSButton>
+                <BSButton Color="Color.Danger" @onclick="@DeleteStructure" IsOutline="true">Delete</BSButton>
+            </BSForm>
             
 
             

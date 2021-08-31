@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using PokerTime.App.Interfaces;
 using PokerTime.Shared.Entities;
@@ -14,6 +15,8 @@ namespace PokerTime.App.Pages
         public Guid HostId { get; set; }
         public Host Host { get; set; }
         public List<TournamentStructure> TournamentStructures { get; set; }
+        [Parameter]
+        public EventCallback<int> OnButtonClick { get; set; }
 
         //used to store state of screen
         protected string Message = string.Empty;
@@ -62,9 +65,8 @@ namespace PokerTime.App.Pages
             NavigationManager.NavigateTo($"structures/0");
         }
 
-        protected void Edit(int structureId)
+        private void EditStructure(int structureId)
         {
-
             NavigationManager.NavigateTo($"structures/{structureId}");
         }
 
@@ -72,6 +74,7 @@ namespace PokerTime.App.Pages
         {
             StructureDataService.DeleteStructure(structureId);
         }
+        
 
     }
 }
