@@ -3,30 +3,38 @@
 
 @attribute [Authorize]
 
+<Styled @bind-Classname="@TimerStyle">
+    font-size: 100pt;
+    font-family: 'Teko';
+    text-align: center;
+    color: @TimerColor;
+</Styled>
+
 @if (IsTournamentRunning) { 
     <h3>@Structure.Name</h3>
 
-    <h1>@TimeLeft.ToString("mm':'ss")</h1>
+    <div class="@TimerStyle">@TimeLeft.ToString("mm':'ss")</div>
 
-    <p>Blinds: @CurrentBlindLevel.SmallBlind / @CurrentBlindLevel.BigBlind</p>
-    <p>Ante: @CurrentBlindLevel.Ante</p>
+    <div class="currentblind">Blinds: @CurrentBlindLevel.SmallBlind / @CurrentBlindLevel.BigBlind</div>
+    <div class="currentblind">Ante: @CurrentBlindLevel.Ante</div>
 
-    <p></p>
+    <p>&nbsp;</p>
 
     @if (NextBlindLevel != null)
     {
-        <p>Next Level:</p>
-        <p>Blinds: @NextBlindLevel.SmallBlind / @NextBlindLevel.BigBlind</p>
-        <p>Ante: @NextBlindLevel.Ante</p>
+        <div class="nextblindlevel">Next Level:</div>
+        <div class="nextblindlevel">Blinds: @NextBlindLevel.SmallBlind / @NextBlindLevel.BigBlind</div>
+        <div class="nextblindlevel">Ante: @NextBlindLevel.Ante</div>
     }
     else
     {
-        <p>No More Blind Levels</p> 
+        <div class="nextblindlevel">No More Blind Levels</div> 
     }
 }
 
-
-<p><a class="btn btn-outline-primary edit-outline-btn" @onclick="@(() => StartStopTimer())">@ButtonName</a></p>
+<div class="start-button-container">
+    <BSButton ButtonType="ButtonType.Button" Color="Color.Active" IsOutline="true" @onclick="@(() => StartStopTimer())" Class="start-button">@ButtonName</BSButton>
+</div>
 
 <audio id="chime" src="../sounds/EndOfBlindLevel.ogg" />
 

@@ -433,7 +433,11 @@ namespace PokerTime.API.Data
         public async Task<bool> UpdateTournamentTracking(TournamentTracking tracker)
         {
             _context.Entry(tracker.CurrentBlindLevel).State = EntityState.Unchanged;
-            _context.Entry(tracker.NextBlindLevel).State = EntityState.Unchanged;
+            if(tracker.CurrentBlindLevel.Id != tracker.NextBlindLevel.Id)
+            {
+                _context.Entry(tracker.NextBlindLevel).State = EntityState.Unchanged;
+            }
+            
             _context.TournamentTrackings.Update(tracker);
 
             _logger.LogInformation($"Updating TournamentTracking for Tournament {tracker.Id}");

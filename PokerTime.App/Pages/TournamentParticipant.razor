@@ -2,26 +2,35 @@
 @inject IJSRuntime _jsRuntime
 
 
+<Styled @bind-Classname="@TimerStyle">
+    font-size: 100pt;
+    font-family: 'Teko';
+    text-align: center;
+    color: @TimerColor;
+</Styled>
+
 @if (Tracker == null)
 {
+    <p>@Message</p>
+
     <div class="spinner"></div>
 }
-else if(!Tracker.IsTournamentRunning)
+else if (!Tracker.IsTournamentRunning)
 {
-    <p>Game Over</p>
+    <p>@Message</p>
 }
 else
 {
-    <h1>@TimeLeft.ToString("mm':'ss")</h1>
+    <div class="@TimerStyle">@TimeLeft.ToString("mm':'ss")</div>
 
-    <p>Blinds: @Tracker.CurrentBlindLevel.SmallBlind / @Tracker.CurrentBlindLevel.BigBlind</p>
-    <p>Ante: @Tracker.CurrentBlindLevel.Ante</p>
+    <div class="currentblind">Blinds: @Tracker.CurrentBlindLevel.SmallBlind / @Tracker.CurrentBlindLevel.BigBlind</div>
+    <div class="currentblind">Ante: @Tracker.CurrentBlindLevel.Ante</div>
 
-    <p></p>
+    <p>&nbsp;</p>
 
-    <p>Next Level:</p>
-    <p>Blinds: @Tracker.NextBlindLevel.SmallBlind / @Tracker.NextBlindLevel.BigBlind</p>
-    <p>Ante: @Tracker.NextBlindLevel.Ante</p>
+    <div class="nextblindlevel">Next Level:</div>
+    <div class="nextblindlevel">Blinds: @Tracker.NextBlindLevel.SmallBlind / @Tracker.NextBlindLevel.BigBlind</div>
+    <div class="nextblindlevel">Ante: @Tracker.NextBlindLevel.Ante</div>
 }
 
 <audio id="chime" src="../sounds/EndOfBlindLevel.ogg" />

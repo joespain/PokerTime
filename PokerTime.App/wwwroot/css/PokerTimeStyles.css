@@ -1,0 +1,131 @@
+﻿
+/*Basic Page Stuff*/
+
+@font-face {
+    font-family: Teko;
+    src: url(../fonts/Teko-Regular.ttf);
+}
+
+@font-face {
+    font-family: Montserrat;
+    src: url(../fonts/Montserrat-Regular.ttf);
+}
+
+
+h1 {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    font-size: 50pt;
+}
+
+h3 {
+
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 40pt;
+}
+
+h4 {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 30pt;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    text-shadow: 1px 2px 0px rgb(140 0 0);
+    font-family: Teko;
+}
+
+body{
+    font-family:Montserrat;
+}
+    /*Forms*/
+
+.textbox {
+    display: block;
+    height: 25px;
+    padding: 0.25rem 0.25rem;
+    font-size: 10pt;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #52575C;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+    transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+}
+
+.form-label {
+    display: inline-block;
+    margin-bottom: 1px;
+    font-size: small;
+}
+
+.center-button {
+    padding: 10px;
+    margin: auto;
+}
+
+/*Menu*/
+
+.sidemenu {
+    background-image: linear-gradient( 1deg, #272b30 25%, rgb(187 0 0));
+}
+
+.center-element {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/*Invitee*/
+
+.invitee-current {
+    border-radius: 5px;
+    box-shadow: 0px 0px 6px 0px #bb0000;
+    margin: 10px;
+}
+
+.invitee-prior {
+    border-radius: 5px;
+    box-shadow: 0px 0px 6px 0px #848484;
+    margin: 10px;
+}
+
+.invitee-submit-buttons{
+    padding: 5px;
+}
+
+/*Tournament*/
+
+.currentblind {
+    text-align: center;
+    font-size: 30pt;
+}
+
+.nextblindlevel {
+    text-align: center;
+    font-size: 15pt;
+}
+
+.start-button-container {
+    height: 100px;
+    position: relative;
+}
+
+.start-button {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}

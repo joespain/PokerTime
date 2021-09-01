@@ -65,7 +65,7 @@ namespace PokerTime.App.Pages
                 Host = await UserDataService.GetHost();
                 HostId = Host.Id;
 
-                if(EventId != new Guid()) //If existing Event
+                if (EventId != new Guid()) //If existing Event
                 {
                     IsNewEvent = false;
                     Event = Mapper.Map<EventModel>(await EventDataService.GetEvent(EventId));
@@ -86,14 +86,12 @@ namespace PokerTime.App.Pages
                     Event.Date = DateTime.Today;
                     Event.Time = DateTime.Now;
                     PriorInvitees = Mapper.Map<List<InviteeModel>>(await InviteeDataService.GetInvitees()).ToList();
-                    if(Event.Invitees == null)
+                    Event.Invitees = new List<InviteeModel>();
+                    Event.Invitees.Add(new InviteeModel()
                     {
-                        Event.Invitees.Add(new InviteeModel()
-                        {
-                            HostId = HostId,
-                            IsDisabled = false
-                        }) ;
-                    }
+                        HostId = HostId,
+                        IsDisabled = false
+                    });
                 }
 
                 TournamentStructures = Mapper.Map<List<TournamentStructureModel>>(await StructureDataService.GetStructures());
@@ -201,11 +199,15 @@ namespace PokerTime.App.Pages
 
         public void AddInvitee()
         {
-            Event.Invitees.Add(new InviteeModel()
+            var newInvitee = new InviteeModel()
             {
                 HostId = HostId,
                 IsDisabled = false
-            });
+            };
+
+            Event.Invitees.Add(newInvitee);
+
+
         }
 
         public void EditInvitee(InviteeModel invitee)

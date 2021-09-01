@@ -6,20 +6,28 @@ using PokerTime.App.Services;
 using PokerTime.Shared.Entities;
 using System;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace PokerTime.App.Pages
 {
     public partial class TournamentParticipant : ComponentBase
     {
         //TournamentTracker
-        public TournamentTracking Tracker { get; set; } = null;
+        private TournamentTracking Tracker { get; set; } = null;
         [Parameter]
         public Guid TrackerId { get; set; }
-        [Parameter]
-        public EventCallback<bool> CheckServer { get; set; }
 
         //Timer
         public TimeSpan TimeLeft { get; set; } = new TimeSpan();
+        public Timer FiveSecondTimer;
+        public bool BlindLevelsIncremented = false;
+        public string Message { get; set; }
+        public Event BlindLevelEnded { get; set; }
+
+        //CSS Styles
+        public string TimerStyle { get; set; }
+        public string TimerColor { get; set; } = "white";
+
 
         //Services
         [Inject]
@@ -33,17 +41,26 @@ namespace PokerTime.App.Pages
         {
             try
             {
-                await CheckTracker(true);
+                //Initialize the Tracker
+                Tracker = await TrackingDataService.GetTournamentTracking(TrackerId);
 
-                if (Tracker == null)
+                if (Tracker == null) //Will only be null before tournament.
                 {
-                    //error
-                    Logger.LogDebug("TournamentTracker not found.");
+                    Message = "Tournament has not started. Please wait.";
                 }
+                else if (!Tracker.IsTournamentRunning)
+                {
+                    Message = "Tournament Ended.";
+                    throw new Exception("Tournament Ended.");
+                }
+
+                //This timer will go off every 5 seconds to call the CheckTracker function.
+                FiveSecondTimer = new Timer(5000);
+                FiveSecondTimer.Elapsed += new ElapsedEventHandler(CheckTracker);
+                FiveSecondTimer.Start();
 
                 SetTimer();
                 await Timer();
-                StateHasChanged();
             }
             catch (Exception e)
             {
@@ -60,68 +77,83 @@ namespace PokerTime.App.Pages
         {
             while (Tracker.IsTournamentRunning)
             {
-                int fiveSecondTimer = 0;
-                while ((TimeLeft > new TimeSpan()) && Tracker.IsTimerRunning)
+                while ((TimeLeft > new TimeSpan(0,0,0)) && Tracker.IsTimerRunning) //While timer is running and Timeleft > 0
                 {
                     await Task.Delay(1000);
                     TimeLeft = TimeLeft.Subtract(new TimeSpan(0, 0, 1));
-                    StateHasChanged();
-                    fiveSecondTimer++;
-                    if (fiveSecondTimer == 5 && TimeLeft > new TimeSpan())
+                    if (TimeLeft < new TimeSpan(0, 0, 31))
                     {
-                        await CheckServer.InvokeAsync(true);
-                        fiveSecondTimer = 0;
+                        TimerColor = "red";
                     }
+                    else
+                    {
+                        TimerColor = "white";
+                    }
+                    StateHasChanged();
                 }
-                if (Tracker.IsTimerRunning)
+
+                if (Tracker.IsTimerRunning && (TimeLeft < new TimeSpan(0,0,1))) //If timeleft has expired and the timer is still running (the blindlevel has ended)
                 {
-                    await TimeExpired();
-                    await CheckTracker();
-                }
-                StateHasChanged();
-                await CheckTracker();
-                await Task.Delay(5000);
-            }
-        }
-
-        public async Task CheckTracker(bool isInitial = false)
-        {
-            bool TimerState = true; //Whether timer is running or not. 
-            BlindLevel currentBL = new();
-
-            if (!isInitial) //Skip these steps in the initial setup
-            {
-                TimerState = Tracker.IsTimerRunning;
-                currentBL = Tracker.CurrentBlindLevel;
-            }
-
-            Tracker = await TrackingDataService.GetTournamentTracking(TrackerId);
-
-            if (TimerState != Tracker.IsTimerRunning && Tracker != null) //If the timer state has changed
-            {
-                if (Tracker.IsTimerRunning) //If the timer is running, subtract the time the timer started from current time to adjust for lag
-                {
-                    TimeLeft -= (DateTime.UtcNow - Tracker.Time) - new TimeSpan(0, 0, 1);
-                    await Timer();
+                    TimeExpired();
+                    IncrementBlindLevels();
                 }
                 else
                 {
-                    TimeLeft = Tracker.TimeRemaining;
+                    await Task.Delay(1000);
                 }
-
-                //if(currentBL != Tracker.CurrentBlindLevel)
-                //{
-                //    await TimeExpired();
-                //}
                 StateHasChanged();
             }
         }
 
-        public async Task TimeExpired()
+        public async void CheckTracker(object sender, ElapsedEventArgs e)
+        {
+            //This function queries the server to get new data for the tracker. Is connected to the FiveSecondTimer and is called every 5 seconds. 
+
+            bool oldTimerState = Tracker.IsTimerRunning; //Initial Timer State.
+
+            Tracker = await TrackingDataService.GetTournamentTracking(TrackerId); //Update Tracker
+
+            var newTimerState = Tracker.IsTimerRunning;
+
+            if ((oldTimerState != newTimerState || BlindLevelsIncremented) && Tracker != null) //If the timer state has changed or blind levels incremented
+            {
+                if (BlindLevelsIncremented)//If the blindlevel incremented, update the timeleft.
+                {
+                    while(Tracker.TimeRemaining < new TimeSpan(0, 0, 2))
+                    {
+                        await Task.Delay(1000);
+                        Tracker = await TrackingDataService.GetTournamentTracking(TrackerId); //Update Tracker
+                    }
+                    TimeLeft = Tracker.TimeRemaining;
+                    BlindLevelsIncremented = false;
+                }
+                else if (Tracker.IsTimerRunning)//If the timer started , subtract the time the timer started from current time to adjust for lag
+                {
+                    TimeLeft -= (DateTime.UtcNow - Tracker.Time) - new TimeSpan(0,0,1);
+                }
+                else //If the timer stopped, reset it.
+                {
+                    SetTimer();
+                }
+                
+            }
+            StateHasChanged();
+        }
+
+        public void IncrementBlindLevels()
+        {
+            //This function queries the server to get new data for the tracker. Is only called at the end of a blind level
+
+            Tracker.CurrentBlindLevel = Tracker.NextBlindLevel;
+            TimeLeft = new TimeSpan(0, Tracker.CurrentBlindLevel.Minutes, 0);
+            BlindLevelsIncremented = true;
+            StateHasChanged();
+        }
+
+
+        public async void TimeExpired()
         {
             await PlaySound();
-            await CheckTracker();
-            await Timer();
         }
 
         public async Task PlaySound()

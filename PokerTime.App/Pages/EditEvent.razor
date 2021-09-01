@@ -3,25 +3,7 @@
 @attribute [Authorize]
 
 
-<style>
-    .center-element{
-        margin-left: auto;
-        margin-right: auto;
-
-    }
-
-    .invitee-current {
-        border-radius: 5px;
-        box-shadow: 0px 0px 6px 0px #bb0000;
-        margin: 10px;
-    }
-
-    .center-button {
-        padding: 10px;
-    }
-</style>
-
-<h3>New Event</h3>
+<h1>New Event</h1>
 
 @if (Event == null || Event.Invitees == null)
 {
@@ -36,14 +18,14 @@ else
     <BSContainer>
         <BSRow>
             <BSCol XS="12" LG="6">
-                <label for="eventName" class="col-form-label">Event Name:</label>
-                <InputText id="eventName" @bind-Value="Event.Name"></InputText>
+                <label for="eventName" class="form-label">Event Name:</label>
+                <InputText id="eventName" @bind-Value="Event.Name" class="textbox"></InputText>
             </BSCol>
         </BSRow>
         <BSRow>
             <BSCol XS="12" LG="6">
-                <label for="structure" class="col-form-label">Select Tournament Structure: </label>
-                <InputSelect id="structure" @bind-Value="@Event.TournamentStructureId" DisplayName="Tournament Structure">
+                <label for="structure" class="form-label">Select Tournament Structure: </label>
+                <InputSelect id="structure" @bind-Value="@Event.TournamentStructureId" DisplayName="Tournament Structure" class="textbox">
                     @foreach (var structure in TournamentStructures)
                         {
                         <option value="@structure.Id">@structure.Name</option>
@@ -53,35 +35,41 @@ else
         </BSRow>
         <BSRow>
             <BSCol XS="12" LG="6">
-                <InputDate id="eventDate" @bind-Value="@Event.Date" format-value="MM-dd-yy"></InputDate>
-                <input type="time" @bind-value="@Event.Time">
+                <label for="eventDate" class="form-label">Date:</label>
+                <InputDate id="eventDate" @bind-Value="@Event.Date" format-value="MM-dd-yy" class="textbox"></InputDate>
+                <label for="time" class="form-label">Time:</label>
+                <input type="time" @bind-value="@Event.Time" class="textbox">
             </BSCol>
         </BSRow>
 
         <BSRow>
-            <BSCol>
-                <h3>Invitees</h3>
+            <BSCol XS="6" MD="3">
+                <h3 class="page-subtitle">Invitees</h3>
+            </BSCol>
+            <BSCol XS="6" MD="3">
+                <BSButton Color="Color.Secondary" IsOutline="true" @onclick="@(() => AddInvitee())"><span class="oi oi-plus"></span> Add Invitee</BSButton>
             </BSCol>
         </BSRow>
+
 
         @foreach (var invitee in Event.Invitees)
         {
             <BSRow Class="invitee-current">
-                <BSCol XS="12" LG="3" >
-                    <label for="Name">Name</label>
-                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Name" @bind-Value="@invitee.Name" ValidateOnChange="true" ValidateOnInput="true" />
+                <BSCol XS="12" MD="3" >
+                    <label for="Name" class="form-label">Name</label>
+                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Name" @bind-Value="@invitee.Name" ValidateOnChange="true" ValidateOnInput="true" Class="textbox"/>
                 </BSCol>
-                <BSCol XS="12" LG="3">
-                    <label for="Email">Email</label>
-                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Email" @bind-Value="@invitee.Email" ValidateOnChange="true" ValidateOnInput="true" />
+                <BSCol XS="12" MD="3">
+                    <label for="Email" class="form-label">Email</label>
+                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Email" @bind-Value="@invitee.Email" ValidateOnChange="true" ValidateOnInput="true" Class="textbox"/>
                 </BSCol>
-                <BSCol XS="12" LG="3">
-                    <label for="Phone">Phone (optional)</label>
-                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Phone" @bind-Value="@invitee.Phone" ValidateOnChange="true" ValidateOnInput="true" />
+                <BSCol XS="12" MD="3">
+                    <label for="Phone" class="form-label">Phone (optional)</label>
+                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Phone" @bind-Value="@invitee.Phone" ValidateOnChange="true" ValidateOnInput="true" Class="textbox" />
                 </BSCol>
-                <BSCol XS="4" LG="1" Class="center-button"><BSButton Color="Color.Secondary" IsOutline="true" @onclick="@(() => EditInvitee(invitee))"><span class="oi oi-pencil"></span></BSButton></BSCol>
-                <BSCol XS="4" LG="1" Class="center-button"><BSButton Color="Color.Success" IsOutline="true" @onclick="@(() => EmailInvitee(invitee))"><span class="oi oi-envelope-closed"></span></BSButton></BSCol>
-                <BSCol XS="4" LG="1" Class="center-button"><BSButton Color="Color.Danger" IsOutline="true" @onclick="@(() => RemoveInvitee(invitee))"><span class="oi oi-circle-x"></span></BSButton></BSCol>
+                <BSCol XS="4" MD="1" Class="center-button"><BSButton Color="Color.Secondary" IsOutline="true" @onclick="@(() => EditInvitee(invitee))" Class="center-button"><span class="oi oi-pencil"></span></BSButton></BSCol>
+                <BSCol XS="4" MD="1" Class="center-button"><BSButton Color="Color.Success" IsOutline="true" @onclick="@(() => EmailInvitee(invitee))" Class="center-button"><span class="oi oi-envelope-closed"></span></BSButton></BSCol>
+                <BSCol XS="4" MD="1" Class="center-button"><BSButton Color="Color.Danger" IsOutline="true" @onclick="@(() => RemoveInvitee(invitee))" Class="center-button"><span class="oi oi-circle-x"></span></BSButton></BSCol>
             </BSRow>
         }
 
@@ -93,41 +81,39 @@ else
 
         @foreach (var invitee in PriorInvitees)
         {
-            <BSRow>
-                <BSCol>
-                    <label for="Name">Name:</label>
-                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" IsPlaintext="@invitee.IsDisabled" id="Name" @bind-Value="@invitee.Name" />
+            <BSRow Class="invitee-prior">
+                <BSCol XS="12" MD="3">
+                    <label for="Name" class="form-label">Name:</label>
+                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Name" @bind-Value="@invitee.Name" Class="textbox"/>
                 </BSCol>
-                <BSCol>
-                    <label for="Email">Email:</label>
-                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" IsPlaintext="@invitee.IsDisabled" id="Email" @bind-Value="@invitee.Email" />
+                <BSCol XS="12" MD="3">
+                    <label for="Email" class="form-label">Email:</label>
+                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Email" @bind-Value="@invitee.Email"  Class="textbox"/>
                 </BSCol>
-                <BSCol>
-                    <label for="Phone">Phone (optional)</label>
-                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" IsPlaintext="@invitee.IsDisabled" id="Phone" @bind-Value="@invitee.Phone" />
+                <BSCol XS="12" MD="3">
+                    <label for="Phone" class="form-label">Phone (optional)</label>
+                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Phone" @bind-Value="@invitee.Phone"  Class="textbox"/>
                 </BSCol>
-                <BSCol><BSButton Color="Color.Success" @onclick="@(() => AddPriorInvitee(invitee))"><span class="oi oi-plus"></span></BSButton></BSCol>
+                <BSCol  XS="4" MD="1" Class="center-button">
+                    <BSButton Color="Color.Success" @onclick="@(() => AddPriorInvitee(invitee))" IsOutline="true"><span class="oi oi-plus"></span></BSButton>
+                </BSCol>
             </BSRow>
         }
 
-        <BSRow>
-            <BSCol>
-                <BSButton Color="Color.Primary" @onclick="@(() => AddInvitee())"><span class="oi oi-plus"></span>Add Invitee</BSButton>
-            </BSCol>
-        </BSRow>
+
 
         <BSRow>
-            <BSCol>
-                <BSButton ButtonType="ButtonType.Submit" @onclick="@(() => IsSave = true)"><span class="oi oi-circle-check"></span> Save Event</BSButton>
+            <BSCol XS="3" MD="1">
+                <BSButton ButtonType="ButtonType.Submit" @onclick="@(() => IsSave = true)" Class="invitee-submit-buttons"><span class="oi oi-circle-check"></span> Save Event</BSButton>
             </BSCol>
-            <BSCol>
-                <BSButton ButtonType="ButtonType.Submit" Color="Color.Success" value="" @onclick="@(() => IsSave = false)"><span class="oi oi-media-play"></span> Begin Event</BSButton>
+            <BSCol XS="3" MD="1">
+                <BSButton ButtonType="ButtonType.Submit" IsOutline="true" Color="Color.Success" @onclick="@(() => IsSave = false)" Class="invitee-submit-buttons"><span class="oi oi-media-play"></span> Begin Event</BSButton>
             </BSCol>
-            <BSCol>
-                <BSButton Color="Color.Success" @onclick="@EmailInvitees"><span class="oi oi-envelope-closed"></span> Email Invitees</BSButton>
+            <BSCol XS="3" MD="1">
+                <BSButton Color="Color.Success" @onclick="@EmailInvitees"  IsOutline="true" Class="invitee-submit-buttons"><span class="oi oi-envelope-closed"></span> Email Invitees</BSButton>
             </BSCol>
-            <BSCol>
-                <BSButton Color="Color.Danger" @onclick="@NavigateToEvents"><span class="oi oi-circle-x"></span> Cancel</BSButton>
+            <BSCol XS="3" MD="1">
+                <BSButton Color="Color.Danger" @onclick="@NavigateToEvents"  IsOutline="true" Class="invitee-submit-buttons"><span class="oi oi-circle-x"></span> Cancel</BSButton>
             </BSCol>
         </BSRow>
     </BSContainer>

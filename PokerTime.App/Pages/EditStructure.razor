@@ -1,26 +1,6 @@
 ﻿@page "/structures/{TournamentStructureId:int}"
 
-
-<style>
-    .form-control-structure {
-        display: block;
-        width: 100px;
-        height: 35px;
-        padding: 0.25rem 0.25rem;
-        font-size: 0.9375rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: #52575C;
-        background-color: #fff;
-        background-clip: padding-box;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-        -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
-        transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
-    }
-</style>
+@attribute [Authorize]
 
 <section class="user-edit">
     @if (TSModel == null || TSModel.BlindLevels == null)
@@ -40,7 +20,7 @@
                 <BSContainer>
                     <BSRow>
                         <BSCol>
-                            <label for="StructureName" class="col-sm-3">Structure Name: </label>
+                            <label for="StructureName" class="form-label">Structure Name: </label>
                             <InputText id="StructureName" @bind-Value="@TSModel.Name" placeholder="Enter Structure Name"></InputText>
                         </BSCol>
                     </BSRow>
@@ -68,19 +48,19 @@
                                     @(TSModel.BlindLevels.IndexOf(blindLevel) + 1)
                                 </td>
                                 <td>
-                                    <BSInput InputType="InputType.Number" id="SmallBlind" @bind-Value="@blindLevel.SmallBlind" ValidateOnChange="true" ValidateOnInput="true" class="form-control-structure"></BSInput>
+                                    <BSInput InputType="InputType.Number" id="SmallBlind" @bind-Value="@blindLevel.SmallBlind" ValidateOnChange="true" ValidateOnInput="true" class="textbox"></BSInput>
                                 </td>
 
                                 <td>
-                                    <BSInput InputType="InputType.Number" id="BigBlind" @bind-Value="@blindLevel.BigBlind" ValidateOnChange="true" ValidateOnInput="true" class="form-control-structure"></BSInput>
+                                    <BSInput InputType="InputType.Number" id="BigBlind" @bind-Value="@blindLevel.BigBlind" ValidateOnChange="true" ValidateOnInput="true" class="textbox"></BSInput>
                                 </td>
 
                                 <td>
-                                    <BSInput InputType="InputType.Number" id="Ante" @bind-Value="@blindLevel.Ante" class="form-control-structure"></BSInput>
+                                    <BSInput InputType="InputType.Number" id="Ante" @bind-Value="@blindLevel.Ante" class="textbox"></BSInput>
                                 </td>
 
                                 <td>
-                                    <BSInput InputType="InputType.Number" id="Minutes" @bind-Value="@blindLevel.Minutes" ValidateOnChange="true" ValidateOnInput="true" class="form-control-structure"></BSInput>
+                                    <BSInput InputType="InputType.Number" id="Minutes" @bind-Value="@blindLevel.Minutes" ValidateOnChange="true" ValidateOnInput="true" class="textbox"></BSInput>
                                 </td>
                                 <td><BSButton Color="Color.Success" Size="Size.ExtraSmall" IsOutline="true" @onclick="@(() => AddBlindLevel(blindLevel))"><span class="oi oi-plus"></span></BSButton></td>
                                 <td><BSButton Color="Color.Danger" Size="Size.ExtraSmall" IsOutline="true" @onclick="@(() => DeleteBlindLevel(blindLevel))"><span class="oi oi-x"></span></BSButton></td>
@@ -100,9 +80,9 @@
                 <BSButton Color="Color.Secondary" @onclick="@NavigateToStructures" IsOutline="true">Cancel</BSButton>
                 <BSButton Color="Color.Danger" @onclick="@DeleteStructure" IsOutline="true">Delete</BSButton>
             </BSForm>
-            
 
-            
+
+
 
         }
 

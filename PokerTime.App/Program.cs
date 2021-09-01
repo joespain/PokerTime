@@ -1,4 +1,5 @@
 using BlazorStrap;
+using BlazorStyled;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using PokerTime.App.Data;
@@ -21,6 +22,7 @@ namespace PokerTime.App
             builder.Services.AddAutoMapper(typeof(EntityProfile));
             builder.Services.AddTransient<TimerService>();
             builder.Services.AddBootstrapCss();
+            builder.Services.AddBlazorStyled();
 
             //Add Data Services
             builder.Services.AddHttpClient<IBlindLevelDataService, BlindLevelDataService>(client =>
