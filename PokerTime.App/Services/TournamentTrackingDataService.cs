@@ -26,6 +26,16 @@ namespace PokerTime.App.Services
             return TournamentTracker;
         }
 
+        public async Task<TournamentStructure> GetTournamentStructure(Guid trackingId, int structureId)
+        {
+            var TournamentStructureJson = await _httpClient.GetStreamAsync($"api/tournamenttracking/{trackingId}/{structureId}");
+
+            var TournamentStructure = await JsonSerializer.DeserializeAsync<TournamentStructure>(TournamentStructureJson,
+                new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+
+            return TournamentStructure;
+        }
+
         public async Task<TournamentTracking> AddTournamentTracking(TournamentTracking tracking)
         {
             var structureJson = new StringContent(JsonSerializer.Serialize(tracking), Encoding.UTF8, "application/json");

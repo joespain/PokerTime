@@ -1,12 +1,14 @@
 ﻿@page "/events/inprogress/{EventId:guid}"
-@inject IJSRuntime _jsRuntime
+
 
 @attribute [Authorize]
 
 <Styled @bind-Classname="@TimerStyle">
     font-size: 100pt;
-    font-family: 'Teko';
+    font-family: Teko;
     text-align: center;
+    color: white;
+    line-height: .95;
     color: @TimerColor;
 </Styled>
 

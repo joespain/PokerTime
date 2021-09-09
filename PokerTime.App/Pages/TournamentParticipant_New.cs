@@ -20,7 +20,7 @@ namespace PokerTime.App.Pages
 
                 // Kick off timer
                 // Get time first 
-                var currentTime = GetCurrentTime();
+                //var currentTime = GetCurrentTime();
                 Timer();
                 
 
@@ -39,10 +39,10 @@ namespace PokerTime.App.Pages
             while (TournamentIsRunning())
             {
                 // Go out and check if the host's timer is still running, if not toggle flag
-                if (!HostTimerIsRunning())
-                {
-                    _isTimerRunning = false;
-                }
+                //if (!HostTimerIsRunning())
+                //{
+                //    _isTimerRunning = false;
+                //}
 
                 // Wait 5 seconds 
                 Task.Delay(5000);

@@ -78,6 +78,8 @@ namespace PokerTime.App.Pages
                     {
                         invitee.IsDisabled = true;
                     }
+
+                    
                 }
                 else //If new Event
                 {
@@ -94,6 +96,7 @@ namespace PokerTime.App.Pages
                     });
                 }
 
+                Event.Invitees = Event.Invitees.OrderBy(x => x.IsDisabled).ThenBy(x => x.Name).ToList();
                 TournamentStructures = Mapper.Map<List<TournamentStructureModel>>(await StructureDataService.GetStructures());
 
                 await GetOtherInvitees();
@@ -206,8 +209,8 @@ namespace PokerTime.App.Pages
             };
 
             Event.Invitees.Add(newInvitee);
-
-
+            Event.Invitees = Event.Invitees.OrderBy(x => x.IsDisabled).ThenBy(x => x.Name).ToList();
+            StateHasChanged();
         }
 
         public void EditInvitee(InviteeModel invitee)

@@ -1,6 +1,4 @@
 ﻿@page "/tournament/{TrackerId:guid}"
-@inject IJSRuntime _jsRuntime
-
 
 <Styled @bind-Classname="@TimerStyle">
     font-size: 100pt;
@@ -23,14 +21,14 @@ else
 {
     <div class="@TimerStyle">@TimeLeft.ToString("mm':'ss")</div>
 
-    <div class="currentblind">Blinds: @Tracker.CurrentBlindLevel.SmallBlind / @Tracker.CurrentBlindLevel.BigBlind</div>
-    <div class="currentblind">Ante: @Tracker.CurrentBlindLevel.Ante</div>
+    <div class="currentblind">Blinds: @CurrentBlindLevel.SmallBlind / @CurrentBlindLevel.BigBlind</div>
+    <div class="currentblind">Ante: @CurrentBlindLevel.Ante</div>
 
     <p>&nbsp;</p>
 
     <div class="nextblindlevel">Next Level:</div>
-    <div class="nextblindlevel">Blinds: @Tracker.NextBlindLevel.SmallBlind / @Tracker.NextBlindLevel.BigBlind</div>
-    <div class="nextblindlevel">Ante: @Tracker.NextBlindLevel.Ante</div>
+    <div class="nextblindlevel">Blinds: @NextBlindLevel.SmallBlind / @NextBlindLevel.BigBlind</div>
+    <div class="nextblindlevel">Ante: @NextBlindLevel.Ante</div>
 }
 
 <audio id="chime" src="../sounds/EndOfBlindLevel.ogg" />

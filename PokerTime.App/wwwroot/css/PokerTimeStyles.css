@@ -1,5 +1,5 @@
 ﻿
-/*Basic Page Stuff*/
+/*Basic HTML Stuff*/
 
 @font-face {
     font-family: Teko;
@@ -11,6 +11,10 @@
     src: url(../fonts/Montserrat-Regular.ttf);
 }
 
+@font-face{
+    font-family: monserrat-bold;
+    src: url(../fonts/Montserrat-Bold.ttf);
+}
 
 h1 {
     margin-left: auto;
@@ -20,12 +24,12 @@ h1 {
 }
 
 h3 {
-
     margin-left: auto;
     margin-right: auto;
     margin-top: 10px;
     text-align: center;
     font-size: 40pt;
+    line-height: .88;
 }
 
 h4 {
@@ -44,6 +48,41 @@ h1, h2, h3, h4, h5, h6 {
 body{
     font-family:Montserrat;
 }
+
+.table-top {
+    background-color: #3a3f44;
+    font-size: 13pt;
+    font-weight: bold;
+    color: white;
+    font-family: monserrat-bold;
+    text-align: center;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    outline-style: solid;
+    outline-color: black;
+    outline-width: 1px;
+}
+
+.list-item {
+    text-align: center;
+    outline-color: black;
+    outline-width: 1px;
+    outline-style: solid;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.list-item-btns {
+    padding-top: 6px;
+    padding-right: 8px;
+    padding-left: 8px;
+    padding-bottom: 6px;
+    margin: 2px;
+    font-size: 8pt;
+}
+
     /*Forms*/
 
 .textbox {
@@ -72,7 +111,12 @@ body{
 
 .center-button {
     padding: 10px;
-    margin: auto;
+}
+
+.add-btn-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /*Menu*/
@@ -88,20 +132,38 @@ body{
 
 /*Invitee*/
 
+.invitee-btns {
+    padding-top: 6px;
+    padding-right: 8px;
+    padding-left: 8px;
+    padding-bottom: 6px;
+    margin: 2px;
+    font-size: 8pt;
+}
+
 .invitee-current {
     border-radius: 5px;
-    box-shadow: 0px 0px 6px 0px #bb0000;
-    margin: 10px;
+    border: black;
+    border-style: solid;
+    border-width: 1px;
 }
 
 .invitee-prior {
     border-radius: 5px;
-    box-shadow: 0px 0px 6px 0px #848484;
-    margin: 10px;
+    border: black;
+    border-style: solid;
+    border-width: 1px;
 }
 
-.invitee-submit-buttons{
-    padding: 5px;
+.invitee-add-btn {
+    padding: 0.5rem .75rem;
+    font-size: 10pt;
+}
+
+.invitee-submit-buttons {
+    padding: 7px;
+    margin: 10px;
+    font-size: 11pt;
 }
 
 /*Tournament*/
@@ -128,4 +190,121 @@ body{
     left: 50%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+}
+
+/*Events*/
+
+.event-item-btns {
+    padding-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.event-add-btn-container {
+}
+
+.event-add-btn {
+    padding: 0.5rem .75rem;
+    font-size: 10pt;
+}
+
+
+
+/*Structures*/
+
+.bottom-btn-container {
+    margin-top: 10px;
+}
+
+.bottom-btn {
+    padding: 0.5rem .75rem;
+    font-size: 10pt;
+}
+
+.structure-table-top {
+    font-size: 10pt;
+    display: flex;
+}
+
+
+/*Edit Structure*/
+
+.edit-structure-table-top {
+    font-size: 9pt;
+    display: flex;
+    align-items: center;
+}
+
+.edit-structure-table-top-item {
+    display: flex;
+    justify-content: center;
+    margin: 2px;
+}
+
+.edit-structure-textbox {
+    padding-right: 2px;
+    padding-left: 2px;
+}
+
+.edit-structure-level-no {
+    font-size: 10pt;
+    width: 20%;
+    margin-left: 0px;
+    max-width: fit-content;
+}
+
+.edit-structure-name-row {
+    margin-bottom: 10px;
+}
+
+.edit-structure-form-label {
+    font-size: 8pt;
+    margin-bottom: 3px;
+    display: flex;
+}
+
+.blind-level-head {
+    font-size: 8pt;
+    display: flex;
+    padding: 2px;
+    text-align: left;
+    background-color: #4a4a4a;
+    justify-content: flex-start;
+}
+
+.blind-level-list-item {
+    padding-bottom: 10px;
+    padding-top: 2px;
+}
+
+.blind-level-item-btns {
+    padding-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.structure-submit-buttons {
+    padding: 7px;
+    margin: 10px;
+    font-size: 11pt;
+}
+
+/*Host*/
+
+.host-labels {
+    font-size: 9pt;
+    margin-top: 5px;
+    margin-bottom: 0px;
+}
+
+.host-items {
+
+}
+
+.host-btns {
+    padding: 7px;
+    margin: 10px;
+    font-size: 11pt;
 }

@@ -41,16 +41,16 @@ else
                 <input type="time" @bind-value="@Event.Time" class="textbox">
             </BSCol>
         </BSRow>
-
         <BSRow>
-            <BSCol XS="6" MD="3">
+            <BSCol XS="6" MD="3" MDOffset="4">
                 <h3 class="page-subtitle">Invitees</h3>
             </BSCol>
-            <BSCol XS="6" MD="3">
-                <BSButton Color="Color.Secondary" IsOutline="true" @onclick="@(() => AddInvitee())"><span class="oi oi-plus"></span> Add Invitee</BSButton>
+            <BSCol XS="6" MD="3" Class="add-btn-container">
+                <BSButton Color="Color.Secondary" IsOutline="true" @onclick="@(() => AddInvitee())" Class="invitee-add-btn">
+                    <span class="oi oi-plus"></span> Add Invitee
+                </BSButton>
             </BSCol>
         </BSRow>
-
 
         @foreach (var invitee in Event.Invitees)
         {
@@ -67,9 +67,17 @@ else
                     <label for="Phone" class="form-label">Phone (optional)</label>
                     <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Phone" @bind-Value="@invitee.Phone" ValidateOnChange="true" ValidateOnInput="true" Class="textbox" />
                 </BSCol>
-                <BSCol XS="4" MD="1" Class="center-button"><BSButton Color="Color.Secondary" IsOutline="true" @onclick="@(() => EditInvitee(invitee))" Class="center-button"><span class="oi oi-pencil"></span></BSButton></BSCol>
-                <BSCol XS="4" MD="1" Class="center-button"><BSButton Color="Color.Success" IsOutline="true" @onclick="@(() => EmailInvitee(invitee))" Class="center-button"><span class="oi oi-envelope-closed"></span></BSButton></BSCol>
-                <BSCol XS="4" MD="1" Class="center-button"><BSButton Color="Color.Danger" IsOutline="true" @onclick="@(() => RemoveInvitee(invitee))" Class="center-button"><span class="oi oi-circle-x"></span></BSButton></BSCol>
+                <BSCol XS="12" MD="3" Class="center-button">
+                    <BSButton Color="Color.Secondary" IsOutline="true" @onclick="@(() => EditInvitee(invitee))" Class="invitee-btns">
+                        <span class="oi oi-pencil"></span> Edit
+                    </BSButton>
+                    <BSButton Color="Color.Success" IsOutline="true" @onclick="@(() => EmailInvitee(invitee))" Class="invitee-btns">
+                        <span class="oi oi-envelope-closed"></span> Invite
+                    </BSButton>
+                    <BSButton Color="Color.Danger" IsOutline="true" @onclick="@(() => RemoveInvitee(invitee))" Class="invitee-btns">
+                        <span class="oi oi-circle-x"></span> Remove
+                    </BSButton>
+                </BSCol>
             </BSRow>
         }
 
@@ -94,8 +102,10 @@ else
                     <label for="Phone" class="form-label">Phone (optional)</label>
                     <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Phone" @bind-Value="@invitee.Phone"  Class="textbox"/>
                 </BSCol>
-                <BSCol  XS="4" MD="1" Class="center-button">
-                    <BSButton Color="Color.Success" @onclick="@(() => AddPriorInvitee(invitee))" IsOutline="true"><span class="oi oi-plus"></span></BSButton>
+                <BSCol  XS="4" MD="3" Class="center-button">
+                    <BSButton Color="Color.Success" @onclick="@(() => AddPriorInvitee(invitee))" IsOutline="true" Class="invitee-btns">
+                    <span class="oi oi-plus"></span> Add
+                    </BSButton>
                 </BSCol>
             </BSRow>
         }
@@ -103,16 +113,13 @@ else
 
 
         <BSRow>
-            <BSCol XS="3" MD="1">
+            <BSCol XS="12" MD="12">
                 <BSButton ButtonType="ButtonType.Submit" @onclick="@(() => IsSave = true)" Class="invitee-submit-buttons"><span class="oi oi-circle-check"></span> Save Event</BSButton>
-            </BSCol>
-            <BSCol XS="3" MD="1">
+
                 <BSButton ButtonType="ButtonType.Submit" IsOutline="true" Color="Color.Success" @onclick="@(() => IsSave = false)" Class="invitee-submit-buttons"><span class="oi oi-media-play"></span> Begin Event</BSButton>
-            </BSCol>
-            <BSCol XS="3" MD="1">
+
                 <BSButton Color="Color.Success" @onclick="@EmailInvitees"  IsOutline="true" Class="invitee-submit-buttons"><span class="oi oi-envelope-closed"></span> Email Invitees</BSButton>
-            </BSCol>
-            <BSCol XS="3" MD="1">
+
                 <BSButton Color="Color.Danger" @onclick="@NavigateToEvents"  IsOutline="true" Class="invitee-submit-buttons"><span class="oi oi-circle-x"></span> Cancel</BSButton>
             </BSCol>
         </BSRow>

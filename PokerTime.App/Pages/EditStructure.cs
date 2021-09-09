@@ -95,6 +95,7 @@ namespace PokerTime.App.Pages
         public void AddBlindLevel(BlindLevelModel blindLevel)
         {
             TSModel.BlindLevels.Insert(TSModel.BlindLevels.IndexOf(blindLevel)+1, new BlindLevelModel());
+            StateHasChanged();
         }
 
         public void AddBlindLevel()

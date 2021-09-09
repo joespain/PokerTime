@@ -48,6 +48,15 @@ namespace PokerTime.App.Services
             return null;
         }
 
+        public async Task IncrementStructurePlayCount(TournamentStructure structure)
+        {
+            structure.NumberOfEvents++;
+            var structureJson = new StringContent(JsonSerializer.Serialize(structure), Encoding.UTF8, "application/json");
+
+            await _httpClient.PutAsync($"api/tournamentstructures/{structure.Id}", structureJson);
+
+        }
+
         public async Task UpdateStructure(TournamentStructure structure)
         {
             var structureJson = new StringContent(JsonSerializer.Serialize(structure), Encoding.UTF8, "application/json");

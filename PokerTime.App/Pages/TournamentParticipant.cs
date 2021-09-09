@@ -5,6 +5,7 @@ using PokerTime.App.Interfaces;
 using PokerTime.App.Services;
 using PokerTime.Shared.Entities;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -16,6 +17,10 @@ namespace PokerTime.App.Pages
         private TournamentTracking Tracker { get; set; } = null;
         [Parameter]
         public Guid TrackerId { get; set; }
+        public TournamentStructure Structure { get; set; } = new TournamentStructure();
+        public BlindLevel CurrentBlindLevel { get; set; } = new BlindLevel();
+        public BlindLevel NextBlindLevel { get; set; } = new BlindLevel();
+        public int CurrentBlindLevelIndex { get; set; } = 0;
 
         //Timer
         public TimeSpan TimeLeft { get; set; } = new TimeSpan();
@@ -36,6 +41,8 @@ namespace PokerTime.App.Pages
         public ILogger<EditEvent> Logger { get; set; }
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+        [Inject]
+        IJSRuntime _jsRuntime { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -54,13 +61,22 @@ namespace PokerTime.App.Pages
                     throw new Exception("Tournament Ended.");
                 }
 
+                //Initialize the Tournament Structure
+                Structure = await TrackingDataService.GetTournamentStructure(TrackerId, Tracker.CurrentBlindLevel.TournamentStructureId);
+                if(Structure == null)
+                {
+                    throw new Exception("Error loading Tournament Structure.");
+                }
+                CurrentBlindLevel = Structure.BlindLevels.ToList().ElementAt(CurrentBlindLevelIndex);
+                NextBlindLevel = Structure.BlindLevels.ToList().ElementAt(CurrentBlindLevelIndex + 1);
+
                 //This timer will go off every 5 seconds to call the CheckTracker function.
                 FiveSecondTimer = new Timer(5000);
                 FiveSecondTimer.Elapsed += new ElapsedEventHandler(CheckTracker);
                 FiveSecondTimer.Start();
 
                 SetTimer();
-                await Timer();
+                Timer();
             }
             catch (Exception e)
             {
@@ -73,7 +89,7 @@ namespace PokerTime.App.Pages
             TimeLeft = Tracker.TimeRemaining;
         }
 
-        public async Task Timer()
+        public async void Timer()
         {
             while (Tracker.IsTournamentRunning)
             {
@@ -92,7 +108,7 @@ namespace PokerTime.App.Pages
                     StateHasChanged();
                 }
 
-                if (Tracker.IsTimerRunning && (TimeLeft < new TimeSpan(0,0,1))) //If timeleft has expired and the timer is still running (the blindlevel has ended)
+                if (TimeLeft <= new TimeSpan()) //If timeleft has expired and the timer is still running (the blindlevel has ended)
                 {
                     TimeExpired();
                     IncrementBlindLevels();
@@ -115,19 +131,27 @@ namespace PokerTime.App.Pages
 
             var newTimerState = Tracker.IsTimerRunning;
 
-            if ((oldTimerState != newTimerState || BlindLevelsIncremented) && Tracker != null) //If the timer state has changed or blind levels incremented
+            if (oldTimerState != newTimerState && Tracker != null) //If the timer state has changed or blind levels incremented
             {
-                if (BlindLevelsIncremented)//If the blindlevel incremented, update the timeleft.
-                {
-                    while(Tracker.TimeRemaining < new TimeSpan(0, 0, 2))
-                    {
-                        await Task.Delay(1000);
-                        Tracker = await TrackingDataService.GetTournamentTracking(TrackerId); //Update Tracker
-                    }
-                    TimeLeft = Tracker.TimeRemaining;
-                    BlindLevelsIncremented = false;
-                }
-                else if (Tracker.IsTimerRunning)//If the timer started , subtract the time the timer started from current time to adjust for lag
+                //if (BlindLevelsIncremented)//If the blindlevel incremented, update the timeleft.
+                //{
+                //    while(Tracker.TimeRemaining < new TimeSpan(0, 0, 5))
+                //    {
+                //        await Task.Delay(1000);
+                //        Tracker = await TrackingDataService.GetTournamentTracking(TrackerId); //Update Tracker
+                //    }
+                //    if(DateTime.UtcNow - Tracker.Time > new TimeSpan())
+                //    {
+                //        TimeLeft = new TimeSpan(0, Tracker.CurrentBlindLevel.Minutes, 0) - (DateTime.UtcNow - Tracker.Time) + new TimeSpan(0,0,2);
+                //    }
+                //    else
+                //    {
+                //        //TimeLeft -= (DateTime.UtcNow - Tracker.Time) - new TimeSpan(0, 0, 1);
+                //    }
+                    
+                //    BlindLevelsIncremented = false;
+                //}
+                if (Tracker.IsTimerRunning)//If the timer started , subtract the time the timer started from current time to adjust for lag
                 {
                     TimeLeft -= (DateTime.UtcNow - Tracker.Time) - new TimeSpan(0,0,1);
                 }
@@ -142,11 +166,13 @@ namespace PokerTime.App.Pages
 
         public void IncrementBlindLevels()
         {
-            //This function queries the server to get new data for the tracker. Is only called at the end of a blind level
+            //Increment the CurrentBlindLevelIndex and update the Current and Next BlindLevels.
+            CurrentBlindLevelIndex++;
+            CurrentBlindLevel = Structure.BlindLevels.ToList().ElementAt(CurrentBlindLevelIndex);
+            NextBlindLevel = Structure.BlindLevels.ToList().ElementAt(CurrentBlindLevelIndex + 1);
 
-            Tracker.CurrentBlindLevel = Tracker.NextBlindLevel;
-            TimeLeft = new TimeSpan(0, Tracker.CurrentBlindLevel.Minutes, 0);
-            BlindLevelsIncremented = true;
+            //Update TimeLeft with the CurrentBlindLevel's minutes property.
+            TimeLeft = new TimeSpan(0, CurrentBlindLevel.Minutes, 0);
             StateHasChanged();
         }
 

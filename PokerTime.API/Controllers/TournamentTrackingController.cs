@@ -38,6 +38,22 @@ namespace PokerTime.API.Controllers
             }
         }
 
+        [HttpGet("{tournamentId}/{structureId}")]
+        public async Task<ActionResult<TournamentStructureModel>> GetTournamentStructure(int structureId)
+        {
+            try
+            {
+                var structure = await _repository.GetTournamentStructureByIdAsync(structureId);
+
+                return _mapper.Map<TournamentStructureModel>(structure);
+            }
+            catch
+            {
+                //Update with real status code errors
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<TournamentTrackingModel>> AddTournamentTracker([FromBody] TournamentTrackingModel model)
         {

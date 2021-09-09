@@ -15,7 +15,7 @@ namespace PokerTime.Shared.Models
         public int BigBlind { get; set; }
         public int Ante { get; set; }
         [Required]
-        [Range(1,int.MaxValue,ErrorMessage ="Minutes must be greater than 0.")]
+        [Range(1, int.MaxValue, ErrorMessage ="Minutes must be greater than 0.")]
         public int Minutes { get; set; }
         [Required]
         public int SequenceNum { get; set; }

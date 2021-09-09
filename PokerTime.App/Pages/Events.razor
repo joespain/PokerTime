@@ -1,6 +1,6 @@
 ﻿@page "/events/"
 
-<h3>Events</h3>
+<h1>Events</h1>
 
 @if (!CanShowScreen)
 {
@@ -8,79 +8,76 @@
 }
 else
 {
-    <a class="btn btn-outline-primary" @onclick="@NewEvent">New Event</a>
+    <BSContainer>
 
-    <h4>Upcoming Events</h4>
+        <BSRow>
+            <BSCol XS="9" MD="9">
+                <h3>Upcoming Events</h3>
+            </BSCol>
+            <BSCol XS="3" MD="3" Class="add-btn-container">
+                <BSButton Class="event-add-btn" Color="Color.Success" @onclick="@NewEvent" IsOutline="true">
+                    <span class="oi oi-plus"></span>New Event
+                </BSButton>
+            </BSCol>
+        </BSRow>
 
-    <BSTable IsHoverable="true">
-        <BSTableHead TableHeadType="TableHeadType.Dark">
-            <tr>
-                <th>Event Name</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th></th>
-                <th></th>
-                <th></th>
-            </tr>
-        </BSTableHead>
-        <tbody>
-            @foreach (var theEvent in FutureEvents)
-            {
-                <tr>
-                    <td>@theEvent.Name</td>
-                    <td>@theEvent.Date.Date.ToString("d")</td>
-                    <td>@theEvent.Time.ToString("t")</td>
-                    <td>
-                        <BSButton Id="ButtonPlay" Color="Color.Success" IsOutline="true" @onclick="@(() => StartEvent(theEvent))"><span class="oi oi-media-play"></span></BSButton>
-                        <BSTooltip Target="ButtonPlay">Start Event</BSTooltip>
-                    </td>
-                    <td>
-                        <BSButton Id="ButtonEdit" Color="Color.Secondary" IsOutline="true" @onclick="@(() => EditEvent(theEvent))"><span class="oi oi-pencil"></span></BSButton>
-                        <BSTooltip Target="ButtonEdit">Edit Event</BSTooltip>
-                    </td>
-                    <td>
-                        <BSButton Id="ButtonDelete" Color="Color.Danger" IsOutline="true" @onclick="@(() => DeleteEvent(theEvent))"><span class="oi oi-circle-x"></span></BSButton>
-                        <BSTooltip Target="ButtonDelete">Delete Event</BSTooltip>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </BSTable>
+        <BSRow Class="table-top">
+            <BSCol XS="4" LG="3">Event Name</BSCol>
+            <BSCol XS="4" LG="3">Date</BSCol>
+            <BSCol XS="4" LG="3">Time</BSCol>
+            <BSCol XS="12" LG="3"></BSCol>
+        </BSRow>
 
-    <h4>Past Events</h4>
+        @foreach (var theEvent in FutureEvents)
+        {
+            <BSRow Class="list-item">
+                <BSCol XS="4" LG="3">@theEvent.Name</BSCol>
+                <BSCol XS="4" LG="3">@theEvent.Date.Date.ToString("M/dd/yy")</BSCol>
+                <BSCol XS="4" LG="3">@theEvent.Time.ToString("t")</BSCol>
+                <BSCol XS="12" LG="3" Class="event-item-btns">
+                    <BSButton Id="ButtonPlay" Color="Color.Success" IsOutline="true" @onclick="@(() => StartEvent(theEvent))" Class="list-item-btns">
+                        <span class="oi oi-media-play"></span> Start
+                    </BSButton>
+                    <BSButton Id="ButtonEdit" Color="Color.Secondary" IsOutline="true" @onclick="@(() => EditEvent(theEvent))" Class="list-item-btns">
+                        <span class="oi oi-pencil"></span> Edit
+                    </BSButton>
+                    <BSButton Id="ButtonDelete" Color="Color.Danger" IsOutline="true" @onclick="@(() => DeleteEvent(theEvent))" Class="list-item-btns">
+                        <span class="oi oi-circle-x"></span> Delete
+                    </BSButton>
+                </BSCol>
+            </BSRow>
+        }
 
-    <BSTable IsHoverable="true">
-        <BSTableHead TableHeadType="TableHeadType.Dark">
-            <tr>
-                <th>Event Name</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th></th>
-                <th></th>
-                <th></th>
-            </tr>
-        </BSTableHead>
-        <tbody>
-            @foreach (var theEvent in PastEvents)
-            {
-                <tr>
-                    <td>@theEvent.Name</td>
-                    <td>@theEvent.Date.Date.ToString("d")</td>
-                    <td>@theEvent.Time.ToString("t")</td>
-                    <td>
-                        <BSButton Id="ButtonPlay" Color="Color.Success" IsOutline="true" @onclick="@(() => StartEvent(theEvent))"><span class="oi oi-media-play"></span></BSButton>
-                        <BSTooltip Target="ButtonPlay">Start Event</BSTooltip>
-                    </td>
-                    <td>
-                        <BSButton Id="ButtonEdit" Color="Color.Secondary" IsOutline="true" @onclick="@(() => EditEvent(theEvent))"><span class="oi oi-pencil"></span></BSButton>
-                        <BSTooltip Target="ButtonEdit">Edit Event</BSTooltip>
-                    </td>
-                    <td>
-                        <BSButton Id="ButtonDelete" Color="Color.Danger" IsOutline="true" @onclick="@(() => DeleteEvent(theEvent))"><span class="oi oi-circle-x"></span></BSButton>
-                        <BSTooltip Target="ButtonDelete">Delete Event</BSTooltip>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </BSTable>
+        <BSRow>
+            <BSCol><h3>Past Events</h3></BSCol>
+        </BSRow>
+        
+        <BSRow Class="table-top">
+            <BSCol XS="4" LG="3">Event Name</BSCol>
+            <BSCol XS="4" LG="3">Date</BSCol>
+            <BSCol XS="4" LG="3">Time</BSCol>
+            <BSCol XS="12" LG="3"></BSCol>
+        </BSRow>
+
+        @foreach (var theEvent in PastEvents)
+        {
+            <BSRow Class="list-item">
+                <BSCol XS="4" LG="3">@theEvent.Name</BSCol>
+                <BSCol XS="4" LG="3">@theEvent.Date.Date.ToString("d")</BSCol>
+                <BSCol XS="4" LG="3">@theEvent.Time.ToString("t")</BSCol>
+                <BSCol XS="12" LG="3" Class="event-item-btns">
+                    <BSButton Id="ButtonPlay" Color="Color.Success" IsOutline="true" @onclick="@(() => StartEvent(theEvent))" Class="list-item-btns">
+                        <span class="oi oi-media-play"></span> Start
+                    </BSButton>
+                    <BSButton Id="ButtonEdit" Color="Color.Secondary" IsOutline="true" @onclick="@(() => EditEvent(theEvent))" Class="list-item-btns">
+                        <span class="oi oi-pencil"></span> Edit
+                    </BSButton>
+                    <BSButton Id="ButtonDelete" Color="Color.Danger" IsOutline="true" @onclick="@(() => DeleteEvent(theEvent))" Class="list-item-btns">
+                        <span class="oi oi-circle-x"></span> Delete
+                    </BSButton>
+                </BSCol>
+            </BSRow>
+        }
+
+    </BSContainer>
 }

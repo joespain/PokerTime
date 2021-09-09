@@ -12,5 +12,6 @@ namespace PokerTime.App.Interfaces
         Task<TournamentStructure> GetStructure(int structureId);
         Task<IEnumerable<TournamentStructure>> GetStructures();
         Task UpdateStructure(TournamentStructure structure);
+        Task IncrementStructurePlayCount(TournamentStructure structure);
     }
 }

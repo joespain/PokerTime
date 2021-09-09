@@ -57,6 +57,8 @@ namespace PokerTime.App.Pages
         public NavigationManager NavigationManager { get; set; }
         [Inject] 
         public IStyled Styled { get; set; }
+        [Inject]
+        IJSRuntime _jsRuntime { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -79,6 +81,11 @@ namespace PokerTime.App.Pages
                 {
                     //error
                     Logger.LogDebug("Structure is null");
+                }
+                else
+                {
+                    //Increment the play count for the structure.
+                    await StructureDataService.IncrementStructurePlayCount(Structure);
                 }
 
                 BlindLevels = (await BlindLevelDataService.GetBlindLevels(Structure.Id)).ToList();
@@ -181,8 +188,8 @@ namespace PokerTime.App.Pages
             if (IsTournamentRunning)
             {
                 SetTimer();
-                Timer();
                 TournamentTracker.Time = DateTime.UtcNow;
+                Timer();
                 UpdateTournamentTracker();
                 StateHasChanged();
             }

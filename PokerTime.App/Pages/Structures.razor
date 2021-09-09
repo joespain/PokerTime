@@ -1,7 +1,7 @@
 ﻿@page "/structures"
 @attribute [Authorize]
 
-<h3>Structures</h3>
+<h1>Structures</h1>
 
 @if (TournamentStructures == null)
 {
@@ -9,39 +9,40 @@
 }
 else
 {
+    <BSContainer>
+
+        <BSRow Class="table-top structure-table-top">
+            <BSCol XS="5">Name</BSCol>
+            <BSCol XS="3">Date Created</BSCol>
+            <BSCol XS="3">No. of Events</BSCol>
+            <BSCol SM="1"></BSCol>
+        </BSRow>
 
 
-    <BSTable IsHoverable="true">
-        <BSTableHead TableHeadType="TableHeadType.Dark">
-            <tr>
-                <th></th>
-                <th scope="col">Name</th>
-                <th scope="col">Date Created</th>
-                <th scope="col">No. of Events</th>
-                <th></th>
-            </tr>
-        </BSTableHead>
-        <tbody>
-            @foreach (var structure in TournamentStructures)
-            {
-                <tr>
-                    <td></td>
-                    <td>@structure.Name</td>
-                    <td>@structure.DateCreated.ToShortDateString()</td>
-                    <td>@structure.NumberOfEvents</td>
-                    <td>
-                        <BSButton Color="Color.Primary" OnClick="@(() => EditStructure(structure.Id))">
-                            <span class="oi oi-pencil" aria-hidden="true"></span> Edit
-                        </BSButton>
-                    </td>
-                    <td></td>
-                </tr>
-            }
-        </tbody>
-    </BSTable>
-    <BSButton @onclick="@NewStructure" Color="Color.Primary">
-        <span class="oi oi-plus"></span> New Structure
-    </BSButton>
+        @foreach (var structure in TournamentStructures)
+        {
+            <BSRow Class="list-item">
+
+                <BSCol XS="5">@structure.Name</BSCol>
+                <BSCol XS="3">@structure.DateCreated.ToString("M/dd/yy")</BSCol>
+                <BSCol XS="2">@structure.NumberOfEvents</BSCol>
+                <BSCol XS="1">
+                    <BSButton Color="Color.Primary" OnClick="@(() => EditStructure(structure.Id))" Class="list-item-btns">
+                        <span class="oi oi-pencil" aria-hidden="true"></span> Edit
+                    </BSButton>
+                </BSCol>
+
+            </BSRow>
+        }
+        <BSRow>
+            <BSCol XS="3" Class="bottom-btn-container">
+                <BSButton @onclick="@NewStructure" Color="Color.Primary" Class="bottom-btn">
+                    <span class="oi oi-plus"></span> New Structure
+                </BSButton>
+            </BSCol>
+        </BSRow>
+    </BSContainer>
+    
 }
 
 
