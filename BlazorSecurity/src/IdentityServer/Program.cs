@@ -2,12 +2,21 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using IdentityServer.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using System.Linq;
+using System.Security.Claims;
+using IdentityModel;
+using Microsoft.Extensions.Logging;
 
 namespace IdentityServer
 {
@@ -35,8 +44,60 @@ namespace IdentityServer
             try
             {
                 Log.Information("Starting host...");
-                CreateHostBuilder(args).Build().Run();
+                var host = CreateHostBuilder(args).Build();
+
+                using(var scope = host.Services.CreateScope())
+                {
+                    try
+                    {
+                        var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
+
+                        context.Database.Migrate();
+
+                        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+                        var alice = userManager.FindByNameAsync("Alice").Result;
+                        if(alice is null)
+                        {
+                            alice = new IdentityUser
+                            {
+                                UserName = "Alice",
+                                Email = "AliceSimpson@gmail.com",
+                                EmailConfirmed = true
+
+                            };
+
+                            var result = userManager.CreateAsync(alice, "P@ssword1").Result;
+                            if (!result.Succeeded)
+                            {
+                                throw new Exception(result.Errors.First().Description);
+                            }
+
+                            result = userManager.AddClaimsAsync(alice, new Claim[] {
+                                new Claim(JwtClaimTypes.Name, "Alice Simpson"),
+                                new Claim(JwtClaimTypes.GivenName, "Alice"),
+                                new Claim(JwtClaimTypes.FamilyName, "Simpson"),
+                                new Claim(JwtClaimTypes.Email, "AliceSimpson@gmail.com")
+                            }).Result;
+
+                            if (!result.Succeeded)
+                            {
+                                throw new Exception(result.Errors.First().Description);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                        logger.LogError(ex, "An error occurred while seeding the database");
+                    }
+                }
+                host.Run();
                 return 0;
+
+
+
+
             }
             catch (Exception ex)
             {

@@ -1,16 +1,13 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PokerTime.API.Data;
-using System.Reflection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.IdentityModel.Tokens.Jwt;
-using Detached.Mappers.EntityFramework;
-using PokerTime.Shared.Email;
 using PokerTime.Shared.Converters;
+using PokerTime.Shared.Email;
+using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 
 namespace PokerTime.API
 {
@@ -27,7 +24,11 @@ namespace PokerTime.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
+            
             services.AddDbContext<PTContext>();
+
+
 
             services.AddScoped<IPTRepository, PTRepository>();
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
@@ -41,7 +42,7 @@ namespace PokerTime.API
             {
                 options.AddPolicy("default", policy =>
                     {
-                        policy.WithOrigins("https://localhost:5015")
+                        policy.WithOrigins("https://pokertimeapp.azurewebsites.net")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                     });
@@ -53,12 +54,16 @@ namespace PokerTime.API
                 .AddJsonOptions(options =>
                 options.JsonSerializerOptions.Converters.Add(new DateTimeToStringConverter()));
 
+            //services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
+            //    .AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
+
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer",
                 options =>
                 {
-                    options.Authority = "https://localhost:5001";
-                    options.Audience = "pokertimeapi";
+                    options.Authority = "https://ptidentityserver.azurewebsites.net";
+                    options.Audience = "PokerTimeApi";
+                    options.RequireHttpsMetadata = false;
                 });
 
             services.AddAuthorization(options =>

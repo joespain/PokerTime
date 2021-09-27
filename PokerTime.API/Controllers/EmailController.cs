@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PokerTime.Shared.Email;
@@ -9,15 +10,16 @@ namespace PokerTime.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize("api-access")]
     public class EmailController : Controller
     {
 
-        private readonly IMailService MailService;
-        private ILogger Logger;
-        public EmailController(IMailService mailService, ILogger logger)
+        private readonly IMailService _mailService;
+
+        public EmailController(IMailService mailService)
         {
-            this.MailService = mailService;
-            this.Logger = logger;
+            _mailService = mailService;
+
         }
 
         [HttpPost("Send")]
@@ -25,13 +27,12 @@ namespace PokerTime.API.Controllers
         {
             try
             {
-                await MailService.SendEmailAsync(request);
+                await _mailService.SendEmailAsync(request);
                 return Ok();
             }
             catch(Exception e)
             {
-                Logger.LogDebug(e.Message);
-                return BadRequest("Email not sent.");
+                return BadRequest($"Email not sent. Error: {e.Message}");
             }
 
         }

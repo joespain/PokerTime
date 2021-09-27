@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using PokerTime.App.Interfaces;
-using PokerTime.App.Services;
 using PokerTime.Shared.Entities;
 using System;
 using System.Collections.Generic;

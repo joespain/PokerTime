@@ -5,9 +5,6 @@ namespace PokerTime.App.Pages
 {
     public partial class Index : ComponentBase
     {
-        [Inject]
-        public IHostDataService HostDataService { get; set; }
-
 
     }
 }

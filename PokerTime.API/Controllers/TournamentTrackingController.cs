@@ -14,7 +14,7 @@ namespace PokerTime.API.Controllers
 {
     [Route("api/tournamenttracking")]
     [ApiController]
-    //[Authorize("api-access")]
+    [AllowAnonymous]
     public class TournamentTrackingController : PokerTimeControllerBase
     {
         public TournamentTrackingController(IPTRepository repository, IMapper mapper, LinkGenerator linkGenerator) : base(repository, mapper, linkGenerator)

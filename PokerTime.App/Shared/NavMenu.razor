@@ -1,4 +1,9 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject SignOutSessionStateManager SignOutManager 
+@inject NavigationManager Navigation
+
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">PokerTime</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -7,33 +12,51 @@
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column sidemenu">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="structures">
-                <span class="oi oi-spreadsheet" aria-hidden="true"></span> Structures
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="events">
-                <span class="oi oi-list" aria-hidden="true"></span> Events
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="host">
-                <span class="oi oi-person" aria-hidden="true"></span> Profile
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="logout">
-                <span class="oi oi-circle-x" aria-hidden="true"></span> Logout
-            </NavLink>
-        </li>
+        <AuthorizeView>
+            <Authorized>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="structures">
+                        <span class="oi oi-spreadsheet" aria-hidden="true"></span> Structures
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="events">
+                        <span class="oi oi-list" aria-hidden="true"></span> Events
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="host">
+                        <span class="oi oi-person" aria-hidden="true"></span> Profile
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" @onclick="BeginSignOut">
+                        <span class="oi oi-circle-x" aria-hidden="true"></span> Logout
+                    </NavLink>
+                </li>
+            </Authorized>
+            <NotAuthorized>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="https://ptidentityserver.azurewebsites.net/Identity/Account/Register">
+                        <span class="oi oi-arrow-thick-left" aria-hidden="true"></span> Register
+                    </NavLink>
+                </li>
+
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="Authentication/Login">
+                        <span class="oi oi-arrow-thick-left" aria-hidden="true"></span> Login
+                    </NavLink>
+                </li>
+            </NotAuthorized>
+        </AuthorizeView>
     </ul>
 </div>
+
 
 @code {
     private bool collapseNavMenu = true;
@@ -43,5 +66,16 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    private async Task BeginSignOut(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo("Authentication/Logout");
+    }
+
+    private void GoToRegistration()
+    {
+        Navigation.NavigateTo($"?returnUrl={Uri.EscapeDataString(Navigation.Uri)}");
     }
 }

@@ -13,7 +13,10 @@ namespace IdentityServer
             new IdentityResource[]
             { 
                 new IdentityResources.OpenId(), //standard openid (subject id)
-                new IdentityResources.Profile() //first name, last name, etc.
+                new IdentityResources.Profile(), //first name, last name, etc.
+                new IdentityResources.Email(),
+                new IdentityResources.Address(),
+                new IdentityResources.Phone()
             };
 
         public static IEnumerable<ApiScope> ApiScopes =>
@@ -25,7 +28,7 @@ namespace IdentityServer
         public static IEnumerable<ApiResource> ApiResources =>
             new ApiResource[]
             {
-                new ApiResource("pokertimeapi", "PokerTime API")
+                new ApiResource("PokerTimeApi", "PokerTime API")
                 {
                     Scopes = {"api-access"}
                 }
@@ -36,18 +39,16 @@ namespace IdentityServer
             { 
                 new Client
                 {
-                    ClientId = "wasmappauth-client",
-                    ClientName = "Blazor WebAssembly App Client",
+                    ClientId = "PokerTimeApp",
+                    ClientName = "PokerTime Webassembly App",
                     RequireClientSecret = false,
-
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
-
-                    AllowedCorsOrigins = {"https://localhost:5015"},
-                    RedirectUris = { "https://localhost:5015/authentication/login-callback" },
-                    PostLogoutRedirectUris = { "https://localhost:5015/authentication/logout-callback" },
-
+                    RedirectUris = { "https://pokertimeapp.azurewebsites.net/authentication/login-callback" },
+                    PostLogoutRedirectUris = { "https://pokertimeapp.azurewebsites.net/authentication/logout-callback" },
                     AllowedScopes = {"openid", "profile", "offline_access", "api-access"},
+                    AllowedCorsOrigins = {"https://pokertimeapp.azurewebsites.net"},
+                    RequireConsent = false
                 }
             
             };

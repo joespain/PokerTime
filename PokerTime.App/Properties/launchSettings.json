@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:5005",
+      "applicationUrl": "https://pokertimeapp.azurewebsites.net",
       "sslPort": 5015
     }
   },
@@ -11,19 +11,19 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      },
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
     },
     "WasmAppAuth": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:5015"
+      "applicationUrl": "https://pokertimeapp.azurewebsites.net",
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
     }
   }
 }
