@@ -87,6 +87,11 @@ body{
     font-size: 8pt;
 }
 
+.spinner-container {
+    height: 75px;
+    position: relative;
+}
+
     /*Forms*/
 
 .textbox {
@@ -183,11 +188,25 @@ body{
 }
 
 .start-button-container {
-    height: 100px;
+    height: 75px;
     position: relative;
 }
 
 .start-button {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.end-tournament-button-container {
+    height: 75px;
+    position: relative;
+}
+
+.end-tournament-btn {
     margin: 0;
     position: absolute;
     top: 50%;

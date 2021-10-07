@@ -44,11 +44,14 @@ namespace IdentityServer
                     RequireClientSecret = false,
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
-                    RedirectUris = { "https://pokertimeapp.azurewebsites.net/authentication/login-callback" },
-                    PostLogoutRedirectUris = { "https://pokertimeapp.azurewebsites.net/authentication/logout-callback" },
                     AllowedScopes = {"openid", "profile", "offline_access", "api-access"},
-                    AllowedCorsOrigins = {"https://pokertimeapp.azurewebsites.net"},
-                    RequireConsent = false
+                    RequireConsent = false,
+                    //AllowedCorsOrigins = {"https://pokertimeapp.azurewebsites.net"},
+                    //RedirectUris = { "https://pokertimeapp.azurewebsites.net/authentication/login-callback" },
+                    //PostLogoutRedirectUris = { "https://pokertimeapp.azurewebsites.net/authentication/logout-callback" }
+                    AllowedCorsOrigins = {"https://localhost:5015"},
+                    RedirectUris = { "https://localhost:5015/authentication/login-callback" },
+                    PostLogoutRedirectUris = { "https://localhost:5015/authentication/logout-callback" }
                 }
             
             };

@@ -9,7 +9,7 @@ namespace PokerTime.App
             NavigationManager navigationManager) : base(provider, navigationManager)
         {
             ConfigureHandler(
-                authorizedUrls: new[] { "https://pokertimeapi.azurewebsites.net" },
+                authorizedUrls: new[] { "https://localhost:44328" },
                 scopes: new[] { "api-access" });
         }
     }

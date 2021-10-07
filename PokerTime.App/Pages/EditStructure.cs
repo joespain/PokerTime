@@ -53,10 +53,11 @@ namespace PokerTime.App.Pages
 
                 Host = await HostDataService.GetHost();
                 HostId = Host.Id;
-                if(TournamentStructureId == 0) //Create new Structure & Blind Levels
+                if(TournamentStructureId == 0) 
                 {
+                    //Create new Structure & Blind Levels
                     TSModel = new();
-                    TSModel.HostId = HostId;
+                    TSModel.HostId = new Guid();
                     TSModel.DateCreated = DateTime.Today;
                     TSModel.Name = "";
                     TSModel.BlindLevels = new List<BlindLevelModel>();
@@ -70,7 +71,7 @@ namespace PokerTime.App.Pages
 
                     if(TSModel.BlindLevels == null)
                     {
-                        //Add an initial blind level if the structure is new.
+                        //Add an initial Blind Level if the structure is new.
                         TSModel.BlindLevels.Add(new BlindLevelModel());
                     }
                 }

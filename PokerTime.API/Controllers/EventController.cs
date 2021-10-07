@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using IdentityServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using PokerTime.API.Data;
@@ -9,6 +11,7 @@ using PokerTime.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace PokerTime.API.Controllers
@@ -28,7 +31,8 @@ namespace PokerTime.API.Controllers
         {
             try
             {
-                var events = await _repository.GetAllEventsByHostIdAsync(GetHostId());
+                
+                var events = await _repository.GetAllEventsByHostIdAsync(await GetHostId());
 
                 if (events == null)
                 {
@@ -160,7 +164,7 @@ namespace PokerTime.API.Controllers
 
         private async Task UpdateInvitees(List<Invitee> invitees)
         {
-            List<Invitee> oldInvitees = (await _repository.GetAllInviteesByHostIdAsync(GetHostId())).ToList();
+            List<Invitee> oldInvitees = (await _repository.GetAllInviteesByHostIdAsync(await GetHostId())).ToList();
             _mapper.Map(invitees, oldInvitees);
             await _repository.SaveChangesAsync();
         }

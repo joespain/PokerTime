@@ -24,16 +24,14 @@ namespace PokerTime.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
-            
             services.AddDbContext<PTContext>();
-
-
-
             services.AddScoped<IPTRepository, PTRepository>();
+
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddTransient<IMailService, MailService>();
+
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
             services.AddControllersWithViews()
                     .AddNewtonsoftJson(options =>
                             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -42,7 +40,8 @@ namespace PokerTime.API
             {
                 options.AddPolicy("default", policy =>
                     {
-                        policy.WithOrigins("https://pokertimeapp.azurewebsites.net")
+                        //policy.WithOrigins("https://pokertimeapp.azurewebsites.net")
+                        policy.WithOrigins("https://localhost:5015")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                     });
@@ -61,9 +60,9 @@ namespace PokerTime.API
                 .AddJwtBearer("Bearer",
                 options =>
                 {
-                    options.Authority = "https://ptidentityserver.azurewebsites.net";
+                    //options.Authority = "https://ptidentityserver.azurewebsites.net";
+                    options.Authority = "https://localhost:5001";
                     options.Audience = "PokerTimeApi";
-                    options.RequireHttpsMetadata = false;
                 });
 
             services.AddAuthorization(options =>
@@ -74,6 +73,8 @@ namespace PokerTime.API
                     policy.RequireClaim("scope", "api-access");
                 });
             });
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -90,6 +91,7 @@ namespace PokerTime.API
                 app.UseHsts();
             }
 
+            //app.UseIdentityServer();
             app.UseRouting();
             app.UseAuthentication();
             app.UseCors("default");

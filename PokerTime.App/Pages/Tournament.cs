@@ -51,7 +51,7 @@ namespace PokerTime.App.Pages
         [Inject]
         public ITournamentTrackingDataService TournamentTrackingDataService { get; set; }
         [Inject]
-        public ILogger<EditEvent> Logger { get; set; }
+        public ILogger<Tournament> Logger { get; set; }
         [Inject]
         public NavigationManager NavigationManager { get; set; }
         [Inject] 
@@ -220,6 +220,17 @@ namespace PokerTime.App.Pages
             TournamentTracker.TimeRemaining = TimeLeft;
 
             await TournamentTrackingDataService.UpdateTournamentTracking(TournamentTracker);
+        }
+
+        public async void EndTournament()
+        {
+            TournamentTracker.IsTournamentRunning = false;
+
+            await TournamentTrackingDataService.UpdateTournamentTracking(TournamentTracker);
+
+            FiveSecondTimer.Stop();
+            FiveSecondTimer.Elapsed -= new ElapsedEventHandler(AutoUpdateTournamentTracker);
+            NavigationManager.NavigateTo("/");
         }
     }
 }

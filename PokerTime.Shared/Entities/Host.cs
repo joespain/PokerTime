@@ -8,6 +8,7 @@ namespace PokerTime.Shared.Entities
     public class Host
     {
         public Guid Id { get; set; }
+        public Guid UserId { get; set; }
         [Required]
         [StringLength(100)]
         public string Name { get; set; }

@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using IdentityServer.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using PokerTime.API.Data;
+using PokerTime.Shared.Entities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace PokerTime.API.Controllers
@@ -15,6 +18,7 @@ namespace PokerTime.API.Controllers
         protected readonly IMapper _mapper;
         protected readonly LinkGenerator _linkGenerator;
 
+
         public PokerTimeControllerBase(IPTRepository repository, IMapper mapper, LinkGenerator linkGenerator)
         {
             _repository = repository;
@@ -22,10 +26,25 @@ namespace PokerTime.API.Controllers
             _linkGenerator = linkGenerator;
         }
 
-        public Guid GetHostId()
+        public async Task<Guid> GetHostId()
         {
-            //Re-do with code to obtain HostId from IDP
-            return Guid.Parse("0e9771b9-2112-4256-8594-7cd3af8d34ee");
+            Guid userId = Guid.Parse(this.User.FindFirstValue("sub"));
+            string name = this.User.FindFirstValue(ClaimTypes.Name);
+            string email = this.User.FindFirstValue(ClaimTypes.Email);
+
+            if(name is null)
+            {
+                name = "New User";
+            }
+
+            if(email is null)
+            {
+                email = "newemail@gmail.com";
+            }
+
+            Guid hostId = await _repository.GetHostIdByUserId(userId, name, email);
+
+            return hostId;
         }
 
     }

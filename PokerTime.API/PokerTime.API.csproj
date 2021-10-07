@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>d65aab14-dfcd-4a50-987f-9e3577f5a540</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BlazorSecurity\src\IdentityServer\IdentityServer.csproj" />
     <ProjectReference Include="..\PokerTime.Shared\PokerTime.Shared.csproj" />
   </ItemGroup>
 

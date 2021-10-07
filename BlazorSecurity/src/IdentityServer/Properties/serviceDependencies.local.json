@@ -5,7 +5,7 @@
       "connectionId": "ConnectionStrings:IdentityServerContextConnection"
     },
     "mssql2": {
-      "type": "mssql.azure",
+      "type": "mssql.local",
       "connectionId": "ConnectionStrings:DefaultConnection",
       "secretStore": null
     }

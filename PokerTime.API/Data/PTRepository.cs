@@ -4,7 +4,9 @@ using PokerTime.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace PokerTime.API.Data
 {
@@ -39,7 +41,31 @@ namespace PokerTime.API.Data
             return (await _context.SaveChangesAsync()) > 0;
         }
 
+
+
         //Hosts-------------------------------------------------
+
+
+        public async Task<Guid> GetHostIdByUserId(Guid userId, string name, string email)
+        {
+            Host host = await _context.Hosts.FirstOrDefaultAsync(h => h.UserId == userId);
+            if (host is null)
+            {
+                host = new Host()
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    Name = name,
+                    Email = email
+                };
+
+                _context.Hosts.Add(host);
+                await _context.SaveChangesAsync();
+            }
+
+            return host.Id;
+        }
+
 
         public async Task<IEnumerable<Host>> GetAllHosts(bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents= false)
         {

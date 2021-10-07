@@ -3,6 +3,7 @@
 
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
+@inject AuthenticationStateProvider AuthProvider
 
 <AuthorizeView>
     <Authorized>
@@ -17,6 +18,9 @@
 @code{
     private async Task BeginSignOut(MouseEventArgs args)
     {
+
+
+
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");
     }

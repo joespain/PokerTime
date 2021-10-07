@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using PokerTime.App.Interfaces;
 using PokerTime.Shared.Entities;
@@ -12,8 +11,8 @@ namespace PokerTime.App.Pages
 {
     public partial class Structures : ComponentBase
     {
-        public Guid HostId { get; set; }
-        public Host Host { get; set; }
+        //public Guid HostId { get; set; }
+        //public Host Host { get; set; }
         public List<TournamentStructure> TournamentStructures { get; set; }
         [Parameter]
         public EventCallback<int> OnButtonClick { get; set; }
@@ -23,8 +22,8 @@ namespace PokerTime.App.Pages
         protected string StatusClass = string.Empty;
         protected bool Saved;
 
-        [Inject]
-        public IHostDataService UserDataService { get; set; }
+        //[Inject]
+        //public IHostDataService UserDataService { get; set; }
 
         [Inject]
         public IStructureDataService StructureDataService { get; set; }
@@ -40,8 +39,8 @@ namespace PokerTime.App.Pages
             try
             {
                 //Set the current host
-                Host = await UserDataService.GetHost();
-                HostId = Host.Id;
+                //Host = await UserDataService.GetHost();
+                //HostId = Host.Id;
 
                 Saved = false;
                 
@@ -60,8 +59,6 @@ namespace PokerTime.App.Pages
 
         protected void NewStructure()
         {
-            //var newStructure = await StructureDataService.AddStructure(new TournamentStructure() { Name = "New Tournament Structure"});
-
             NavigationManager.NavigateTo($"structures/0");
         }
 

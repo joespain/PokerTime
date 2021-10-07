@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PokerTime.API.Data;
 
 namespace PokerTime.API.Migrations
 {
     [DbContext(typeof(PTContext))]
-    partial class PTContextModelSnapshot : ModelSnapshot
+    [Migration("20211001190515_addedUserIdToHost")]
+    partial class addedUserIdToHost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

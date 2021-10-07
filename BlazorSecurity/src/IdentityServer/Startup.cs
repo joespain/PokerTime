@@ -3,6 +3,8 @@
 
 
 using IdentityServer.Data;
+using IdentityServer.Models;
+using IdentityServer.Services;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
@@ -13,11 +15,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using PokerTime.Shared.Email;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 
 namespace IdentityServer
 {
@@ -44,8 +45,13 @@ namespace IdentityServer
                 options.UseSqlServer(connectionString,
                     sqlOptions => sqlOptions.MigrationsAssembly(migrationsAssembly)));
 
-            services.AddIdentity<IdentityUser, IdentityRole>(
-                options => options.SignIn.RequireConfirmedAccount = true)
+
+            //Identity Configuration
+            services.AddIdentity<ApplicationUser, IdentityRole>(options => 
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                    options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
+                })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -61,7 +67,7 @@ namespace IdentityServer
                 };
 
             })
-                .AddAspNetIdentity<IdentityUser>()
+                .AddAspNetIdentity<ApplicationUser>()
                 .AddConfigurationStore(options =>
                 {
                     options.ConfigureDbContext = builder => builder.UseSqlServer(connectionString,
@@ -101,16 +107,11 @@ namespace IdentityServer
                 options.User.RequireUniqueEmail = true;
             });
 
-
             // Email sender, used to confirm email address
-            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddTransient<IEmailSender, EmailSender>();
 
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();
-
-
-
         }
 
         public void Configure(IApplicationBuilder app)

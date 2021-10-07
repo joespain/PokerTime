@@ -36,37 +36,37 @@ namespace PokerTime.App
             //Add Data Services
             builder.Services.AddHttpClient<IBlindLevelDataService, BlindLevelDataService>(client =>
             {
-                client.BaseAddress = new Uri("https://pokertimeapi.azurewebsites.net");
+                client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiAddress"));
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IEventDataService, EventDataService>(client =>
             {
-                client.BaseAddress = new Uri("https://pokertimeapi.azurewebsites.net");
+                client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiAddress"));
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IHostDataService, HostDataService>(client =>
             {
-                client.BaseAddress = new Uri("https://pokertimeapi.azurewebsites.net");
+                client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiAddress"));
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IInviteeDataService, InviteeDataService>(client =>
             {
-                client.BaseAddress = new Uri("https://pokertimeapi.azurewebsites.net");
+                client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiAddress"));
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IStructureDataService, StructureDataService>(client =>
             {
-                client.BaseAddress = new Uri("https://pokertimeapi.azurewebsites.net");
+                client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiAddress"));
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<ITournamentTrackingDataService, TournamentTrackingDataService>(client =>
             {
-                client.BaseAddress = new Uri("https://pokertimeapi.azurewebsites.net");
+                client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiAddress"));
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IEmailDataService, EmailDataService>(client =>
             {
-                client.BaseAddress = new Uri("https://pokertimeapi.azurewebsites.net");
+                client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiAddress"));
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             await builder.Build().RunAsync();

@@ -28,7 +28,7 @@ namespace PokerTime.API.Controllers
         {
             try
             {
-                var invitees = await _repository.GetAllInviteesByHostIdAsync(GetHostId());
+                var invitees = await _repository.GetAllInviteesByHostIdAsync(await GetHostId());
 
                 return _mapper.Map<IEnumerable<InviteeModel>>(invitees).ToList();
             }
@@ -61,7 +61,7 @@ namespace PokerTime.API.Controllers
             try
             {
                 //Make sure the host exists
-                var host = await _repository.GetHostByIdAsync(GetHostId());
+                var host = await _repository.GetHostByIdAsync(await GetHostId());
 
                 if (host == null) return BadRequest("Host not found.");
 

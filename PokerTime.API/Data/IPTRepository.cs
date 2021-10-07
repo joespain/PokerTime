@@ -12,7 +12,8 @@ namespace PokerTime.API.Data
         void Add<T>(T entity) where T : class;
         void Delete<T>(T entity) where T : class;
 
-        //Users 
+        //Hosts
+        public Task<Guid> GetHostIdByUserId(Guid userId, string name, string email);
         Task<IEnumerable<Host>> GetAllHosts(bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
         Task<Host> GetHostByEmailAsync(string email, bool includeTournamentStructures = false, bool includeInvitees = false, bool includeEvents = false);
         Task<Host> GetHostByIdAsync(Guid id);

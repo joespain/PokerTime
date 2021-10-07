@@ -1,6 +1,5 @@
 ﻿@page "/events/inprogress/{EventId:guid}"
 
-
 @attribute [Authorize]
 
 <Styled @bind-Classname="@TimerStyle">
@@ -36,6 +35,10 @@
 
 <div class="start-button-container">
     <BSButton ButtonType="ButtonType.Button" Color="Color.Active" IsOutline="true" @onclick="@(() => StartStopTimer())" Class="start-button">@ButtonName</BSButton>
+</div>
+
+<div class="end-tournament-button-container">
+    <BSButton ButtonType="ButtonType.Button" Color="Color.Danger" IsOutline="true" @onclick="@(() => EndTournament())" Class="end-tournament-btn">End Tournament</BSButton>
 </div>
 
 <audio id="chime" src="../sounds/EndOfBlindLevel.ogg" />
