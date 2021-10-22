@@ -2,21 +2,22 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-using Microsoft.AspNetCore;
+using IdentityModel;
+using IdentityServer.Data;
+using IdentityServer.Models;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
+using Serilog.Formatting.Json;
 using Serilog.Sinks.SystemConsole.Themes;
 using System;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using IdentityServer.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using System.Linq;
 using System.Security.Claims;
-using IdentityModel;
-using Microsoft.Extensions.Logging;
 
 namespace IdentityServer
 {
@@ -25,20 +26,8 @@ namespace IdentityServer
         public static int Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-                .MinimumLevel.Override("System", LogEventLevel.Warning)
-                .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
-                .Enrich.FromLogContext()
-                // uncomment to write to Azure diagnostics stream
-                //.WriteTo.File(
-                //    @"D:\home\LogFiles\Application\identityserver.txt",
-                //    fileSizeLimitBytes: 1_000_000,
-                //    rollOnFileSizeLimit: true,
-                //    shared: true,
-                //    flushToDiskInterval: TimeSpan.FromSeconds(1))
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
+                .MinimumLevel.Information()
+                .WriteTo.File(new JsonFormatter(), path: @"c:\temp\logs\identityserver-log.json", shared: true)
                 .CreateLogger();
 
             try
@@ -54,12 +43,12 @@ namespace IdentityServer
 
                         context.Database.Migrate();
 
-                        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
                         var alice = userManager.FindByNameAsync("Alice").Result;
                         if(alice is null)
                         {
-                            alice = new IdentityUser
+                            alice = new ApplicationUser
                             {
                                 UserName = "Alice",
                                 Email = "AliceSimpson@gmail.com",
@@ -94,9 +83,6 @@ namespace IdentityServer
                 }
                 host.Run();
                 return 0;
-
-
-
 
             }
             catch (Exception ex)

@@ -49,7 +49,7 @@ namespace PokerTime.App.Pages
         [Inject]
         public IBlindLevelDataService BlindLevelDataService { get; set; }
         [Inject]
-        public ITournamentTrackingDataService TournamentTrackingDataService { get; set; }
+        public ITournamentEventDataService TournamentEventDataService { get; set; }
         [Inject]
         public ILogger<Tournament> Logger { get; set; }
         [Inject]
@@ -207,7 +207,7 @@ namespace PokerTime.App.Pages
             TournamentTracker.NextBlindLevel = NextBlindLevel;
             TournamentTracker.TimeRemaining = TimeLeft;
             
-            await TournamentTrackingDataService.UpdateTournamentTracking(TournamentTracker);
+            await TournamentEventDataService.UpdateTournamentTracking(TournamentTracker);
         }
 
         public async void UpdateTournamentTracker()
@@ -219,14 +219,14 @@ namespace PokerTime.App.Pages
             TournamentTracker.NextBlindLevel = NextBlindLevel;
             TournamentTracker.TimeRemaining = TimeLeft;
 
-            await TournamentTrackingDataService.UpdateTournamentTracking(TournamentTracker);
+            await TournamentEventDataService.UpdateTournamentTracking(TournamentTracker);
         }
 
         public async void EndTournament()
         {
-            TournamentTracker.IsTournamentRunning = false;
-
-            await TournamentTrackingDataService.UpdateTournamentTracking(TournamentTracker);
+            IsTournamentRunning = false;
+            IsTimerRunning = false;
+            await TournamentEventDataService.EndTournamentTracking(TournamentTracker);
 
             FiveSecondTimer.Stop();
             FiveSecondTimer.Elapsed -= new ElapsedEventHandler(AutoUpdateTournamentTracker);

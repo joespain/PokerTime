@@ -41,6 +41,7 @@ namespace IdentityServer
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
+            //Add database
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString,
                     sqlOptions => sqlOptions.MigrationsAssembly(migrationsAssembly)));
@@ -55,6 +56,7 @@ namespace IdentityServer
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            //Add IdentityServer4
             var builder = services.AddIdentityServer(options =>
             {
                 // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
@@ -118,15 +120,8 @@ namespace IdentityServer
         {
             InitializeDatabase(app);
 
-            if (Environment.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/home/error");
-                app.UseHsts();
-            }
+            app.UseExceptionHandler("/home/error");
+            app.UseHsts();
 
             // uncomment if you want to add MVC
             app.UseRouting();
@@ -148,6 +143,7 @@ namespace IdentityServer
             });
         }
 
+        //Initializes the Configuration Database
         private void InitializeDatabase(IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())

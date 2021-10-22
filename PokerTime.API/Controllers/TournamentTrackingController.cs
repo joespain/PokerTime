@@ -34,7 +34,7 @@ namespace PokerTime.API.Controllers
             catch(Exception e)
             {
                 //Update with real status code errors
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Error getting the tracker");
             }
         }
 
@@ -50,78 +50,7 @@ namespace PokerTime.API.Controllers
             catch
             {
                 //Update with real status code errors
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
-            }
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<TournamentTrackingModel>> AddTournamentTracker([FromBody] TournamentTrackingModel model)
-        {
-            try
-            {
-                var newTournamentTracker = _mapper.Map<TournamentTracking>(model);
-
-                if(await _repository.GetTournamentTrackingById(newTournamentTracker.Id) == null)
-                {
-                    if (await _repository.AddTournamentTracking(newTournamentTracker))
-                    {
-                        return Created($"api/tournamenttracking/{newTournamentTracker.Id}",
-                            _mapper.Map<TournamentTrackingModel>(newTournamentTracker));
-                    }
-                    else
-                    {
-                        return BadRequest("Failed to add new TournamentTracking.");
-                    }
-                }
-                else
-                {
-                    if (await _repository.UpdateTournamentTracking(newTournamentTracker))
-                    {
-                        return _mapper.Map<TournamentTrackingModel>(newTournamentTracker);
-                    }
-                    else return BadRequest("Error updating the Tournament Tracking.");
-                }
-
-                
-            }
-            catch (Exception e)
-            {
-                //Update with real status code errors
-                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
-            }
-        } 
-
-
-        [HttpPut("{tournamentId}")]
-        public async Task<ActionResult<TournamentTrackingModel>> UpdateTournamentTracker(Guid tournamentId, [FromBody] TournamentTrackingModel model)
-        {
-            try
-            {
-
-                if (!await _repository.DoesTournamentTrackingExist(model.Id)) //If the tracking does not already exist in the database
-                {
-                    if (await _repository.AddTournamentTracking(_mapper.Map<TournamentTracking>(model)))
-                    {
-                        return Ok(model);
-                    }
-                    else return BadRequest("Error updating the Tournament Tracking.");
-                }
-                else
-                {
-
-                    if (await _repository.UpdateTournamentTracking(_mapper.Map<TournamentTracking>(model)))
-                    {
-                        return Ok(model);
-                    }
-                    else return BadRequest("Error updating the Tournament Tracking.");
-                }
-
-
-            }
-            catch(Exception e)
-            {
-                //Update with real status code errors
-                return this.StatusCode(StatusCodes.Status500InternalServerError, $"{e.Message}");
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Error getting the structure");
             }
         }
     }

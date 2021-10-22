@@ -49,10 +49,12 @@ namespace PokerTime.API.Data
         public async Task<Guid> GetHostIdByUserId(Guid userId, string name, string email)
         {
             Host host = await _context.Hosts.FirstOrDefaultAsync(h => h.UserId == userId);
-            if (host is null)
+            if (host is null) //If Host doesn't exist in database, create a new Host
             {
+                _logger.LogInformation("Creating new Host for user {userId}", userId);
                 host = new Host()
                 {
+                    
                     Id = Guid.NewGuid(),
                     UserId = userId,
                     Name = name,
@@ -224,7 +226,11 @@ namespace PokerTime.API.Data
             {
                 return true;
             }
-            else return false;
+            else
+            {
+                _logger.LogError("Unable to delete TournamentStructure {Id}.", id);
+                return false;
+            }
         }
 
         
@@ -299,7 +305,11 @@ namespace PokerTime.API.Data
             {
                 return true;
             }
-            else return false;
+            else
+            {
+                _logger.LogError("Unable to delete Event {id}.", id);
+                return false;
+            }
         }
 
         public async Task<bool> AddNewEvent(Event theEvent)
@@ -319,13 +329,17 @@ namespace PokerTime.API.Data
 
             _context.Events.Add(theEvent);
 
-            _logger.LogInformation($"Adding new event.");
+            _logger.LogInformation("Adding new event.");
 
             if (await _context.SaveChangesAsync() > 0) //Success
             {
                 return true;
             }
-            else return false;
+            else
+            {
+                _logger.LogError($"Error adding event for Host {theEvent.HostId}");
+                return false;
+            }
         }
 
         public async Task<bool> UpdateEvent(Event eventToUpdate)

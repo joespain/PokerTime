@@ -15,11 +15,12 @@ namespace PokerTime.API.Controllers
     {
 
         private readonly IMailService _mailService;
+        private readonly ILogger<EmailController> _logger;
 
-        public EmailController(IMailService mailService)
+        public EmailController(IMailService mailService, ILogger<EmailController> logger)
         {
             _mailService = mailService;
-
+            _logger = logger;
         }
 
         [HttpPost("Send")]
@@ -27,12 +28,17 @@ namespace PokerTime.API.Controllers
         {
             try
             {
+                var userId = User.FindFirst(a => a.Type == "sub")?.Value;
+                _logger.LogInformation(message: "{UserName} - {UserId} is sending email to {EmailAddress}.",
+                    User.Identity.Name, userId, request.ToEmail);
+
                 await _mailService.SendEmailAsync(request);
                 return Ok();
             }
             catch(Exception e)
             {
-                return BadRequest($"Email not sent. Error: {e.Message}");
+                _logger.LogError($"Error {e.Message}");
+                return BadRequest("Email not sent.");
             }
 
         }

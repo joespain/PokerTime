@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using PokerTime.API.Data;
 using PokerTime.Shared.Entities;
 using PokerTime.Shared.Models;
@@ -21,7 +22,6 @@ namespace PokerTime.API.Controllers
     {
         public BlindLevelController(IPTRepository repository, IMapper mapper, LinkGenerator linkGenerator) : base(repository, mapper, linkGenerator)
         {
-
         }
 
         [HttpGet]

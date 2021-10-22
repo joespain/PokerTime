@@ -23,7 +23,6 @@ namespace PokerTime.API.Controllers
     {
         public EventController(IPTRepository repository, IMapper mapper, LinkGenerator linkGenerator) : base(repository, mapper, linkGenerator)
         {
-
         }
 
         [HttpGet]

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PokerTime.Shared.Email;
 using System.Net;
@@ -12,13 +13,17 @@ namespace IdentityServer.Services
     {
 
         private readonly MailSettings _mailSettings;
+
+
         public EmailSender(IOptions<MailSettings> mailSettings)
         {
             _mailSettings = mailSettings.Value;
+
         }
 
         public Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
+            //_logger.LogInformation(message:"Sending user confirmation email to {emailAddress}", email);
             using(var message = new MailMessage())
             {
                 message.To.Add(new MailAddress(email, email));

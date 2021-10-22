@@ -13,13 +13,14 @@ namespace PokerTime.API
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         }
 
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -27,7 +28,7 @@ namespace PokerTime.API
             services.AddDbContext<PTContext>();
             services.AddScoped<IPTRepository, PTRepository>();
 
-            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.Configure<MailSettings>(_configuration.GetSection("MailSettings"));
             services.AddTransient<IMailService, MailService>();
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -41,7 +42,7 @@ namespace PokerTime.API
                 options.AddPolicy("default", policy =>
                     {
                         //policy.WithOrigins("https://pokertimeapp.azurewebsites.net")
-                        policy.WithOrigins("https://localhost:5015")
+                        policy.WithOrigins(_configuration.GetValue<string>("AppAddress"))
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                     });
@@ -53,15 +54,12 @@ namespace PokerTime.API
                 .AddJsonOptions(options =>
                 options.JsonSerializerOptions.Converters.Add(new DateTimeToStringConverter()));
 
-            //services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
-            //    .AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
-
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer",
                 options =>
                 {
                     //options.Authority = "https://ptidentityserver.azurewebsites.net";
-                    options.Authority = "https://localhost:5001";
+                    options.Authority = _configuration.GetValue<string>("IDPAddress");
                     options.Audience = "PokerTimeApi";
                 });
 
@@ -80,16 +78,9 @@ namespace PokerTime.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+            app.UseExceptionHandler("/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
 
             //app.UseIdentityServer();
             app.UseRouting();

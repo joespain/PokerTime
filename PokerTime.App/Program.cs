@@ -3,7 +3,6 @@ using BlazorStyled;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Plk.Blazor.DragDrop;
 using PokerTime.App.Data;
 using PokerTime.App.Interfaces;
 using PokerTime.App.Services;
@@ -32,6 +31,8 @@ namespace PokerTime.App
             builder.Services.AddBootstrapCss();
             builder.Services.AddBlazorStyled();
 
+            //API address
+            Uri pokerTimeApi = new("https://pokertimeapi.azurewebsites.net");
 
             //Add Data Services
             builder.Services.AddHttpClient<IBlindLevelDataService, BlindLevelDataService>(client =>
@@ -41,32 +42,37 @@ namespace PokerTime.App
 
             builder.Services.AddHttpClient<IEventDataService, EventDataService>(client =>
             {
-                client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiAddress"));
+                client.BaseAddress = pokerTimeApi;
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IHostDataService, HostDataService>(client =>
             {
-                client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiAddress"));
+                client.BaseAddress = pokerTimeApi;
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IInviteeDataService, InviteeDataService>(client =>
             {
-                client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiAddress"));
+                client.BaseAddress = pokerTimeApi;
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IStructureDataService, StructureDataService>(client =>
             {
-                client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiAddress"));
+                client.BaseAddress = pokerTimeApi;
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<ITournamentTrackingDataService, TournamentTrackingDataService>(client =>
             {
-                client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiAddress"));
+                client.BaseAddress = pokerTimeApi;
+            }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
+
+            builder.Services.AddHttpClient<ITournamentEventDataService, TournamentEventDataService>(client =>
+            {
+                client.BaseAddress = pokerTimeApi;
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IEmailDataService, EmailDataService>(client =>
             {
-                client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiAddress"));
+                client.BaseAddress = pokerTimeApi;
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             await builder.Build().RunAsync();
