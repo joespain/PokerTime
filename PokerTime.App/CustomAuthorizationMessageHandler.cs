@@ -13,7 +13,7 @@ namespace PokerTime.App
         {
             _configuration = configuration;
             ConfigureHandler(
-                authorizedUrls: new[] { "https://pokertimeapi.azurewebsites.net" },
+                authorizedUrls: new[] { configuration.GetValue<string>("ApiAddress") },
                 scopes: new[] { "api-access" });
             
         }

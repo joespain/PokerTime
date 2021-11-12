@@ -118,5 +118,35 @@ namespace PokerTime.API.Controllers
             }
         }
 
+        [HttpGet("{tournamentId}")]
+        public async Task<ActionResult<TournamentTrackingModel>> GetTournamentTracker(Guid tournamentId)
+        {
+            try
+            {
+                if (!await _repository.DoesTournamentTrackingExist(tournamentId))
+                {
+                    //Return Tracking w/new Guid (0's) if Tracker doesn't exist.
+
+                    var newTournamentTracking = new TournamentTracking()
+                    {
+                        Id = new Guid()
+                    };
+
+                    return _mapper.Map<TournamentTrackingModel>(newTournamentTracking);
+                }
+                else
+                {
+                    var existingTournamentTracking = await _repository.GetTournamentTrackingById(tournamentId);
+
+                    return _mapper.Map<TournamentTrackingModel>(existingTournamentTracking);
+                }
+            }
+            catch (Exception e)
+            {
+                //Update with real status code errors
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Error getting the tracker");
+            }
+        }
+
     }
 }

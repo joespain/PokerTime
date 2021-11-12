@@ -18,6 +18,7 @@ using Serilog.Sinks.SystemConsole.Themes;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using Microsoft.Extensions.Logging.AzureAppServices;
 
 namespace IdentityServer
 {
@@ -25,10 +26,10 @@ namespace IdentityServer
     {
         public static int Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Information()
-                .WriteTo.File(new JsonFormatter(), path: @"c:\temp\logs\identityserver-log.json", shared: true)
-                .CreateLogger();
+            //Log.Logger = new LoggerConfiguration()
+            //    .MinimumLevel.Information()
+            //    .WriteTo.File(new JsonFormatter(), path: @"c:\temp\logs\identityserver-log.json", shared: true)
+            //    .CreateLogger();
 
             try
             {
@@ -98,7 +99,7 @@ namespace IdentityServer
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseSerilog()
+                .ConfigureLogging(logging => logging.AddAzureWebAppDiagnostics())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

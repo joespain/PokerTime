@@ -1,7 +1,25 @@
 ﻿@page "/"
 
+@inject IConfiguration Config
 @attribute [AllowAnonymous]
 
 <h1>Welcome to Poker.Time!</h1>
 
 <p>Welcome welcome welcome!</p> 
+
+<p>RegistrationAddress: @registrationAddress</p>
+
+<p>LogoutAddress: @logoutAddress</p>
+
+
+@code{
+	private string registrationAddress;
+	private string logoutAddress;
+
+	protected override void OnInitialized()
+	{
+		registrationAddress = Config.GetValue<string>("RegistrationAddress");
+		logoutAddress = Config.GetValue<string>("LogoutAddress");
+	}
+}
+

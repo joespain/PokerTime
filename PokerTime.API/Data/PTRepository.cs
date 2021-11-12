@@ -4,9 +4,7 @@ using PokerTime.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 
 namespace PokerTime.API.Data
 {
@@ -457,6 +455,22 @@ namespace PokerTime.API.Data
             else return false;
         }
 
+        //public async Task<bool> DoesTournamentTrackingExist(Guid id)
+        //{
+        //    var tournamentTracker = await _context.TournamentTrackings
+        //        .FirstOrDefaultAsync(t => t.Id == id);
+
+        //    _logger.LogInformation($"Checking if TournamentTracking for Event {id} exists.");
+
+        //    if (tournamentTracker is null)
+        //    {
+        //        return false;
+        //    }
+        //    else return true;
+
+            
+        //}
+
         public async Task<TournamentTracking> GetTournamentTrackingById(Guid id)
         {
             var tournamentTracker = await _context.TournamentTrackings
@@ -472,10 +486,10 @@ namespace PokerTime.API.Data
 
         public async Task<bool> UpdateTournamentTracking(TournamentTracking tracker)
         {
-            _context.Entry(tracker.CurrentBlindLevel).State = EntityState.Unchanged;
+            _context.Entry(tracker.CurrentBlindLevel).State = EntityState.Detached;
             if(tracker.CurrentBlindLevel.Id != tracker.NextBlindLevel.Id)
             {
-                _context.Entry(tracker.NextBlindLevel).State = EntityState.Unchanged;
+                _context.Entry(tracker.NextBlindLevel).State = EntityState.Detached;
             }
             
             _context.TournamentTrackings.Update(tracker);
@@ -486,7 +500,11 @@ namespace PokerTime.API.Data
             {
                 return true;
             }
-            else return false;
+            else
+            {
+                _logger.LogError($"Error updating tournament tracking for Tournament {tracker.Id}.");
+                return false;
+            }
         }
 
         public async Task<bool> DoesTournamentTrackingExist(Guid id)

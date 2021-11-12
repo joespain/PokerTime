@@ -105,6 +105,7 @@ namespace IdentityServer.Areas.Identity.Pages.Account
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         if (returnUrl.Contains(_configuration.GetValue<string>("AppReturnUrl")))
                         {
+
                             return Redirect(returnUrl);
                         }
                         else

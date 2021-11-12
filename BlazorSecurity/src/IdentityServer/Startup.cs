@@ -48,26 +48,29 @@ namespace IdentityServer
 
 
             //Identity Configuration
-            services.AddIdentity<ApplicationUser, IdentityRole>(options => 
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = false;
                     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+               
+            
 
             //Add IdentityServer4
             var builder = services.AddIdentityServer(options =>
             {
                 // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
                 options.EmitStaticAudienceClaim = true;
+                options.Authentication.CookieLifetime = TimeSpan.FromHours(12);
                 options.UserInteraction = new IdentityServer4.Configuration.UserInteractionOptions()
                 {
                     LogoutUrl = "/account/logout",
                     LoginUrl = "/account/login",
                     LoginReturnUrlParameter = "returnUrl"
                 };
-
+                
             })
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddConfigurationStore(options =>
@@ -112,6 +115,8 @@ namespace IdentityServer
             // Email sender, used to confirm email address
             services.AddTransient<IEmailSender, EmailSender>();
 
+
+
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();
         }
@@ -122,6 +127,7 @@ namespace IdentityServer
 
             app.UseExceptionHandler("/home/error");
             app.UseHsts();
+
 
             // uncomment if you want to add MVC
             app.UseRouting();

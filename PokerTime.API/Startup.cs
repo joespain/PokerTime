@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using PokerTime.API.Data;
 using PokerTime.Shared.Converters;
 using PokerTime.Shared.Email;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 
@@ -71,8 +72,6 @@ namespace PokerTime.API
                     policy.RequireClaim("scope", "api-access");
                 });
             });
-
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

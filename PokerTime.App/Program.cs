@@ -31,13 +31,15 @@ namespace PokerTime.App
             builder.Services.AddBootstrapCss();
             builder.Services.AddBlazorStyled();
 
+            builder.Services.AddHostedService<TimerService>();
+
             //API address
-            Uri pokerTimeApi = new("https://pokertimeapi.azurewebsites.net");
+            Uri pokerTimeApi = new(builder.Configuration.GetValue<string>("ApiAddress"));
 
             //Add Data Services
             builder.Services.AddHttpClient<IBlindLevelDataService, BlindLevelDataService>(client =>
             {
-                client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiAddress"));
+                client.BaseAddress = pokerTimeApi;
             }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<IEventDataService, EventDataService>(client =>
@@ -63,7 +65,9 @@ namespace PokerTime.App
             builder.Services.AddHttpClient<ITournamentTrackingDataService, TournamentTrackingDataService>(client =>
             {
                 client.BaseAddress = pokerTimeApi;
-            }).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
+            });
+                //The CustomMessageHandler is not included in TournamentTracking to allow anonymous users
+                //.AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
 
             builder.Services.AddHttpClient<ITournamentEventDataService, TournamentEventDataService>(client =>
             {

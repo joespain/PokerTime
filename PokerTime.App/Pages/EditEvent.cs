@@ -233,7 +233,7 @@ namespace PokerTime.App.Pages
             var email = new MailRequest();
             email.ToEmail = invitee.Email;
             email.Subject = "Join the PokerTime Tournament";
-            email.Body = $"Join our tournament by clicking the following link: https://localhost:5015/tournament/{Event.Id}";
+            email.Body = $"Join our tournament by clicking the following link: https://pokertimeapp.azurewebsites.net/tournament/{Event.Id}";
 
             await EmailDataService.SendEmail(email);
         }
@@ -262,7 +262,7 @@ namespace PokerTime.App.Pages
 
         public void BeginEvent()
         {
-            NavigationManager.NavigateTo($"/events/inprogress/{Event.Id}");
+            NavigationManager.NavigateTo($"/tournament/{Event.Id}");
         }
 
        

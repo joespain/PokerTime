@@ -47,12 +47,14 @@ namespace IdentityServer
                     RequirePkce = true,
                     AllowedScopes = {"openid", "profile", "offline_access", "api-access"},
                     RequireConsent = false,
-                    AllowedCorsOrigins = {"https://pokertimeapp.azurewebsites.net"},
-                    RedirectUris = { "https://pokertimeapp.azurewebsites.net/authentication/login-callback" },
-                    PostLogoutRedirectUris = { "https://pokertimeapp.azurewebsites.net/authentication/logout-callback" }
-                    //AllowedCorsOrigins = {"https://localhost:5015"},
-                    //RedirectUris = { "https://localhost:5015/authentication/login-callback" },
-                    //PostLogoutRedirectUris = { "https://localhost:5015/authentication/logout-callback" }
+                    //AllowedCorsOrigins = {"https://pokertimeapp.azurewebsites.net"},
+                    //RedirectUris = { "https://pokertimeapp.azurewebsites.net/authentication/login-callback" },
+                    //PostLogoutRedirectUris = { "https://pokertimeapp.azurewebsites.net/authentication/logout-callback" }
+
+
+                    AllowedCorsOrigins = {"https://localhost:5015"},
+                    RedirectUris = { "https://localhost:5015/authentication/login-callback" },
+                    PostLogoutRedirectUris = { "https://localhost:5015/authentication/logout-callback" }
                 }
 
             };

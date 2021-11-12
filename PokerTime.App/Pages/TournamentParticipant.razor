@@ -1,4 +1,4 @@
-﻿@page "/tournament/{TrackerId:guid}"
+﻿@page "/tournament/event/{TrackerId:guid}"
 @attribute [AllowAnonymous]
 
 <Styled @bind-Classname="@TimerStyle">
@@ -8,7 +8,7 @@
     color: @TimerColor;
 </Styled>
 
-@if (Tracker == null)
+@if (Tracker is null)
 {
     <p>@Message</p>
 

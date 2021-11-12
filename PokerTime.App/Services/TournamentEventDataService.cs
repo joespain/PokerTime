@@ -1,5 +1,6 @@
 ﻿using PokerTime.App.Interfaces;
 using PokerTime.Shared.Entities;
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -40,6 +41,17 @@ namespace PokerTime.App.Services
             var structureJson = new StringContent(JsonSerializer.Serialize(tracking), Encoding.UTF8, "application/json");
 
             await _httpClient.PostAsync($"api/tournamentevent/{tracking.Id}/end", structureJson);
+
+        }
+
+        public async Task<TournamentTracking> GetTournamentTracking(Guid trackingId)
+        {
+            var TournamentTrackerJson = await _httpClient.GetStreamAsync($"api/tournamentevent/{trackingId}");
+
+            TournamentTracking TournamentTracker = await JsonSerializer.DeserializeAsync<TournamentTracking>(TournamentTrackerJson,
+                new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+
+            return TournamentTracker;
 
         }
     }

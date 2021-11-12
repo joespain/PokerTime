@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace PokerTime.Shared.Email
+﻿namespace PokerTime.Shared.Email
 {
     public class MailSettings
     {
@@ -12,5 +7,6 @@ namespace PokerTime.Shared.Email
         public string Password { get; set; }
         public string Host { get; set; }
         public int Port { get; set; }
+        public string ApiKey { get; set; }
     }
 }
