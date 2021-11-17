@@ -13,7 +13,7 @@
 
 
 
-@if (IsTournamentRunning) { 
+@if (IsTournamentRunning && Tracker is not null) { 
 
 
     <div class="@TimerStyle">@TimeLeft.ToString("mm':'ss")</div>

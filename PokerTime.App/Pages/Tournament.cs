@@ -30,10 +30,11 @@ namespace PokerTime.App.Pages
         public Event Event { get; set; }
 
         //Timer
+        public Timer TournamentTimer { get; set; }
         public TimeSpan TimeLeft { get; set; } = new();
         public Timer UpdateTrackerTimer { get; set; }
         public string TimerStyle { get; set; }
-        public string TimerColor { get; set; }
+        public string TimerColor { get; set; } = "White";
         public bool IsTimerRunning { get; set; } = false;
         public bool IsTournamentRunning { get; set; } = true;
         public string ButtonName { get; set; } = "Start";
@@ -49,7 +50,7 @@ namespace PokerTime.App.Pages
         public Timer FiveSecondTimer { get; set; } = new();
 
         //User
-        public bool IsUserAuthenticated { get; set; } = false;
+        public bool IsUserAuthenticated { get; set; } 
 
         //Services
         [Inject]
@@ -77,18 +78,17 @@ namespace PokerTime.App.Pages
         {
             try
             {
-                //Check Authorization and set the IsUserAuthenticated variable.
-                Task<AuthenticationState> currentAuthenticationStateTask;
-                AuthenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
-                currentAuthenticationStateTask = AuthenticationStateProvider.GetAuthenticationStateAsync();
-                OnAuthenticationStateChanged(currentAuthenticationStateTask);
+                var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                var user = authState.User;
+
+                //var userId = user.Claims.FirstOrDefault(x => x.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
 
                 if (EventId == new Guid()) //Must have EventId present in address bar
                 {
                     throw new Exception("No event ID");
                 }
 
-                if (IsUserAuthenticated) //For Host users
+                if (user.Identity.IsAuthenticated) //For Host users
                 {
                     //Check to see if Tracking already exists.
                     Tracker = await TournamentEventDataService.GetTournamentTracking(EventId);
@@ -105,12 +105,50 @@ namespace PokerTime.App.Pages
                         }
                         else if (!Tracker.IsTimerRunning)
                         {
-                            GetEventDataFromServer();
+                            Event = await EventDataService.GetEvent(EventId);
+                            if (Event is null)
+                            {
+                                //error
+                                throw new Exception("Event is null");
+                            }
+
+                            Structure = await StructureDataService.GetStructure(Event.TournamentStructureId);
+                            if (Structure is null)
+                            {
+                                //error
+                                throw new Exception("Structure is null");
+                            }
+
+                            BlindLevels = Structure.BlindLevels.OrderBy(x => x.SequenceNum).ToList();
+                            if (BlindLevels is null)
+                            {
+                                //error
+                                throw new Exception("BlindLevels are null");
+                            }
                             SetDataFromTracker();
                         }
                         else
                         {
-                            GetEventDataFromServer();
+                            Event = await EventDataService.GetEvent(EventId);
+                            if (Event is null)
+                            {
+                                //error
+                                throw new Exception("Event is null");
+                            }
+
+                            Structure = await StructureDataService.GetStructure(Event.TournamentStructureId);
+                            if (Structure is null)
+                            {
+                                //error
+                                throw new Exception("Structure is null");
+                            }
+
+                            BlindLevels = Structure.BlindLevels.OrderBy(x => x.SequenceNum).ToList();
+                            if (BlindLevels is null)
+                            {
+                                //error
+                                throw new Exception("BlindLevels are null");
+                            }
                             SetDataFromTracker();
                             CalculateCurrentBlindLevel();
                         }
@@ -122,14 +160,14 @@ namespace PokerTime.App.Pages
                         if (Event is null)
                         {
                             //error
-                            Logger.LogDebug("Event is null");
+                            throw new Exception("Event is null");
                         }
 
                         Structure = await StructureDataService.GetStructure(Event.TournamentStructureId);
                         if (Structure is null)
                         {
                             //error
-                            Logger.LogDebug("Structure is null");
+                            throw new Exception("Structure is null");
                         }
                         else
                         {
@@ -141,7 +179,7 @@ namespace PokerTime.App.Pages
                         if (BlindLevels is null)
                         {
                             //error
-                            Logger.LogDebug("BlindLevels are null");
+                            throw new Exception("BlindLevels are null");
                         }
 
                         CurrentBlindLevel = BlindLevels.First();
@@ -190,15 +228,23 @@ namespace PokerTime.App.Pages
                     FiveSecondTimer = new Timer(5000);
                     FiveSecondTimer.Elapsed += new ElapsedEventHandler(CheckTracker);
                     FiveSecondTimer.Start();
-
-                    Timer();
                 }
-                
+
+                //This timer updates TimeLeft if the Timer is running
+                TournamentTimer = new Timer(1000);
+                TournamentTimer.Elapsed += new ElapsedEventHandler(StartTournamentTimer);
+                TournamentTimer.Start();
+
+                //Start AuthenticationStateChanged task
+                Task<AuthenticationState> currentAuthenticationStateTask;
+                AuthenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+                currentAuthenticationStateTask = AuthenticationStateProvider.GetAuthenticationStateAsync();
+                OnAuthenticationStateChanged(currentAuthenticationStateTask);
+
             }
             catch (Exception e)
             {
                 Logger.LogError(e.Message);
-                
             }
         }
 
@@ -259,12 +305,18 @@ namespace PokerTime.App.Pages
             if(timeSinceLastAction < TimeLeft) //If time is still within the current Blind Level
             {
                 TimeLeft -= timeSinceLastAction;
+                TimeStateChanged = Tracker.Time;
             }
             else
             {
                 timeSinceLastAction -= TimeLeft;
                 CurrentBlindLevel = NextBlindLevel;
                 NextBlindLevel = BlindLevels.FirstOrDefault(x => x.SequenceNum == CurrentBlindLevel.SequenceNum + 1);
+
+                if(NextBlindLevel is null)
+                {
+                    CreateNextBlindLevel(CurrentBlindLevel);
+                }
 
                 while (timeSinceLastAction > new TimeSpan()) //Loop through the Blind Levels, subtracting the times until we get to the current Blind Level
                 {
@@ -280,7 +332,10 @@ namespace PokerTime.App.Pages
                         NextBlindLevel = BlindLevels.FirstOrDefault(x => x.SequenceNum == CurrentBlindLevel.SequenceNum + 1);
                     }
                 }
+                TimeStateChanged = DateTime.UtcNow;
+                PriorTimeLeft = TimeLeft;
             }
+            
 
             IsTournamentRunning = Tracker.IsTournamentRunning;
             IsTimerRunning = Tracker.IsTimerRunning;
@@ -292,45 +347,11 @@ namespace PokerTime.App.Pages
             {
                 ButtonName = "Start";
             }
-            Timer();
         }
 
         public TimeSpan GetTimeDifference()
         {
             return DateTime.UtcNow - Tracker.Time;
-        }
-
-        public async void Timer()
-        {
-            while ((TimeLeft > new TimeSpan()) && IsTimerRunning)
-            {
-                
-                //TimeLeft = TimeLeft.Subtract(new TimeSpan(0, 0, 1));
-                TimeLeft = PriorTimeLeft - (DateTime.UtcNow - TimeStateChanged);
-                CheckTimerColor();
-                StateHasChanged();
-                await Task.Delay(1000);
-            }
-
-            if (TimeLeft <= new TimeSpan())
-            {
-                //Timer ended
-                TimeExpired();
-            }
-            else
-            {
-                //Host stopped timer
-                if (IsUserAuthenticated)
-                {
-                    UpdateTournamentTracker();
-                }
-                else
-                {
-                    await Task.Delay(1000);
-                }
-                
-            }
-            StateHasChanged();
         }
 
         public async void TimeExpired()
@@ -348,7 +369,6 @@ namespace PokerTime.App.Pages
                 TimeStateChanged = Tracker.Time;
                 ButtonName = "Stop";
                 UpdateTournamentTracker();
-                Timer();
             }
             else //Timer is stopped
             {
@@ -370,7 +390,6 @@ namespace PokerTime.App.Pages
                 TimerColor = "White";
             }
         }
-
 
         public void IncrementBlindLevel()
         {
@@ -404,7 +423,6 @@ namespace PokerTime.App.Pages
                     {
                         UpdateTournamentTracker();
                     }
-                    Timer();
                     StateHasChanged();
                 }
             }
@@ -422,7 +440,7 @@ namespace PokerTime.App.Pages
 
         public async void UpdateTournamentTracker()
         {
-            Tracker.Id = Event.Id;
+            Tracker.Id = EventId;
             Tracker.IsTimerRunning = IsTimerRunning;
             Tracker.IsTournamentRunning = IsTournamentRunning;
 
@@ -471,7 +489,6 @@ namespace PokerTime.App.Pages
                     TimeStateChanged = Tracker.Time;
                     UpdateBlindLevels();
                     IsTimerRunning = true;
-                    Timer();
                 }
                 else //If the timer stopped, reset it.
                 {
@@ -516,7 +533,28 @@ namespace PokerTime.App.Pages
 
         public void Dispose()
         {
-            //Timer?.Dispose();
+            FiveSecondTimer?.Dispose();
+            TournamentTimer?.Dispose();
+            //AuthenticationStateProvider.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+        }
+
+        public void StartTournamentTimer(object sender, ElapsedEventArgs e)
+        {
+            if (IsTimerRunning)
+            {
+                if (TimeLeft > new TimeSpan())
+                {
+                    TimeLeft = PriorTimeLeft - (DateTime.UtcNow - TimeStateChanged);
+                    CheckTimerColor();
+                }
+
+                if (TimeLeft <= new TimeSpan())
+                {
+                    //Timer ended
+                    TimeExpired();
+                }
+            }
+            StateHasChanged();
         }
     }
 }
