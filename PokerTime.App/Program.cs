@@ -1,5 +1,6 @@
 using BlazorStrap;
 using BlazorStyled;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,11 +18,11 @@ namespace PokerTime.App
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
+            builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddOidcAuthentication(options =>
             {
                 builder.Configuration.Bind("OidcConfiguration", options.ProviderOptions);
-
             });
 
             builder.Services.AddTransient<CustomAuthorizationMessageHandler>();

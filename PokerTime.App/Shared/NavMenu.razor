@@ -74,7 +74,7 @@
     private async Task BeginSignOut(MouseEventArgs args)
     {
         await SignOutManager.SetSignOutState();
-        Navigation.NavigateTo($"{Config.GetValue<string>("LogoutAddress")}");
+        Navigation.NavigateTo("authentication/logout");
     }
 
     private void GoToRegistration()

@@ -535,7 +535,6 @@ namespace PokerTime.App.Pages
         {
             FiveSecondTimer?.Dispose();
             TournamentTimer?.Dispose();
-            //AuthenticationStateProvider.AuthenticationStateChanged -= OnAuthenticationStateChanged;
         }
 
         public void StartTournamentTimer(object sender, ElapsedEventArgs e)

@@ -1,25 +1,12 @@
 ﻿@page "/"
 
-@inject IConfiguration Config
 @attribute [AllowAnonymous]
 
-<h1>Welcome to Poker.Time!</h1>
+<h1>Welcome to PokerTime!</h1>
 
-<p>Welcome welcome welcome!</p> 
+<p>
+	PokerTime is the best way for you and your friends to keep track of your poker tournament. Create your own custom blind level structures to suit your needs!
+	Email a link to your friends so they can view the tournament timer directly on their phones!
+</p> 
 
-<p>RegistrationAddress: @registrationAddress</p>
-
-<p>LogoutAddress: @logoutAddress</p>
-
-
-@code{
-	private string registrationAddress;
-	private string logoutAddress;
-
-	protected override void OnInitialized()
-	{
-		registrationAddress = Config.GetValue<string>("RegistrationAddress");
-		logoutAddress = Config.GetValue<string>("LogoutAddress");
-	}
-}
 
