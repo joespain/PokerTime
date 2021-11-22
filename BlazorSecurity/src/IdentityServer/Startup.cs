@@ -47,11 +47,7 @@ namespace IdentityServer
 
 
             //Identity Configuration
-            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = false;
-                options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
-            })
+            services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -59,19 +55,7 @@ namespace IdentityServer
 
 
             //Add IdentityServer4
-            var builder = services.AddIdentityServer(options =>
-            {
-                // see https://identityserver4.readthedocs.io/en/latest/topics/resources.html
-                options.EmitStaticAudienceClaim = true;
-                options.Authentication.CookieLifetime = TimeSpan.FromHours(12);
-                //options.UserInteraction = new IdentityServer4.Configuration.UserInteractionOptions()
-                //{
-                //    //LogoutUrl = "/account/logout",
-                //    //LoginUrl = "/account/login",
-                //    LoginReturnUrlParameter = "returnUrl"
-                //};
-                
-            })
+            var builder = services.AddIdentityServer()
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddConfigurationStore(options =>
                 {

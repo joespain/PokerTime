@@ -14,8 +14,8 @@ namespace PokerTime.App
             _configuration = configuration;
             ConfigureHandler(
                 authorizedUrls: new[] { configuration.GetValue<string>("ApiAddress") },
-                scopes: new[] { "api-access" });
-            
+                scopes: new[] { "api-access" },
+                returnUrl: configuration.GetValue<string>("RedirectUrl"));
         }
     }
 }

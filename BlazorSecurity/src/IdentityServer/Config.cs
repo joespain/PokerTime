@@ -44,9 +44,11 @@ namespace IdentityServer
                     ClientName = "PokerTime Webassembly App",
                     RequireClientSecret = false,
                     AllowedGrantTypes = GrantTypes.Code,
+                    AllowOfflineAccess = true,
                     RequirePkce = true,
                     AllowedScopes = {"openid", "profile", "offline_access", "api-access"},
                     RequireConsent = false,
+                    RefreshTokenExpiration = TokenExpiration.Absolute,
                     //AllowedCorsOrigins = {"https://pokertimeapp.azurewebsites.net"},
                     //RedirectUris = { "https://pokertimeapp.azurewebsites.net/authentication/login-callback" },
                     //PostLogoutRedirectUris = { "https://pokertimeapp.azurewebsites.net/authentication/logout-callback" }
