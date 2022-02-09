@@ -47,7 +47,7 @@ namespace PokerTime.App.Pages
 
         //TournamentTracking
         public TournamentTracking Tracker { get; set; } = new();
-        public Timer FiveSecondTimer { get; set; } = new();
+        public Timer CheckTrackerTimer { get; set; } = new();
 
         //User
         public bool IsUserAuthenticated { get; set; } 
@@ -225,9 +225,9 @@ namespace PokerTime.App.Pages
                     }
 
                     //This timer will go off every 5 seconds to call the CheckTracker function.
-                    FiveSecondTimer = new Timer(5000);
-                    FiveSecondTimer.Elapsed += new ElapsedEventHandler(CheckTracker);
-                    FiveSecondTimer.Start();
+                    CheckTrackerTimer = new Timer(15000);
+                    CheckTrackerTimer.Elapsed += new ElapsedEventHandler(CheckTracker);
+                    CheckTrackerTimer.Start();
                 }
 
                 //This timer updates TimeLeft if the Timer is running
@@ -533,7 +533,7 @@ namespace PokerTime.App.Pages
 
         public void Dispose()
         {
-            FiveSecondTimer?.Dispose();
+            CheckTrackerTimer?.Dispose();
             TournamentTimer?.Dispose();
         }
 

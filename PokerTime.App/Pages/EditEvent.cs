@@ -87,13 +87,14 @@ namespace PokerTime.App.Pages
                     Event.Id = Guid.NewGuid();
                     Event.Date = DateTime.Today;
                     Event.Time = DateTime.Now;
+                    Event.Time = Event.Time.AddSeconds(-Event.Time.Second);
                     PriorInvitees = Mapper.Map<List<InviteeModel>>(await InviteeDataService.GetInvitees()).ToList();
                     Event.Invitees = new List<InviteeModel>();
-                    Event.Invitees.Add(new InviteeModel()
-                    {
-                        HostId = HostId,
-                        IsDisabled = false
-                    });
+                    //Event.Invitees.Add(new InviteeModel()
+                    //{
+                    //    HostId = HostId,
+                    //    IsDisabled = false
+                    //});
                 }
 
                 Event.Invitees = Event.Invitees.OrderBy(x => x.IsDisabled).ThenBy(x => x.Name).ToList();
@@ -160,20 +161,31 @@ namespace PokerTime.App.Pages
             //This method populates the PriorInvitees property, which contains all other invitees the Host has
             //that have not been used in the current event.
             PriorInvitees = Mapper.Map<List<InviteeModel>>(await InviteeDataService.GetInvitees());
-            foreach(var thisEventInvitee in Event.Invitees.ToList())
+            if(Event.Invitees.Count > 0) //If existing event with Invitees
             {
-                foreach(var priorInvitee in PriorInvitees.ToList())
+                foreach (var thisEventInvitee in Event.Invitees.ToList())
                 {
-                    if(thisEventInvitee.Id == priorInvitee.Id)
+                    foreach (var priorInvitee in PriorInvitees.ToList()) // Remove any current Invitees from the Prior Invitee list
                     {
-                        PriorInvitees.Remove(priorInvitee);
-                    }
-                    else
-                    {
-                        priorInvitee.IsDisabled = true;
+                        if (thisEventInvitee.Id == priorInvitee.Id)
+                        {
+                            PriorInvitees.Remove(priorInvitee);
+                        }
+                        else
+                        {
+                            priorInvitee.IsDisabled = true;
+                        }
                     }
                 }
             }
+            else // If Event with no Invitees
+            {
+                foreach (var priorInvitee in PriorInvitees.ToList()) //Disable all the prior invitees
+                {
+                    priorInvitee.IsDisabled = true;
+                }
+            }
+            
         }
 
         public void AddPriorInvitee(InviteeModel Invitee)

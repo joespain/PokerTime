@@ -21,10 +21,6 @@ namespace PokerTime.App.Pages
         public int TournamentStructureId { get; set; }
         public TournamentStructureModel TSModel { get; set; } = new TournamentStructureModel();
 
-
-        ////Blind Levels
-        //public List<BlindLevelModel> BlindLevels { get; set; } = new List<BlindLevelModel>();
-
         //Services
         [Inject]
         public IHostDataService HostDataService { get; set; }

@@ -168,7 +168,7 @@ namespace PokerTime.App.Pages
 
         public void UpdateTimerColor()
         {
-            if (TimeLeft < new TimeSpan(0, 0, 31))
+            if (TimeLeft < new TimeSpan(0, 0, 31)) //Set TimerColor to red if < 30 secs remain.
             {
                 TimerColor = "red";
             }

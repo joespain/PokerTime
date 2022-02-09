@@ -1,11 +1,7 @@
-﻿using MimeKit;
-using System.IO;
-using System.Threading.Tasks;
-using MailKit.Net.Smtp;
-using MailKit.Security;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using System.Threading.Tasks;
 
 namespace PokerTime.Shared.Email
 {

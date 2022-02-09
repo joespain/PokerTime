@@ -55,33 +55,40 @@ else
             </BSCol>
         </BSRow>
 
-        @foreach (var invitee in Event.Invitees)
+        @if(Event.Invitees.Count == 0)
         {
-            <BSRow Class="invitee-current">
-                <BSCol XS="12" MD="3" >
-                    <label for="Name" class="form-label">Name</label>
-                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Name" @bind-Value="@invitee.Name" ValidateOnChange="true" ValidateOnInput="true" Class="textbox"/>
-                </BSCol>
-                <BSCol XS="12" MD="3">
-                    <label for="Email" class="form-label">Email</label>
-                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Email" @bind-Value="@invitee.Email" ValidateOnChange="true" ValidateOnInput="true" Class="textbox"/>
-                </BSCol>
-                <BSCol XS="12" MD="3">
-                    <label for="Phone" class="form-label">Phone (optional)</label>
-                    <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Phone" @bind-Value="@invitee.Phone" ValidateOnChange="true" ValidateOnInput="true" Class="textbox" />
-                </BSCol>
-                <BSCol XS="12" MD="3" Class="center-button">
-                    <BSButton Color="Color.Secondary" IsOutline="true" @onclick="@(() => EditInvitee(invitee))" Class="invitee-btns">
-                        <span class="oi oi-pencil"></span> Edit
-                    </BSButton>
-                    <BSButton Color="Color.Success" IsOutline="true" @onclick="@(() => EmailInvitee(invitee))" Class="invitee-btns">
-                        <span class="oi oi-envelope-closed"></span> Invite
-                    </BSButton>
-                    <BSButton Color="Color.Danger" IsOutline="true" @onclick="@(() => RemoveInvitee(invitee))" Class="invitee-btns">
-                        <span class="oi oi-circle-x"></span> Remove
-                    </BSButton>
-                </BSCol>
-            </BSRow>
+            <p>No Invitees Added</p>
+        }
+        else
+        {
+            @foreach (var invitee in Event.Invitees)
+            {
+                <BSRow Class="invitee-current">
+                    <BSCol XS="12" MD="3" >
+                        <label for="Name" class="form-label">Name</label>
+                        <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Name" @bind-Value="@invitee.Name" ValidateOnChange="true" ValidateOnInput="true" Class="textbox"/>
+                    </BSCol>
+                    <BSCol XS="12" MD="3">
+                        <label for="Email" class="form-label">Email</label>
+                        <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Email" @bind-Value="@invitee.Email" ValidateOnChange="true" ValidateOnInput="true" Class="textbox"/>
+                    </BSCol>
+                    <BSCol XS="12" MD="3">
+                        <label for="Phone" class="form-label">Phone (optional)</label>
+                        <BSBasicInput InputType="InputType.Text" IsReadonly="@invitee.IsDisabled" id="Phone" @bind-Value="@invitee.Phone" ValidateOnChange="true" ValidateOnInput="true" Class="textbox" />
+                    </BSCol>
+                    <BSCol XS="12" MD="3" Class="center-button">
+                        <BSButton Color="Color.Secondary" IsOutline="true" @onclick="@(() => EditInvitee(invitee))" Class="invitee-btns">
+                            <span class="oi oi-pencil"></span> Edit
+                        </BSButton>
+                        <BSButton Color="Color.Success" IsOutline="true" @onclick="@(() => EmailInvitee(invitee))" Class="invitee-btns">
+                            <span class="oi oi-envelope-closed"></span> Invite
+                        </BSButton>
+                            <BSButton Color="Color.Danger" IsOutline="true" @onclick="@(() => RemoveInvitee(invitee))" Class="invitee-btns">
+                            <span class="oi oi-circle-x"></span> Remove
+                        </BSButton>
+                    </BSCol>
+                </BSRow>
+            }
         }
 
         <BSRow>
@@ -90,6 +97,7 @@ else
             </BSCol>
         </BSRow>
 
+            
         @foreach (var invitee in PriorInvitees)
         {
             <BSRow Class="invitee-prior">
@@ -112,6 +120,8 @@ else
                 </BSCol>
             </BSRow>
         }
+            
+
 
 
 

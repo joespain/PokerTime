@@ -14,10 +14,10 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PokerTime.Shared.Email;
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Security.Claims;
 
 namespace IdentityServer
 {
@@ -98,6 +98,7 @@ namespace IdentityServer
 
             // Email sender, used to confirm email address
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IMailService, MailService>();
 
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();

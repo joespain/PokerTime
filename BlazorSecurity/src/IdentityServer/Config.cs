@@ -9,7 +9,6 @@ namespace IdentityServer
 {
     public static class Config
     {
-
         public static IEnumerable<IdentityResource> IdentityResources =>
             new IdentityResource[]
             { 
@@ -42,13 +41,19 @@ namespace IdentityServer
                 {
                     ClientId = "PokerTimeApp",
                     ClientName = "PokerTime Webassembly App",
+
                     RequireClientSecret = false,
                     AllowedGrantTypes = GrantTypes.Code,
-                    AllowOfflineAccess = true,
+                    
                     RequirePkce = true,
                     AllowedScopes = {"openid", "profile", "offline_access", "api-access"},
                     RequireConsent = false,
+
+                    //Refresh Token info
+                    AllowOfflineAccess = true,
                     RefreshTokenExpiration = TokenExpiration.Absolute,
+                    AbsoluteRefreshTokenLifetime = default,
+
                     //AllowedCorsOrigins = {"https://pokertimeapp.azurewebsites.net"},
                     //RedirectUris = { "https://pokertimeapp.azurewebsites.net/authentication/login-callback" },
                     //PostLogoutRedirectUris = { "https://pokertimeapp.azurewebsites.net/authentication/logout-callback" }
